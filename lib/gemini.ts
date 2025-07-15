@@ -278,29 +278,52 @@ export class GeminiService {
 
   // Generate the analysis prompt
   private getFoodAnalysisPrompt(): string {
-    return `Analyze this food image and provide a detailed calorie estimate. Return the response as JSON with this exact format:
+    return `Analyze this image and provide detailed calorie information. This could be either actual food or a nutrition label/food packaging. Return the response as JSON with this exact format:
 
 {
   "foods": [
     {
       "name": "food item name",
       "calories": number,
-      "quantity": "estimated portion size",
+      "quantity": "portion size or serving size",
       "confidence": 0.8
     }
   ]
 }
 
-Guidelines:
+INSTRUCTIONS:
+
+**If this is a NUTRITION LABEL or FOOD PACKAGING:**
+- Read the nutrition facts label carefully
+- Extract the exact calorie information per serving
+- Use the product name from the package
+- Use the serving size exactly as stated on the label
+- Set confidence to 0.95 for nutrition labels (they're accurate)
+- Look for "Calories per serving", "Energy", or similar labels
+- If multiple servings are visible, calculate total calories
+
+**If this is ACTUAL FOOD:**
 - Identify all visible food items
-- Provide realistic calorie estimates based on typical serving sizes
-- Include confidence scores (0.0 to 1.0)
+- Estimate realistic calories based on typical serving sizes
 - Be specific about food names (e.g., "grilled chicken breast" not just "chicken")
 - Consider cooking methods and ingredients
-- If multiple items, list each separately
-- Use standard portion descriptions (e.g., "1 cup", "medium slice", "1 piece")
+- Use visual estimation for portion sizes
+- Set confidence based on how clearly you can identify the food (0.6-0.9)
 
-Focus on accuracy and be conservative with estimates if uncertain.`;
+**General Guidelines:**
+- If you see both packaging AND food, prioritize the nutrition label data
+- Include confidence scores (0.0 to 1.0)
+- If multiple items, list each separately
+- Use standard portion descriptions (e.g., "1 cup", "medium slice", "1 piece", "per 100g")
+- For packaged foods, include brand name if visible
+- Be conservative with estimates if uncertain
+
+**Examples:**
+- Nutrition label showing "120 calories per serving" → use exactly 120 calories
+- Bag of chips with "150 cal per 28g serving" → use 150 calories for that serving size
+- Actual apple → estimate based on size (e.g., "80 calories for medium apple")
+
+Focus on accuracy and prioritize nutrition label data when available.`;
   }
 
   // Create API error helper

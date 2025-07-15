@@ -24,7 +24,13 @@ export const APP_CONFIG = {
   MAX_IMAGE_SIZE: 1024 * 1024, // 1MB in bytes
   SUPPORTED_IMAGE_FORMATS: ['image/jpeg', 'image/png', 'image/webp'],
   // Default test API key for users to try the app
-  DEFAULT_TEST_API_KEY: 'AIzaSyCwIBFPUSFZf5Ew00lT4fq6SbfEsCbCMkI', 
+  DEFAULT_TEST_API_KEY: 'AIzaSyCwIBFPUSFZf5Ew00lT4fq6SbfEsCbCMkI',
+  // Rate limiting for default test key
+  DEFAULT_KEY_LIMITS: {
+    REQUESTS_PER_MINUTE: 10, // Lower limit for shared test key
+    REQUESTS_PER_DAY: 100,   // Daily limit for test users
+    MAX_CONCURRENT_USERS: 50, // Estimated concurrent users
+  },
 } as const;
 
 // Storage keys
@@ -65,4 +71,27 @@ export function getApiKey(userApiKey?: string): string {
   }
   
   throw new Error('No API key available. Please provide your Gemini API key in settings.');
+}
+
+// Check if using default test key
+export function isUsingDefaultTestKey(userApiKey?: string): boolean {
+  const apiKey = getApiKey(userApiKey);
+  return apiKey === APP_CONFIG.DEFAULT_TEST_API_KEY;
+}
+
+// Get rate limits based on key type
+export function getRateLimits(userApiKey?: string) {
+  if (isUsingDefaultTestKey(userApiKey)) {
+    return {
+      requestsPerMinute: APP_CONFIG.DEFAULT_KEY_LIMITS.REQUESTS_PER_MINUTE,
+      requestsPerDay: APP_CONFIG.DEFAULT_KEY_LIMITS.REQUESTS_PER_DAY,
+      isSharedKey: true,
+    };
+  }
+  
+  return {
+    requestsPerMinute: GEMINI_CONFIG.MAX_REQUESTS_PER_MINUTE,
+    requestsPerDay: 1500, // Standard free tier daily limit
+    isSharedKey: false,
+  };
 }

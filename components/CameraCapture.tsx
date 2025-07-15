@@ -24,20 +24,36 @@ export default function CameraCapture({ onPhotoCapture, onError }: CameraProps) 
         throw new Error('Camera not supported on this device');
       }
 
-      // Request camera access
+      // Request camera access with mobile-optimized constraints
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: 'environment', // Use back camera on mobile
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
-        }
+          facingMode: { ideal: 'environment' }, // Prefer back camera but allow front
+          width: { ideal: 1280, max: 1920 },
+          height: { ideal: 720, max: 1080 },
+          aspectRatio: { ideal: 16/9 }
+        },
+        audio: false
       });
 
       streamRef.current = stream;
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        await videoRef.current.play();
+        
+        // Add event listeners for mobile compatibility
+        videoRef.current.onloadedmetadata = () => {
+          if (videoRef.current) {
+            videoRef.current.play().catch(console.error);
+          }
+        };
+        
+        // Force play for mobile browsers
+        try {
+          await videoRef.current.play();
+        } catch (playError) {
+          console.warn('Autoplay failed, user interaction may be required:', playError);
+        }
+        
         setIsActive(true);
       }
     } catch (error) {
@@ -76,6 +92,15 @@ export default function CameraCapture({ onPhotoCapture, onError }: CameraProps) 
     try {
       setIsLoading(true);
       
+      const video = videoRef.current;
+      
+      // Wait for video to be ready
+      if (video.readyState < 2) {
+        await new Promise((resolve) => {
+          video.addEventListener('loadeddata', resolve, { once: true });
+        });
+      }
+      
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       
@@ -83,12 +108,25 @@ export default function CameraCapture({ onPhotoCapture, onError }: CameraProps) 
         throw new Error('Canvas not supported');
       }
 
-      // Set canvas dimensions to match video
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
+      // Set canvas dimensions to match video (handle mobile orientation)
+      const videoWidth = video.videoWidth || video.clientWidth;
+      const videoHeight = video.videoHeight || video.clientHeight;
+      
+      canvas.width = videoWidth;
+      canvas.height = videoHeight;
 
+      // Save context state for transformations
+      ctx.save();
+      
+      // Mirror the image back (since we mirrored the video for UX)
+      ctx.scale(-1, 1);
+      ctx.translate(-videoWidth, 0);
+      
       // Draw video frame to canvas
-      ctx.drawImage(videoRef.current, 0, 0);
+      ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
+      
+      // Restore context
+      ctx.restore();
 
       // Convert to base64 with compression
       let imageData = canvas.toDataURL('image/jpeg', APP_CONFIG.IMAGE_QUALITY);
@@ -212,10 +250,23 @@ export default function CameraCapture({ onPhotoCapture, onError }: CameraProps) 
               className="w-full h-64 object-cover"
               playsInline
               muted
+              autoPlay
+              webkit-playsinline="true"
+              style={{ 
+                transform: 'scaleX(-1)', // Mirror for better UX
+                WebkitTransform: 'scaleX(-1)',
+                minHeight: '256px' // Ensure minimum height on mobile
+              }}
             />
             <div className="absolute inset-0 border-2 border-white/20 rounded-xl pointer-events-none" />
             <div className="absolute top-4 left-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
               Position your food in the frame
+            </div>
+            {/* Capture overlay for better mobile UX */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+              <div className="w-16 h-16 border-4 border-white rounded-full flex items-center justify-center bg-white/20 backdrop-blur-sm">
+                <div className="w-12 h-12 bg-white rounded-full opacity-80"></div>
+              </div>
             </div>
           </div>
           
