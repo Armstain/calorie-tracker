@@ -1,8 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fffbf0;
+  --foreground: #1a1a1a;
+
+  /* Food-themed color palette */
+  --primary: #f59e0b; /* Amber-500 - main food/cooking color */
+  --primary-dark: #d97706; /* Amber-600 */
+  --primary-light: #fbbf24; /* Amber-400 */
+  --primary-bg: #fef3c7; /* Amber-100 */
+
+  --secondary: #ea580c; /* Orange-600 - warm food color */
+  --secondary-dark: #c2410c; /* Orange-700 */
+  --secondary-light: #fb923c; /* Orange-400 */
+  --secondary-bg: #fed7aa; /* Orange-200 */
+
+  --accent: #16a34a; /* Green-600 - healthy/fresh color */
+  --accent-light: #22c55e; /* Green-500 */
+  --accent-bg: #dcfce7; /* Green-100 */
+
+  --neutral: #6b7280; /* Gray-500 */
+  --neutral-light: #9ca3af; /* Gray-400 */
+  --neutral-bg: #f9fafb; /* Gray-50 */
+
+  --success: #10b981; /* Emerald-500 */
+  --warning: #f59e0b; /* Amber-500 */
+  --error: #ef4444; /* Red-500 */
 }
 
 @theme inline {
@@ -10,17 +33,142 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Custom color tokens */
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-light: var(--primary-light);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0f0f0f;
+    --foreground: #f5f5f5;
+    --primary-bg: #451a03; /* Amber-950 */
+    --secondary-bg: #431407; /* Orange-950 */
+    --accent-bg: #052e16; /* Green-950 */
+    --neutral-bg: #111827; /* Gray-900 */
   }
+}
+
+/* Mobile-first responsive optimizations */
+html {
+  /* Prevent zoom on input focus on iOS */
+  -webkit-text-size-adjust: 100%;
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  /* Prevent horizontal scroll */
+  overflow-x: hidden;
+  /* Better font rendering on mobile */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent zoom on input focus */
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
+/* Better touch targets */
+button,
+[role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Mobile-optimized button styles */
+.btn-mobile {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: colors 0.2s;
+  min-height: 48px;
+  touch-action: manipulation;
+}
+
+.btn-mobile-sm {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition: colors 0.2s;
+  min-height: 40px;
+  touch-action: manipulation;
+}
+
+/* Input styles optimized for mobile */
+.input-mobile {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 16px; /* Prevent zoom on iOS */
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+}
+
+.input-mobile:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #3b82f6;
+  border-color: transparent;
+}
+
+/* Touch-friendly hover states */
+@media (hover: hover) {
+  .hover-desktop:hover {
+    opacity: 0.8;
+  }
+}
+
+/* Mobile-specific utilities */
+.tap-highlight-none {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent text selection on UI elements */
+.select-none-mobile {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Better focus visibility */
+.focus-visible-mobile:focus-visible {
+  ring: 2px;
+  ring-color: #3b82f6;
+  ring-offset: 2px;
+}
+
+/* PWA and mobile-specific styles */
+@media (display-mode: standalone) {
+  /* Styles for when app is installed as PWA */
+  .pwa-header {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (orientation: landscape) and (max-height: 500px) {
+  .landscape-compact {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .high-dpi-border {
+    border-width: 0.5px;
+  }
 }
