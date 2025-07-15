@@ -23,6 +23,8 @@ export const APP_CONFIG = {
   IMAGE_QUALITY: 0.8,
   MAX_IMAGE_SIZE: 1024 * 1024, // 1MB in bytes
   SUPPORTED_IMAGE_FORMATS: ['image/jpeg', 'image/png', 'image/webp'],
+  // Default test API key for users to try the app
+  DEFAULT_TEST_API_KEY: 'AIzaSyCwIBFPUSFZf5Ew00lT4fq6SbfEsCbCMkI', 
 } as const;
 
 // Storage keys
@@ -44,7 +46,7 @@ export function getConfig(): EnvironmentConfig {
   return config;
 }
 
-// Get API key with user override support
+// Get API key with user override support and default test key
 export function getApiKey(userApiKey?: string): string {
   // User-provided API key takes precedence
   if (userApiKey && userApiKey.trim()) {
@@ -57,5 +59,10 @@ export function getApiKey(userApiKey?: string): string {
     return config.GEMINI_API_KEY;
   }
   
-  throw new Error('No API key available. Please provide your Gemini API key in settings or set GEMINI_API_KEY environment variable.');
+  // Use default test API key as final fallback
+  if (APP_CONFIG.DEFAULT_TEST_API_KEY) {
+    return APP_CONFIG.DEFAULT_TEST_API_KEY;
+  }
+  
+  throw new Error('No API key available. Please provide your Gemini API key in settings.');
 }

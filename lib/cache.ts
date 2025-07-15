@@ -7,14 +7,16 @@ interface CacheEntry<T> {
 }
 
 class Cache {
-  private cache = new Map<string, CacheEntry<any>>();
+  private cache = new Map<string, CacheEntry<unknown>>();
   private maxSize = 100; // Maximum number of entries
 
   set<T>(key: string, data: T, ttlMs: number = 5 * 60 * 1000): void {
     // Remove oldest entries if cache is full
     if (this.cache.size >= this.maxSize) {
       const oldestKey = this.cache.keys().next().value;
-      this.cache.delete(oldestKey);
+      if (oldestKey) {
+        this.cache.delete(oldestKey);
+      }
     }
 
     this.cache.set(key, {
@@ -37,7 +39,7 @@ class Cache {
       return null;
     }
 
-    return entry.data;
+    return entry.data as T;
   }
 
   has(key: string): boolean {

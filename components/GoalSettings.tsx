@@ -3,9 +3,7 @@
 import { useState, useEffect } from 'react';
 import { CheckCircle, AlertTriangle, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { UserSettings } from '@/types';
 import { formatCalories } from '@/lib/utils';
 
@@ -240,17 +238,22 @@ export default function GoalSettings({
                 {settings.apiKey ? '••••••••••••••••' : 'Not set (using environment variable)'}
               </div>
             )}
-            <p className="text-sm text-gray-500 mt-1">
-              Provide your own API key to avoid rate limits. Get one from{' '}
-              <a 
-                href="https://makersuite.google.com/app/apikey" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:text-blue-600"
-              >
-                Google AI Studio
-              </a>
-            </p>
+            <div className="text-sm text-gray-500 mt-1 space-y-1">
+              <p>
+                <span className="text-green-600 font-medium">✓ Default test key provided</span> - You can start using the app immediately!
+              </p>
+              <p>
+                For unlimited usage, get your own free API key from{' '}
+                <a 
+                  href="https://makersuite.google.com/app/apikey" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:text-blue-600 underline"
+                >
+                  Google AI Studio
+                </a>
+              </p>
+            </div>
           </div>
 
           {/* Notifications */}

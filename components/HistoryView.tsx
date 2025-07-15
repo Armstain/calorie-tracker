@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { BarChart3, List, TrendingUp, TrendingDown, ArrowRight, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+// Removed unused Card and Badge imports
 import { HistoryProps, DailyData } from '@/types';
 import { formatCalories, dateUtils, calculateWeeklyAverage } from '@/lib/utils';
 
@@ -175,7 +174,7 @@ export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) 
             <div className="space-y-4">
               {/* Chart */}
               <div className="flex items-end justify-between h-64 bg-gray-50 rounded-lg p-4">
-                {weeklyData.map((day, index) => (
+                {weeklyData.map((day) => (
                   <div key={day.date} className="flex flex-col items-center flex-1">
                     {/* Bar */}
                     <div className="relative w-full max-w-12 mb-2">

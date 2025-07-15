@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Utensils, PartyPopper } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { TrackerProps, FoodEntry } from '@/types';
-import { formatCalories, dateUtils } from '@/lib/utils';
+import { useState, useEffect } from "react";
+import { Utensils, PartyPopper } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { TrackerProps } from "@/types";
+import { formatCalories, dateUtils } from "@/lib/utils";
+import Image from "next/image";
 
-export default function DailyTracker({ 
-  dailyGoal, 
-  currentTotal, 
-  todaysEntries, 
-  onGoalUpdate 
+export default function DailyTracker({
+  dailyGoal,
+  currentTotal,
+  todaysEntries,
+  onGoalUpdate,
 }: TrackerProps) {
   const [isEditingGoal, setIsEditingGoal] = useState(false);
   const [goalInput, setGoalInput] = useState(dailyGoal.toString());
@@ -40,14 +40,16 @@ export default function DailyTracker({
   };
 
   const getProgressColor = () => {
-    if (isOverGoal) return 'bg-red-500';
-    if (progressPercentage >= 80) return 'bg-yellow-500';
-    return 'bg-green-500';
+    if (isOverGoal) return "bg-red-500";
+    if (progressPercentage >= 80) return "bg-yellow-500";
+    return "bg-green-500";
   };
 
   const getStatusMessage = () => {
     if (isOverGoal) {
-      return `${formatCalories(Math.abs(remainingCalories))} calories over goal`;
+      return `${formatCalories(
+        Math.abs(remainingCalories)
+      )} calories over goal`;
     }
     if (remainingCalories > 0) {
       return `${formatCalories(remainingCalories)} calories remaining`;
@@ -69,7 +71,7 @@ export default function DailyTracker({
       {/* Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Today's Progress
+          Today&apos;s Progress
         </h2>
         <p className="text-gray-600">
           {dateUtils.formatDisplayDate(dateUtils.getCurrentDate())}
@@ -132,7 +134,9 @@ export default function DailyTracker({
             <div className="text-2xl font-bold text-gray-900">
               {formatCalories(currentTotal)}
             </div>
-            <div className="text-sm text-gray-600">of {formatCalories(dailyGoal)}</div>
+            <div className="text-sm text-gray-600">
+              of {formatCalories(dailyGoal)}
+            </div>
           </div>
         </div>
 
@@ -152,13 +156,15 @@ export default function DailyTracker({
         </div>
 
         {/* Status Message */}
-        <div className={`text-center p-3 rounded-lg ${
-          isOverGoal 
-            ? 'bg-red-50 text-red-700' 
-            : remainingCalories === 0 
-              ? 'bg-green-50 text-green-700'
-              : 'bg-blue-50 text-blue-700'
-        }`}>
+        <div
+          className={`text-center p-3 rounded-lg ${
+            isOverGoal
+              ? "bg-red-50 text-red-700"
+              : remainingCalories === 0
+              ? "bg-green-50 text-green-700"
+              : "bg-blue-50 text-blue-700"
+          }`}
+        >
           {getStatusMessage()}
         </div>
       </div>
@@ -167,7 +173,7 @@ export default function DailyTracker({
       <div className="bg-white border border-gray-200 rounded-lg p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">
-            Today's Meals ({todaysEntries.length})
+            Today&apos;s Meals ({todaysEntries.length})
           </h3>
           {todaysEntries.length > 0 && (
             <div className="text-sm text-gray-600">
@@ -193,24 +199,24 @@ export default function DailyTracker({
                 key={entry.id}
                 className="border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow"
               >
-                <div 
+                <div
                   className="flex items-center justify-between cursor-pointer"
                   onClick={() => toggleEntryExpansion(entry.id)}
                 >
                   <div className="flex-1">
                     <div className="font-medium text-gray-900">
-                      {entry.foods.length === 1 
-                        ? entry.foods[0].name 
+                      {entry.foods.length === 1
+                        ? entry.foods[0].name
                         : `${entry.foods.length} food items`}
                     </div>
                     <div className="text-sm text-gray-600">
-                      {new Date(entry.timestamp).toLocaleTimeString([], { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
+                      {new Date(entry.timestamp).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
                       })}
                     </div>
                   </div>
-                  
+
                   <div className="text-right mr-4">
                     <div className="font-semibold text-gray-900">
                       {formatCalories(entry.totalCalories)}
@@ -219,7 +225,7 @@ export default function DailyTracker({
                   </div>
 
                   <div className="text-gray-400">
-                    {expandedEntry === entry.id ? '▼' : '▶'}
+                    {expandedEntry === entry.id ? "▼" : "▶"}
                   </div>
                 </div>
 
@@ -228,7 +234,10 @@ export default function DailyTracker({
                   <div className="mt-4 pt-4 border-t border-gray-100">
                     <div className="space-y-2">
                       {entry.foods.map((food, index) => (
-                        <div key={index} className="flex justify-between items-center">
+                        <div
+                          key={index}
+                          className="flex justify-between items-center"
+                        >
                           <div>
                             <span className="text-sm font-medium text-gray-900 capitalize">
                               {food.name}
@@ -243,12 +252,14 @@ export default function DailyTracker({
                         </div>
                       ))}
                     </div>
-                    
+
                     {entry.imageData && (
                       <div className="mt-3">
-                        <img
+                        <Image
                           src={entry.imageData}
                           alt="Food entry"
+                          width={80}
+                          height={80}
                           className="w-20 h-20 object-cover rounded-lg border border-gray-200"
                         />
                       </div>
@@ -269,10 +280,13 @@ export default function DailyTracker({
           </div>
           <div className="text-sm text-gray-600">Meals Logged</div>
         </div>
-        
+
         <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
           <div className="text-2xl font-bold text-gray-900">
-            {todaysEntries.reduce((total, entry) => total + entry.foods.length, 0)}
+            {todaysEntries.reduce(
+              (total, entry) => total + entry.foods.length,
+              0
+            )}
           </div>
           <div className="text-sm text-gray-600">Food Items</div>
         </div>

@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { Camera, Upload, Check, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+// Removed unused Card imports
 import { CameraProps } from '@/types';
 import { imageUtils } from '@/lib/utils';
 import { APP_CONFIG } from '@/lib/config';
@@ -247,6 +247,7 @@ export default function CameraCapture({ onPhotoCapture, onError }: CameraProps) 
           </div>
           
           <div className="relative bg-gray-100 rounded-xl overflow-hidden shadow-lg">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={capturedImage}
               alt="Captured food"

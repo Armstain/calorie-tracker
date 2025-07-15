@@ -25,11 +25,11 @@ export function useNetworkStatus(): NetworkStatus {
 
       // Check connection type if available
       if ('connection' in navigator) {
-        const connection = (navigator as any).connection;
+        const connection = (navigator as unknown as { connection: { effectiveType?: string; type?: string } }).connection;
         connectionType = connection.effectiveType || connection.type || 'unknown';
         
         // Consider 2G and slow-2g as slow connections
-        isSlowConnection = ['slow-2g', '2g'].includes(connection.effectiveType);
+        isSlowConnection = connection.effectiveType ? ['slow-2g', '2g'].includes(connection.effectiveType) : false;
       }
 
       setNetworkStatus({
@@ -48,7 +48,7 @@ export function useNetworkStatus(): NetworkStatus {
 
     // Listen for connection changes if supported
     if ('connection' in navigator) {
-      const connection = (navigator as any).connection;
+      const connection = (navigator as unknown as { connection: { addEventListener: (event: string, handler: () => void) => void } }).connection;
       connection.addEventListener('change', updateNetworkStatus);
     }
 
@@ -57,7 +57,7 @@ export function useNetworkStatus(): NetworkStatus {
       window.removeEventListener('offline', updateNetworkStatus);
       
       if ('connection' in navigator) {
-        const connection = (navigator as any).connection;
+        const connection = (navigator as unknown as { connection: { removeEventListener: (event: string, handler: () => void) => void } }).connection;
         connection.removeEventListener('change', updateNetworkStatus);
       }
     };

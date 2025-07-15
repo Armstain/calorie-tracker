@@ -2,8 +2,7 @@
 
 import React, { Component, ReactNode } from 'react';
 import { AlertTriangle } from 'lucide-react';
-import { AppError } from '@/types';
-import { errorUtils } from '@/lib/utils';
+// Removed unused imports
 
 interface Props {
   children: ReactNode;
