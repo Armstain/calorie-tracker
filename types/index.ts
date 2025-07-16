@@ -1,10 +1,22 @@
 // Core data models for the Food Calorie Estimator app
 
+export interface MacroNutrients {
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+}
+
 export interface FoodItem {
   name: string;
   calories: number;
   quantity: string;
   confidence: number;
+  ingredients?: string[];
+  cookingMethod?: 'grilled' | 'fried' | 'baked' | 'steamed' | 'raw' | 'boiled' | 'roasted';
+  macros?: MacroNutrients;
+  category?: 'protein' | 'vegetable' | 'grain' | 'fruit' | 'dairy' | 'snack' | 'beverage';
+  healthScore?: number;
 }
 
 export interface FoodAnalysisResult {
@@ -13,6 +25,10 @@ export interface FoodAnalysisResult {
   confidence: number;
   timestamp: string;
   imageUrl?: string;
+  modelUsed?: string;
+  mealType?: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  restaurantName?: string;
+  totalMacros?: MacroNutrients;
 }
 
 export interface FoodEntry {

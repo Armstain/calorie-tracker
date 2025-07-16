@@ -6,12 +6,33 @@ export interface EnvironmentConfig {
   NODE_ENV: 'development' | 'production';
 }
 
-// Gemini AI configuration
+// Gemini AI configuration with model fallback support
+export const GEMINI_MODELS = {
+  'gemini-2.0-flash': {
+    url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+    maxRequestsPerMinute: 15,
+    maxRequestsPerDay: 1500,
+    priority: 1, // Highest priority
+  },
+  'gemini-1.5-pro': {
+    url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent',
+    maxRequestsPerMinute: 2,
+    maxRequestsPerDay: 50,
+    priority: 2,
+  },
+  'gemini-1.5-flash': {
+    url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+    maxRequestsPerMinute: 15,
+    maxRequestsPerDay: 1500,
+    priority: 3, // Fallback
+  },
+} as const;
+
 export const GEMINI_CONFIG = {
-  API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
-  MODEL: 'gemini-1.5-flash',
+  MODELS: GEMINI_MODELS,
+  DEFAULT_MODEL: 'gemini-2.0-flash',
+  FALLBACK_ORDER: ['gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.5-flash'],
   MAX_IMAGE_SIZE: 1024 * 1024, // 1MB
-  MAX_REQUESTS_PER_MINUTE: 15, // Free tier limit
   TIMEOUT: 30000, // 30 seconds
 } as const;
 
@@ -79,8 +100,11 @@ export function isUsingDefaultTestKey(userApiKey?: string): boolean {
   return apiKey === APP_CONFIG.DEFAULT_TEST_API_KEY;
 }
 
-// Get rate limits based on key type
-export function getRateLimits(userApiKey?: string) {
+// Get rate limits based on key type and model
+export function getRateLimits(userApiKey?: string, modelName?: keyof typeof GEMINI_MODELS) {
+  const model = modelName || GEMINI_CONFIG.DEFAULT_MODEL;
+  const modelConfig = GEMINI_MODELS[model];
+  
   if (isUsingDefaultTestKey(userApiKey)) {
     return {
       requestsPerMinute: APP_CONFIG.DEFAULT_KEY_LIMITS.REQUESTS_PER_MINUTE,
@@ -90,8 +114,37 @@ export function getRateLimits(userApiKey?: string) {
   }
   
   return {
-    requestsPerMinute: GEMINI_CONFIG.MAX_REQUESTS_PER_MINUTE,
-    requestsPerDay: 1500, // Standard free tier daily limit
+    requestsPerMinute: modelConfig.maxRequestsPerMinute,
+    requestsPerDay: modelConfig.maxRequestsPerDay,
     isSharedKey: false,
   };
+}
+
+// Get model configuration with fallback support
+export function getModelConfig(preferredModel?: keyof typeof GEMINI_MODELS) {
+  const model = preferredModel || GEMINI_CONFIG.DEFAULT_MODEL;
+  return {
+    model,
+    config: GEMINI_MODELS[model],
+    fallbackOrder: GEMINI_CONFIG.FALLBACK_ORDER,
+  };
+}
+
+// Test if a model is available (for fallback logic)
+export async function testModelAvailability(modelName: keyof typeof GEMINI_MODELS, apiKey: string): Promise<boolean> {
+  try {
+    const modelConfig = GEMINI_MODELS[modelName];
+    const response = await fetch(`${modelConfig.url}?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: 'test' }] }]
+      })
+    });
+    
+    // Model is available if we don't get 404 or 403 (model not found/not accessible)
+    return response.status !== 404 && response.status !== 403;
+  } catch {
+    return false;
+  }
 }

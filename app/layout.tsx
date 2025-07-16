@@ -1,21 +1,29 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Nunito, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const nunitoSans = Nunito({
+  variable: "--font-nunito-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const nunitoMono = Nunito_Sans({
+  variable: "--font-nunito-mono",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
   title: "CalorieMeter - AI Food Calorie Tracker",
-  description: "Track your daily calories with AI-powered food analysis. Take photos of your meals and get instant calorie estimates using Gemini AI.",
-  keywords: ["calorie tracker", "food analysis", "AI", "nutrition", "diet", "health"],
+  description:
+    "Track your daily calories with AI-powered food analysis. Take photos of your meals and get instant calorie estimates using Gemini AI.",
+  keywords: [
+    "calorie tracker",
+    "food analysis",
+    "AI",
+    "nutrition",
+    "diet",
+    "health",
+  ],
   authors: [{ name: "CalorieMeter" }],
   creator: "CalorieMeter",
   publisher: "CalorieMeter",
@@ -69,20 +77,37 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="CalorieMeter" />
-        
+
         {/* Prevent automatic phone number detection */}
         <meta name="format-detection" content="telephone=no" />
-        
+
         {/* Preconnect to external domains for better performance */}
-        <link rel="preconnect" href="https://generativelanguage.googleapis.com" />
-        
+        <link
+          rel="preconnect"
+          href="https://generativelanguage.googleapis.com"
+        />
+
         {/* Apple touch icons */}
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${nunitoSans.variable} ${nunitoMono.variable} antialiased`}
       >
         {children}
       </body>
