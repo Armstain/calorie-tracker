@@ -7,10 +7,9 @@ import {
   TrendingUp,
   Settings,
   Utensils,
+  Plus,
 } from "lucide-react";
-import CameraDebug from "@/components/CameraDebug";
-import SimpleCameraPreview from "@/components/SimpleCameraPreview";
-import SimpleCameraTest from "@/components/SimpleCameraTest";
+
 import ResultsDisplay from "@/components/ResultsDisplay";
 import DailyTracker from "@/components/DailyTracker";
 import HistoryView from "@/components/HistoryView";
@@ -29,12 +28,11 @@ import { FoodAnalysisResult, FoodEntry, UserSettings } from "@/types";
 import { dateUtils } from "@/lib/utils";
 import WorkingCamera from "@/components/WorkingCamera";
 import HealthIntegration from "@/components/HealthIntegration";
+import FoodDatabaseEntry from "@/components/FoodDatabaseEntry";
+import { CommonFood } from "@/lib/foodDatabase";
 
 type AppView =
   | "capture"
-  | "debug"
-  | "simple"
-  | "test"
   | "results"
   | "tracker"
   | "history"
@@ -52,6 +50,7 @@ export default function Home() {
   );
   const [todaysEntries, setTodaysEntries] = useState<FoodEntry[]>([]);
   const [weeklyData, setWeeklyData] = useState(storageService.getWeeklyData());
+  const [showFoodDatabase, setShowFoodDatabase] = useState(false);
 
   const {
     error,
@@ -183,6 +182,30 @@ export default function Home() {
     setShowSplash(false);
   };
 
+  const handleFoodDatabaseAdd = useCallback((food: CommonFood, calories: number, portion: string) => {
+    try {
+      // Create a food entry from the database selection
+      const foodEntry = {
+        timestamp: new Date().toISOString(),
+        foods: [{
+          name: food.name,
+          calories: calories,
+          quantity: portion,
+          confidence: 1.0 // Database entries have 100% confidence
+        }],
+        totalCalories: calories,
+        date: dateUtils.getCurrentDate(),
+      };
+
+      storageService.saveFoodEntry(foodEntry);
+      refreshData();
+      setCurrentView("tracker");
+      setShowFoodDatabase(false);
+    } catch (error) {
+      showError(error as Error);
+    }
+  }, [refreshData, showError]);
+
   if (showSplash) {
     return <SplashScreen onComplete={handleSplashComplete} />;
   }
@@ -296,71 +319,135 @@ export default function Home() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {currentView === "capture" && (
             <div className="space-y-6">
-              <div className="text-center space-x-2">
-                <button
-                  onClick={() => setCurrentView("debug")}
-                  className="bg-red-500 text-white px-3 py-2 rounded-lg mb-4 text-sm"
-                >
-                  🔧 Debug
-                </button>
-                <button
-                  onClick={() => setCurrentView("simple")}
-                  className="bg-green-500 text-white px-3 py-2 rounded-lg mb-4 text-sm"
-                >
-                  📷 Simple
-                </button>
-                <button
-                  onClick={() => setCurrentView("test")}
-                  className="bg-purple-500 text-white px-3 py-2 rounded-lg mb-4 text-sm"
-                >
-                  🧪 Minimal Test
-                </button>
+              {/* Daily Progress Summary */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-amber-200 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-lg font-semibold text-gray-800">Today&apos;s Progress</h2>
+                  <button
+                    onClick={() => setCurrentView("tracker")}
+                    className="text-amber-600 hover:text-amber-700 text-sm font-medium"
+                  >
+                    View Details →
+                  </button>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold text-gray-900">{currentTotal}</span>
+                      <span className="text-sm text-gray-500">/ {settings.dailyCalorieGoal} cal</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                      <div
+                        className="bg-gradient-to-r from-amber-400 to-orange-500 h-2 rounded-full transition-all duration-300"
+                        style={{
+                          width: `${Math.min((currentTotal / settings.dailyCalorieGoal) * 100, 100)}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm text-gray-500">Remaining</div>
+                    <div className="text-lg font-semibold text-gray-800">
+                      {Math.max(settings.dailyCalorieGoal - currentTotal, 0)}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <WorkingCamera
-                onPhotoCapture={handlePhotoCapture}
-                onError={showError}
-              />
+
+              {/* Welcome Message for New Users */}
+              {todaysEntries.length === 0 && (
+                <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-200">
+                  <div className="text-center space-y-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto">
+                      <Camera className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-800">Welcome to CalorieMeter!</h3>
+                    <p className="text-gray-600 max-w-md mx-auto">
+                      Take a photo of your food and get instant AI-powered calorie estimates. 
+                      Start tracking your nutrition journey today!
+                    </p>
+                    <div className="flex items-center justify-center gap-4 text-sm text-gray-500 mt-4">
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                        <span>AI Analysis</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                        <span>Local Storage</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                        <span>Privacy First</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Recent Meals Preview */}
+              {todaysEntries.length > 0 && (
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-amber-200 shadow-sm">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold text-gray-800">Recent Meals</h3>
+                    <span className="text-sm text-gray-500">{todaysEntries.length} entries today</span>
+                  </div>
+                  <div className="flex gap-3 overflow-x-auto pb-2">
+                    {todaysEntries.slice(-3).map((entry, index) => (
+                      <div key={index} className="flex-shrink-0 bg-gray-50 rounded-lg p-3 min-w-[120px]">
+                        <div className="text-sm font-medium text-gray-800 truncate">
+                          {entry.foods[0]?.name || 'Food Item'}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {entry.totalCalories} cal
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {new Date(entry.timestamp).toLocaleTimeString([], { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Camera Component */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-amber-200 shadow-sm">
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold text-gray-800">Capture Your Food</h3>
+                    <button
+                      onClick={() => setShowFoodDatabase(true)}
+                      className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-green-600 hover:text-green-700 hover:bg-green-50 border border-green-200 rounded-lg transition-colors"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Quick Add
+                    </button>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Point your camera at your meal and tap the capture button for instant analysis, or use Quick Add for common foods
+                  </p>
+                </div>
+                <WorkingCamera
+                  onPhotoCapture={handlePhotoCapture}
+                  onError={showError}
+                />
+              </div>
+
+              {/* Quick Tips */}
+              <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                <h4 className="font-medium text-blue-800 mb-2">💡 Pro Tips</h4>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• Ensure good lighting for better AI recognition</li>
+                  <li>• Include the whole plate for accurate portion estimates</li>
+                  <li>• Try different angles if the first analysis isn&apos;t accurate</li>
+                </ul>
+              </div>
             </div>
           )}
 
-          {currentView === "simple" && (
-            <div className="space-y-4">
-              <button
-                onClick={() => setCurrentView("capture")}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-              >
-                ← Back to Main Camera
-              </button>
-              <SimpleCameraPreview
-                onPhotoCapture={handlePhotoCapture}
-                onError={showError}
-              />
-            </div>
-          )}
 
-          {currentView === "test" && (
-            <div className="space-y-4">
-              <button
-                onClick={() => setCurrentView("capture")}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-              >
-                ← Back to Main Camera
-              </button>
-              <SimpleCameraTest />
-            </div>
-          )}
-
-          {currentView === "debug" && (
-            <div className="space-y-4">
-              <button
-                onClick={() => setCurrentView("capture")}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-              >
-                ← Back to Camera
-              </button>
-              <CameraDebug />
-            </div>
-          )}
 
           {currentView === "results" && analysisResult && (
             <ResultsDisplay
@@ -388,10 +475,8 @@ export default function Home() {
 
           {currentView === "health" && (
             <HealthIntegration
-              settings={settings}
               onSettingsUpdate={handleSettingsUpdate}
               currentCalories={currentTotal}
-              weeklyAverage={weeklyAverage}
             />
           )}
 
@@ -497,6 +582,14 @@ export default function Home() {
           isOnline={isOnline}
           isSlowConnection={isSlowConnection}
         />
+
+        {/* Food Database Entry Modal */}
+        {showFoodDatabase && (
+          <FoodDatabaseEntry
+            onFoodAdd={handleFoodDatabaseAdd}
+            onClose={() => setShowFoodDatabase(false)}
+          />
+        )}
       </div>
     </ErrorBoundary>
   );

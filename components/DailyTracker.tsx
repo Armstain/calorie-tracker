@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Utensils, PartyPopper } from "lucide-react";
+import { Utensils, PartyPopper, Trash2, RotateCcw, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TrackerProps } from "@/types";
 import { formatCalories, dateUtils } from "@/lib/utils";
+import { storageService } from "@/lib/storage";
 import Image from "next/image";
+import FoodDatabaseEntry from "@/components/FoodDatabaseEntry";
+import { CommonFood } from "@/lib/foodDatabase";
 
 export default function DailyTracker({
   dailyGoal,
@@ -17,6 +20,9 @@ export default function DailyTracker({
   const [isEditingGoal, setIsEditingGoal] = useState(false);
   const [goalInput, setGoalInput] = useState(dailyGoal.toString());
   const [expandedEntry, setExpandedEntry] = useState<string | null>(null);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [deleteEntryId, setDeleteEntryId] = useState<string | null>(null);
+  const [showFoodDatabase, setShowFoodDatabase] = useState(false);
 
   useEffect(() => {
     setGoalInput(dailyGoal.toString());
@@ -64,6 +70,73 @@ export default function DailyTracker({
 
   const toggleEntryExpansion = (entryId: string) => {
     setExpandedEntry(expandedEntry === entryId ? null : entryId);
+  };
+
+  const handleDeleteEntry = (entryId: string) => {
+    setDeleteEntryId(entryId);
+  };
+
+  const confirmDeleteEntry = () => {
+    if (deleteEntryId) {
+      try {
+        storageService.deleteEntry(deleteEntryId);
+        // Trigger refresh by calling onGoalUpdate with current goal
+        onGoalUpdate(dailyGoal);
+        setDeleteEntryId(null);
+      } catch (error) {
+        console.error('Error deleting entry:', error);
+        // Could show error message here
+      }
+    }
+  };
+
+  const cancelDeleteEntry = () => {
+    setDeleteEntryId(null);
+  };
+
+  const handleResetProgress = () => {
+    setShowResetConfirm(true);
+  };
+
+  const confirmResetProgress = () => {
+    try {
+      // Delete all today's entries
+      todaysEntries.forEach(entry => {
+        storageService.deleteEntry(entry.id);
+      });
+      // Trigger refresh
+      onGoalUpdate(dailyGoal);
+      setShowResetConfirm(false);
+    } catch (error) {
+      console.error('Error resetting progress:', error);
+    }
+  };
+
+  const cancelResetProgress = () => {
+    setShowResetConfirm(false);
+  };
+
+  const handleFoodDatabaseAdd = (food: CommonFood, calories: number, portion: string) => {
+    try {
+      // Create a food entry from the database selection
+      const foodEntry = {
+        timestamp: new Date().toISOString(),
+        foods: [{
+          name: food.name,
+          calories: calories,
+          quantity: portion,
+          confidence: 1.0 // Database entries have 100% confidence
+        }],
+        totalCalories: calories,
+        date: dateUtils.getCurrentDate(),
+      };
+
+      storageService.saveFoodEntry(foodEntry);
+      onGoalUpdate(dailyGoal); // Trigger refresh
+      setShowFoodDatabase(false);
+    } catch (error) {
+      console.error('Error adding food from database:', error);
+    }
   };
 
   return (
@@ -175,11 +248,33 @@ export default function DailyTracker({
           <h3 className="text-lg font-semibold text-gray-900">
             Today&apos;s Meals ({todaysEntries.length})
           </h3>
-          {todaysEntries.length > 0 && (
-            <div className="text-sm text-gray-600">
-              Total: {formatCalories(currentTotal)} cal
-            </div>
-          )}
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={() => setShowFoodDatabase(true)}
+              variant="outline"
+              size="sm"
+              className="text-green-600 hover:text-green-700 hover:bg-green-50 border-green-200"
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              Quick Add
+            </Button>
+            {todaysEntries.length > 0 && (
+              <>
+                <div className="text-sm text-gray-600">
+                  Total: {formatCalories(currentTotal)} cal
+                </div>
+                <Button
+                  onClick={handleResetProgress}
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                >
+                  <RotateCcw className="w-4 h-4 mr-1" />
+                  Reset Day
+                </Button>
+              </>
+            )}
+          </div>
         </div>
 
         {todaysEntries.length === 0 ? (
@@ -199,11 +294,11 @@ export default function DailyTracker({
                 key={entry.id}
                 className="border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow"
               >
-                <div
-                  className="flex items-center justify-between cursor-pointer"
-                  onClick={() => toggleEntryExpansion(entry.id)}
-                >
-                  <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <div 
+                    className="flex-1 cursor-pointer"
+                    onClick={() => toggleEntryExpansion(entry.id)}
+                  >
                     <div className="font-medium text-gray-900">
                       {entry.foods.length === 1
                         ? entry.foods[0].name
@@ -224,8 +319,24 @@ export default function DailyTracker({
                     <div className="text-xs text-gray-500">calories</div>
                   </div>
 
-                  <div className="text-gray-400">
-                    {expandedEntry === entry.id ? "▼" : "▶"}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteEntry(entry.id);
+                      }}
+                      className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
+                      title="Remove this meal"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                    
+                    <div 
+                      className="text-gray-400 cursor-pointer"
+                      onClick={() => toggleEntryExpansion(entry.id)}
+                    >
+                      {expandedEntry === entry.id ? "▼" : "▶"}
+                    </div>
                   </div>
                 </div>
 
@@ -291,6 +402,76 @@ export default function DailyTracker({
           <div className="text-sm text-gray-600">Food Items</div>
         </div>
       </div>
+
+      {/* Delete Entry Confirmation Modal */}
+      {deleteEntryId && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Remove Meal Entry
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to remove this meal from today&apos;s log? This action cannot be undone.
+            </p>
+            
+            <div className="flex gap-3">
+              <Button
+                onClick={confirmDeleteEntry}
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Remove Meal
+              </Button>
+              <Button
+                onClick={cancelDeleteEntry}
+                variant="outline"
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reset Progress Confirmation Modal */}
+      {showResetConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Reset Today&apos;s Progress
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to reset today&apos;s progress? This will remove all {todaysEntries.length} meal entries and cannot be undone.
+            </p>
+            
+            <div className="flex gap-3">
+              <Button
+                onClick={confirmResetProgress}
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Reset Progress
+              </Button>
+              <Button
+                onClick={cancelResetProgress}
+                variant="outline"
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Food Database Entry Modal */}
+      {showFoodDatabase && (
+        <FoodDatabaseEntry
+          onFoodAdd={handleFoodDatabaseAdd}
+          onClose={() => setShowFoodDatabase(false)}
+        />
+      )}
     </div>
   );
 }

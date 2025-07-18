@@ -1,19 +1,26 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Heart, TrendingUp, Calculator, Target, Activity, Scale } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { UserSettings } from '@/types';
-import { formatCalories } from '@/lib/utils';
+import { useState, useEffect } from "react";
+import {
+  Heart,
+  TrendingUp,
+  Calculator,
+  Target,
+  Activity,
+  Scale,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { UserSettings } from "@/types";
+import { formatCalories } from "@/lib/utils";
 
 interface HealthMetrics {
   weight: number; // kg
   height: number; // cm
   age: number;
-  gender: 'male' | 'female' | 'other';
-  activityLevel: 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active';
-  goal: 'lose' | 'maintain' | 'gain';
+  gender: "male" | "female" | "other";
+  activityLevel: "sedentary" | "light" | "moderate" | "active" | "very_active";
+  goal: "lose" | "maintain" | "gain";
 }
 
 interface WeightEntry {
@@ -24,29 +31,25 @@ interface WeightEntry {
 }
 
 interface HealthIntegrationProps {
-  settings: UserSettings;
   onSettingsUpdate: (settings: Partial<UserSettings>) => void;
   currentCalories: number;
-  weeklyAverage: number;
 }
 
-export default function HealthIntegration({ 
-  settings, 
-  onSettingsUpdate, 
+export default function HealthIntegration({
+  onSettingsUpdate,
   currentCalories,
-  weeklyAverage 
 }: HealthIntegrationProps) {
   const [healthMetrics, setHealthMetrics] = useState<HealthMetrics>({
     weight: 70,
     height: 170,
     age: 30,
-    gender: 'other',
-    activityLevel: 'moderate',
-    goal: 'maintain'
+    gender: "other",
+    activityLevel: "moderate",
+    goal: "maintain",
   });
-  
+
   const [weightEntries, setWeightEntries] = useState<WeightEntry[]>([]);
-  const [newWeight, setNewWeight] = useState('');
+  const [newWeight, setNewWeight] = useState("");
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -55,27 +58,27 @@ export default function HealthIntegration({
 
   const loadHealthData = () => {
     try {
-      const storedMetrics = localStorage.getItem('health_metrics');
-      const storedWeights = localStorage.getItem('weight_entries');
-      
+      const storedMetrics = localStorage.getItem("health_metrics");
+      const storedWeights = localStorage.getItem("weight_entries");
+
       if (storedMetrics) {
         setHealthMetrics(JSON.parse(storedMetrics));
       }
-      
+
       if (storedWeights) {
         setWeightEntries(JSON.parse(storedWeights));
       }
     } catch (error) {
-      console.error('Error loading health data:', error);
+      console.error("Error loading health data:", error);
     }
   };
 
   const saveHealthData = () => {
     try {
-      localStorage.setItem('health_metrics', JSON.stringify(healthMetrics));
-      localStorage.setItem('weight_entries', JSON.stringify(weightEntries));
+      localStorage.setItem("health_metrics", JSON.stringify(healthMetrics));
+      localStorage.setItem("weight_entries", JSON.stringify(weightEntries));
     } catch (error) {
-      console.error('Error saving health data:', error);
+      console.error("Error saving health data:", error);
     }
   };
 
@@ -85,20 +88,28 @@ export default function HealthIntegration({
   };
 
   const getBMICategory = (bmi: number): { category: string; color: string } => {
-    if (bmi < 18.5) return { category: 'Underweight', color: 'text-blue-600' };
-    if (bmi < 25) return { category: 'Normal', color: 'text-green-600' };
-    if (bmi < 30) return { category: 'Overweight', color: 'text-yellow-600' };
-    return { category: 'Obese', color: 'text-red-600' };
+    if (bmi < 18.5) return { category: "Underweight", color: "text-blue-600" };
+    if (bmi < 25) return { category: "Normal", color: "text-green-600" };
+    if (bmi < 30) return { category: "Overweight", color: "text-yellow-600" };
+    return { category: "Obese", color: "text-red-600" };
   };
 
   const calculateDailyCalorieNeeds = (): number => {
     // Mifflin-St Jeor Equation
     let bmr: number;
-    
-    if (healthMetrics.gender === 'male') {
-      bmr = 10 * healthMetrics.weight + 6.25 * healthMetrics.height - 5 * healthMetrics.age + 5;
+
+    if (healthMetrics.gender === "male") {
+      bmr =
+        10 * healthMetrics.weight +
+        6.25 * healthMetrics.height -
+        5 * healthMetrics.age +
+        5;
     } else {
-      bmr = 10 * healthMetrics.weight + 6.25 * healthMetrics.height - 5 * healthMetrics.age - 161;
+      bmr =
+        10 * healthMetrics.weight +
+        6.25 * healthMetrics.height -
+        5 * healthMetrics.age -
+        161;
     }
 
     // Activity multipliers
@@ -107,16 +118,19 @@ export default function HealthIntegration({
       light: 1.375,
       moderate: 1.55,
       active: 1.725,
-      very_active: 1.9
+      very_active: 1.9,
     };
 
     const tdee = bmr * activityMultipliers[healthMetrics.activityLevel];
 
     // Adjust for goal
     switch (healthMetrics.goal) {
-      case 'lose': return Math.round(tdee - 500); // 500 cal deficit for 1lb/week loss
-      case 'gain': return Math.round(tdee + 500); // 500 cal surplus for 1lb/week gain
-      default: return Math.round(tdee);
+      case "lose":
+        return Math.round(tdee - 500); // 500 cal deficit for 1lb/week loss
+      case "gain":
+        return Math.round(tdee + 500); // 500 cal surplus for 1lb/week gain
+      default:
+        return Math.round(tdee);
     }
   };
 
@@ -127,39 +141,48 @@ export default function HealthIntegration({
     const entry: WeightEntry = {
       id: Date.now().toString(),
       weight,
-      date: new Date().toISOString().split('T')[0],
-      timestamp: new Date().toISOString()
+      date: new Date().toISOString().split("T")[0],
+      timestamp: new Date().toISOString(),
     };
 
     const updatedEntries = [entry, ...weightEntries].slice(0, 30); // Keep last 30 entries
     setWeightEntries(updatedEntries);
-    setNewWeight('');
-    
+    setNewWeight("");
+
     // Update current weight in metrics
-    setHealthMetrics(prev => ({ ...prev, weight }));
-    
+    setHealthMetrics((prev) => ({ ...prev, weight }));
+
     saveHealthData();
   };
 
-  const getWeightTrend = (): { trend: 'up' | 'down' | 'stable'; change: number } => {
-    if (weightEntries.length < 2) return { trend: 'stable', change: 0 };
-    
+  const getWeightTrend = (): {
+    trend: "up" | "down" | "stable";
+    change: number;
+  } => {
+    if (weightEntries.length < 2) return { trend: "stable", change: 0 };
+
     const recent = weightEntries.slice(0, 5);
     const older = weightEntries.slice(5, 10);
-    
-    if (recent.length === 0 || older.length === 0) return { trend: 'stable', change: 0 };
-    
-    const recentAvg = recent.reduce((sum, entry) => sum + entry.weight, 0) / recent.length;
-    const olderAvg = older.reduce((sum, entry) => sum + entry.weight, 0) / older.length;
-    
+
+    if (recent.length === 0 || older.length === 0)
+      return { trend: "stable", change: 0 };
+
+    const recentAvg =
+      recent.reduce((sum, entry) => sum + entry.weight, 0) / recent.length;
+    const olderAvg =
+      older.reduce((sum, entry) => sum + entry.weight, 0) / older.length;
+
     const change = recentAvg - olderAvg;
-    
-    if (Math.abs(change) < 0.5) return { trend: 'stable', change };
-    return { trend: change > 0 ? 'up' : 'down', change };
+
+    if (Math.abs(change) < 0.5) return { trend: "stable", change };
+    return { trend: change > 0 ? "up" : "down", change };
   };
 
-  const updateHealthMetrics = (field: keyof HealthMetrics, value: any) => {
-    setHealthMetrics(prev => ({ ...prev, [field]: value }));
+  const updateHealthMetrics = (
+    field: keyof HealthMetrics,
+    value: string | number
+  ) => {
+    setHealthMetrics((prev) => ({ ...prev, [field]: value }));
   };
 
   const saveHealthMetrics = () => {
@@ -229,19 +252,33 @@ export default function HealthIntegration({
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <div className="flex items-center gap-3 mb-4">
             <TrendingUp className="w-6 h-6 text-purple-500" />
-            <h3 className="text-lg font-semibold text-gray-900">Weight Trend</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Weight Trend
+            </h3>
           </div>
           <div className="text-center">
-            <div className={`text-2xl font-bold mb-1 ${
-              weightTrend.trend === 'up' ? 'text-red-600' : 
-              weightTrend.trend === 'down' ? 'text-green-600' : 'text-gray-600'
-            }`}>
-              {weightTrend.trend === 'up' ? '↗' : weightTrend.trend === 'down' ? '↘' : '→'}
+            <div
+              className={`text-2xl font-bold mb-1 ${
+                weightTrend.trend === "up"
+                  ? "text-red-600"
+                  : weightTrend.trend === "down"
+                  ? "text-green-600"
+                  : "text-gray-600"
+              }`}
+            >
+              {weightTrend.trend === "up"
+                ? "↗"
+                : weightTrend.trend === "down"
+                ? "↘"
+                : "→"}
               {Math.abs(weightTrend.change).toFixed(1)}kg
             </div>
             <div className="text-sm text-gray-600">
-              {weightTrend.trend === 'stable' ? 'Stable' : 
-               weightTrend.trend === 'up' ? 'Increasing' : 'Decreasing'}
+              {weightTrend.trend === "stable"
+                ? "Stable"
+                : weightTrend.trend === "up"
+                ? "Increasing"
+                : "Decreasing"}
             </div>
             <div className="text-xs text-gray-500 mt-2">
               Last 5 vs previous 5 entries
@@ -252,25 +289,36 @@ export default function HealthIntegration({
 
       {/* Calorie Balance Analysis */}
       <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Today's Calorie Balance</h3>
-        
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Today&apos;s Calorie Balance
+        </h3>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">{formatCalories(currentCalories)}</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {formatCalories(currentCalories)}
+            </div>
             <div className="text-sm text-gray-600">Consumed Today</div>
           </div>
-          
+
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">{formatCalories(dailyNeeds)}</div>
+            <div className="text-2xl font-bold text-green-600">
+              {formatCalories(dailyNeeds)}
+            </div>
             <div className="text-sm text-gray-600">Daily Target</div>
           </div>
-          
+
           <div className="text-center">
-            <div className={`text-2xl font-bold ${calorieBalance > 0 ? 'text-red-600' : 'text-green-600'}`}>
-              {calorieBalance > 0 ? '+' : ''}{formatCalories(calorieBalance)}
+            <div
+              className={`text-2xl font-bold ${
+                calorieBalance > 0 ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              {calorieBalance > 0 ? "+" : ""}
+              {formatCalories(calorieBalance)}
             </div>
             <div className="text-sm text-gray-600">
-              {calorieBalance > 0 ? 'Over Target' : 'Under Target'}
+              {calorieBalance > 0 ? "Over Target" : "Under Target"}
             </div>
           </div>
         </div>
@@ -284,9 +332,14 @@ export default function HealthIntegration({
           <div className="w-full bg-gray-200 rounded-full h-3">
             <div
               className={`h-3 rounded-full transition-all duration-300 ${
-                currentCalories > dailyNeeds ? 'bg-red-500' : 'bg-green-500'
+                currentCalories > dailyNeeds ? "bg-red-500" : "bg-green-500"
               }`}
-              style={{ width: `${Math.min((currentCalories / dailyNeeds) * 100, 100)}%` }}
+              style={{
+                width: `${Math.min(
+                  (currentCalories / dailyNeeds) * 100,
+                  100
+                )}%`,
+              }}
             />
           </div>
         </div>
@@ -295,7 +348,9 @@ export default function HealthIntegration({
       {/* Weight Tracking */}
       <div className="bg-white border border-gray-200 rounded-lg p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Weight Tracking</h3>
+          <h3 className="text-lg font-semibold text-gray-900">
+            Weight Tracking
+          </h3>
           <div className="flex items-center gap-2">
             <Input
               type="number"
@@ -315,11 +370,18 @@ export default function HealthIntegration({
         {/* Recent Weight Entries */}
         {weightEntries.length > 0 && (
           <div className="space-y-2">
-            <h4 className="text-sm font-medium text-gray-700">Recent Entries:</h4>
+            <h4 className="text-sm font-medium text-gray-700">
+              Recent Entries:
+            </h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {weightEntries.slice(0, 8).map((entry) => (
-                <div key={entry.id} className="bg-gray-50 rounded-lg p-3 text-center">
-                  <div className="font-semibold text-gray-900">{entry.weight}kg</div>
+                <div
+                  key={entry.id}
+                  className="bg-gray-50 rounded-lg p-3 text-center"
+                >
+                  <div className="font-semibold text-gray-900">
+                    {entry.weight}kg
+                  </div>
                   <div className="text-xs text-gray-500">
                     {new Date(entry.date).toLocaleDateString()}
                   </div>
@@ -333,13 +395,15 @@ export default function HealthIntegration({
       {/* Health Metrics Configuration */}
       <div className="bg-white border border-gray-200 rounded-lg p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Health Profile</h3>
+          <h3 className="text-lg font-semibold text-gray-900">
+            Health Profile
+          </h3>
           <Button
             onClick={() => setIsEditing(!isEditing)}
             variant="outline"
             size="sm"
           >
-            {isEditing ? 'Cancel' : 'Edit Profile'}
+            {isEditing ? "Cancel" : "Edit Profile"}
           </Button>
         </div>
 
@@ -353,10 +417,12 @@ export default function HealthIntegration({
                 <Input
                   type="number"
                   value={healthMetrics.height}
-                  onChange={(e) => updateHealthMetrics('height', parseInt(e.target.value))}
+                  onChange={(e) =>
+                    updateHealthMetrics("height", parseInt(e.target.value))
+                  }
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Age
@@ -364,17 +430,21 @@ export default function HealthIntegration({
                 <Input
                   type="number"
                   value={healthMetrics.age}
-                  onChange={(e) => updateHealthMetrics('age', parseInt(e.target.value))}
+                  onChange={(e) =>
+                    updateHealthMetrics("age", parseInt(e.target.value))
+                  }
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Gender
                 </label>
                 <select
                   value={healthMetrics.gender}
-                  onChange={(e) => updateHealthMetrics('gender', e.target.value)}
+                  onChange={(e) =>
+                    updateHealthMetrics("gender", e.target.value)
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="male">Male</option>
@@ -382,31 +452,43 @@ export default function HealthIntegration({
                   <option value="other">Other</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Activity Level
                 </label>
                 <select
                   value={healthMetrics.activityLevel}
-                  onChange={(e) => updateHealthMetrics('activityLevel', e.target.value)}
+                  onChange={(e) =>
+                    updateHealthMetrics("activityLevel", e.target.value)
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="sedentary">Sedentary (little/no exercise)</option>
-                  <option value="light">Light (light exercise 1-3 days/week)</option>
-                  <option value="moderate">Moderate (moderate exercise 3-5 days/week)</option>
-                  <option value="active">Active (hard exercise 6-7 days/week)</option>
-                  <option value="very_active">Very Active (very hard exercise, physical job)</option>
+                  <option value="sedentary">
+                    Sedentary (little/no exercise)
+                  </option>
+                  <option value="light">
+                    Light (light exercise 1-3 days/week)
+                  </option>
+                  <option value="moderate">
+                    Moderate (moderate exercise 3-5 days/week)
+                  </option>
+                  <option value="active">
+                    Active (hard exercise 6-7 days/week)
+                  </option>
+                  <option value="very_active">
+                    Very Active (very hard exercise, physical job)
+                  </option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Weight Goal
                 </label>
                 <select
                   value={healthMetrics.goal}
-                  onChange={(e) => updateHealthMetrics('goal', e.target.value)}
+                  onChange={(e) => updateHealthMetrics("goal", e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="lose">Lose Weight</option>
@@ -415,9 +497,12 @@ export default function HealthIntegration({
                 </select>
               </div>
             </div>
-            
+
             <div className="flex gap-3 pt-4">
-              <Button onClick={saveHealthMetrics} className="bg-green-500 hover:bg-green-600 text-white">
+              <Button
+                onClick={saveHealthMetrics}
+                className="bg-green-500 hover:bg-green-600 text-white"
+              >
                 <Heart className="w-4 h-4 mr-2" />
                 Save & Update Calorie Goal
               </Button>
@@ -427,19 +512,27 @@ export default function HealthIntegration({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
               <span className="text-gray-500">Height:</span>
-              <div className="font-medium text-gray-900">{healthMetrics.height} cm</div>
+              <div className="font-medium text-gray-900">
+                {healthMetrics.height} cm
+              </div>
             </div>
             <div>
               <span className="text-gray-500">Age:</span>
-              <div className="font-medium text-gray-900">{healthMetrics.age} years</div>
+              <div className="font-medium text-gray-900">
+                {healthMetrics.age} years
+              </div>
             </div>
             <div>
               <span className="text-gray-500">Gender:</span>
-              <div className="font-medium text-gray-900 capitalize">{healthMetrics.gender}</div>
+              <div className="font-medium text-gray-900 capitalize">
+                {healthMetrics.gender}
+              </div>
             </div>
             <div>
               <span className="text-gray-500">Activity:</span>
-              <div className="font-medium text-gray-900 capitalize">{healthMetrics.activityLevel.replace('_', ' ')}</div>
+              <div className="font-medium text-gray-900 capitalize">
+                {healthMetrics.activityLevel.replace("_", " ")}
+              </div>
             </div>
           </div>
         )}
@@ -450,40 +543,47 @@ export default function HealthIntegration({
         <h3 className="text-lg font-semibold text-blue-900 mb-4">
           Personalized Recommendations
         </h3>
-        
+
         <div className="space-y-3 text-sm">
           {bmi < 18.5 && (
             <div className="flex items-start gap-2">
               <Activity className="w-4 h-4 text-blue-600 mt-0.5" />
               <p className="text-blue-800">
-                Your BMI indicates you're underweight. Consider increasing your calorie intake with nutrient-dense foods and consult a healthcare provider.
+                Your BMI indicates you&apos;re underweight. Consider increasing
+                your calorie intake with nutrient-dense foods and consult a
+                healthcare provider.
               </p>
             </div>
           )}
-          
+
           {bmi >= 25 && (
             <div className="flex items-start gap-2">
               <Activity className="w-4 h-4 text-blue-600 mt-0.5" />
               <p className="text-blue-800">
-                Your BMI indicates you're above normal weight. A moderate calorie deficit combined with regular exercise can help achieve a healthy weight.
+                Your BMI indicates you&apos;re above normal weight. A moderate
+                calorie deficit combined with regular exercise can help achieve
+                a healthy weight.
               </p>
             </div>
           )}
-          
+
           {calorieBalance > 500 && (
             <div className="flex items-start gap-2">
               <Target className="w-4 h-4 text-blue-600 mt-0.5" />
               <p className="text-blue-800">
-                You're significantly over your calorie target today. Consider lighter meals or increased physical activity.
+                You&apos;re significantly over your calorie target today.
+                Consider lighter meals or increased physical activity.
               </p>
             </div>
           )}
-          
+
           {calorieBalance < -500 && (
             <div className="flex items-start gap-2">
               <Target className="w-4 h-4 text-blue-600 mt-0.5" />
               <p className="text-blue-800">
-                You're well under your calorie target. Make sure you're eating enough to support your health and energy needs.
+                You&apos;re well under your calorie target. Make sure
+                you&apos;re eating enough to support your health and energy
+                needs.
               </p>
             </div>
           )}

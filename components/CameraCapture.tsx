@@ -284,161 +284,149 @@ export default function CameraCapture({
   );
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full max-w-lg mx-auto p-4">
       {!isActive && !capturedImage && (
         <div className="space-y-6">
+          {/* Enhanced header */}
           <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Camera className="w-8 h-8 text-white" />
+            <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl">
+              <Camera className="w-10 h-10 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Capture Food Photo
-            </h2>
-            <p className="text-gray-600 text-sm">
-              Take a photo of your food to get AI-powered calorie estimates
-            </p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Food Scanner</h1>
+            <p className="text-gray-600 text-lg">Choose how to capture your meal</p>
           </div>
 
-          <Button
-            onClick={startCamera}
-            disabled={isLoading}
-            size="lg"
-            className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 disabled:from-amber-300 disabled:to-orange-300 text-white font-medium py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl gap-3"
-          >
-            <Camera className="w-5 h-5" />
-            {isLoading ? "Starting Camera..." : "Open Camera"}
-          </Button>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-amber-200" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-3 bg-gradient-to-br from-amber-50 to-orange-50 text-amber-700 font-medium">
-                or
-              </span>
-            </div>
-          </div>
-
-          <label className="w-full bg-white hover:bg-amber-50 border-2 border-dashed border-amber-300 hover:border-amber-400 text-amber-700 font-medium py-4 px-6 rounded-xl transition-all cursor-pointer block text-center group">
-            <Upload className="w-6 h-6 mx-auto mb-2 group-hover:scale-110 transition-transform" />
-            Upload Photo
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileUpload}
-              className="hidden"
+          {/* Large horizontal buttons */}
+          <div className="grid grid-cols-2 gap-4">
+            <Button
+              onClick={startCamera}
               disabled={isLoading}
-            />
-          </label>
+              size="lg"
+              className="h-24 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 text-white font-bold rounded-2xl transition-all shadow-lg hover:shadow-xl flex flex-col items-center justify-center gap-2"
+            >
+              <Camera className="w-8 h-8" />
+              <span className="text-base">{isLoading ? "Starting..." : "Use Camera"}</span>
+            </Button>
+            
+            <label className="h-24 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold rounded-2xl transition-all cursor-pointer flex flex-col items-center justify-center gap-2 shadow-lg hover:shadow-xl group">
+              <Upload className="w-8 h-8 group-hover:scale-110 transition-transform" />
+              <span className="text-base">Upload Photo</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileUpload}
+                className="hidden"
+                disabled={isLoading}
+              />
+            </label>
+          </div>
+
+          {/* Additional info */}
+          <div className="text-center text-gray-500 text-sm">
+            <p>📸 Take a photo or upload from gallery</p>
+            <p>🤖 Get instant AI-powered calorie analysis</p>
+          </div>
         </div>
       )}
 
       {isActive && (
-        <div className="space-y-4">
-          {/* Camera Preview Container */}
-          <div
-            className="relative bg-black rounded-xl overflow-hidden shadow-2xl border-2 border-gray-300"
-            style={{ minHeight: "300px" }}
-          >
+        <div className="space-y-6">
+          {/* Enhanced Camera Preview */}
+          <div className="relative bg-black rounded-3xl overflow-hidden shadow-2xl aspect-square">
             <video
               ref={videoRef}
-              className="w-full h-auto block"
+              className="w-full h-full object-cover"
               playsInline
               muted
               autoPlay
-              style={{
-                minHeight: "300px",
-                maxHeight: "400px",
-                backgroundColor: "#000",
-                objectFit: "cover",
-              }}
             />
-            <div className="absolute inset-0 border-2 border-white/20 rounded-xl pointer-events-none" />
-            <div className="absolute top-4 left-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+            
+            {/* Professional frame overlay */}
+            <div className="absolute inset-6 border-2 border-white/30 rounded-2xl pointer-events-none" />
+            
+            {/* Status indicator */}
+            <div className="absolute top-4 left-4 bg-green-500/90 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 shadow-lg">
+              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              CAMERA LIVE
+            </div>
+            
+            {/* Instruction overlay */}
+            <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-black/70 backdrop-blur-sm text-white px-6 py-3 rounded-full text-base font-semibold">
               Position your food in the frame
             </div>
-            {/* Capture overlay for better mobile UX */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-              <div className="w-16 h-16 border-4 border-white rounded-full flex items-center justify-center bg-white/20 backdrop-blur-sm">
-                <div className="w-12 h-12 bg-white rounded-full opacity-80"></div>
-              </div>
-            </div>
           </div>
 
-          {/* Status and Camera Info */}
-          <div className="text-center space-y-2">
-            <p className="text-lg font-semibold text-gray-800">
-              📷 Camera Active
-            </p>
-            <p className="text-sm text-gray-600">
-              Position your food in the frame and tap capture
-            </p>
-          </div>
-
-          {/* Debug Info */}
-          <div className="bg-gray-100 p-3 rounded-lg text-xs">
-            <p>🔍 Debug: Camera preview should be visible above</p>
-            <p>📱 If you see black screen, check camera permissions</p>
-            <p>🎥 Video element is active and should show live feed</p>
-          </div>
-
-          <div className="flex gap-3">
-            <Button
-              onClick={capturePhoto}
-              disabled={isLoading}
-              className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 disabled:from-green-300 disabled:to-emerald-300 text-white font-medium py-3 px-4 rounded-xl transition-all shadow-lg gap-2"
-            >
-              <Camera className="w-5 h-5" />
-              {isLoading ? "Capturing..." : "Capture"}
-            </Button>
+          {/* Large horizontal control buttons */}
+          <div className="grid grid-cols-2 gap-4">
             <Button
               onClick={stopCamera}
               variant="secondary"
-              className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-4 rounded-xl transition-colors"
+              size="lg"
+              className="h-16 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-2xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
             >
-              Cancel
+              <span className="text-lg">✕</span>
+              <span className="text-base">Cancel</span>
+            </Button>
+            <Button
+              onClick={capturePhoto}
+              disabled={isLoading}
+              size="lg"
+              className="h-16 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:opacity-50 text-white font-bold rounded-2xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
+            >
+              <Camera className="w-6 h-6" />
+              <span className="text-base">{isLoading ? "Capturing..." : "Capture"}</span>
             </Button>
           </div>
         </div>
       )}
 
       {capturedImage && (
-        <div className="space-y-4">
+        <div className="space-y-6">
+          {/* Photo preview header */}
           <div className="text-center">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              Photo Preview
-            </h3>
-            <p className="text-gray-600 text-sm">
-              Review your photo before analysis
-            </p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Photo Preview</h2>
+            <p className="text-gray-600 text-lg">Review your captured image</p>
           </div>
 
-          <div className="relative bg-gray-100 rounded-xl overflow-hidden shadow-lg">
+          <div className="relative bg-gray-100 rounded-3xl overflow-hidden shadow-2xl aspect-square">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={capturedImage}
               alt="Captured food"
-              className="w-full h-64 object-cover"
+              className="w-full h-full object-cover"
             />
+            
+            {/* Ready indicator */}
+            <div className="absolute top-4 right-4 bg-green-500/90 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+              ✓ Ready to Analyze
+            </div>
           </div>
 
-          <div className="flex gap-3">
-            <Button
-              onClick={confirmPhoto}
-              className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-medium py-3 px-4 rounded-xl transition-all shadow-lg gap-2"
-            >
-              <Check className="w-5 h-5" />
-              Analyze Photo
-            </Button>
+          {/* Large horizontal action buttons */}
+          <div className="grid grid-cols-2 gap-4">
             <Button
               onClick={retakePhoto}
               variant="secondary"
-              className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-4 rounded-xl transition-colors gap-2"
+              size="lg"
+              className="h-16 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-2xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
             >
-              <RotateCcw className="w-4 h-4" />
-              Retake
+              <RotateCcw className="w-6 h-6" />
+              <span className="text-base">Retake Photo</span>
             </Button>
+            <Button
+              onClick={confirmPhoto}
+              size="lg"
+              className="h-16 bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-2xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
+            >
+              <Check className="w-6 h-6" />
+              <span className="text-base">Analyze Food</span>
+            </Button>
+          </div>
+
+          {/* Analysis info */}
+          <div className="text-center text-gray-500 text-sm">
+            <p>🤖 AI will identify food items and estimate calories</p>
+            <p>⚡ Analysis typically takes 2-5 seconds</p>
           </div>
         </div>
       )}

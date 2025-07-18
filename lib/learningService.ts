@@ -1,7 +1,7 @@
 // AI Learning Service - Learn from user corrections to improve accuracy
 
 import { FoodAnalysisResult, FoodItem, MacroNutrients } from '@/types';
-import { storageService } from '@/lib/storage';
+// Learning service for AI improvements based on user corrections
 
 interface UserCorrection {
   id: string;
@@ -41,19 +41,25 @@ export class LearningService {
   // Save user correction and learn from it
   saveCorrection(
     originalAnalysis: FoodAnalysisResult,
-    correctedData: Partial<{
+    correctedData: {
       foods: Partial<FoodItem>[];
-      totalCalories: number;
-      totalMacros: MacroNutrients;
-      mealType: string;
-      restaurantName: string;
-    }>,
+      totalCalories?: number;
+      totalMacros?: MacroNutrients;
+      mealType?: string;
+      restaurantName?: string;
+    },
     correctionType: UserCorrection['correctionType']
   ): void {
     const correction: UserCorrection = {
       id: this.generateId(),
       originalAnalysis,
-      correctedData,
+      correctedData: {
+        foods: correctedData.foods || [],
+        totalCalories: correctedData.totalCalories,
+        totalMacros: correctedData.totalMacros,
+        mealType: correctedData.mealType,
+        restaurantName: correctedData.restaurantName
+      },
       timestamp: new Date().toISOString(),
       imageHash: this.hashImage(originalAnalysis.imageUrl || ''),
       correctionType
@@ -75,7 +81,13 @@ export class LearningService {
     confidenceAdjustment?: number;
   } {
     const imageHash = this.hashImage(analysis.imageUrl || '');
-    const suggestions: any = {};
+    const suggestions: {
+      calorieAdjustment?: number;
+      cookingMethodSuggestions?: string[];
+      restaurantSuggestions?: string[];
+      ingredientSuggestions?: string[];
+      confidenceAdjustment?: number;
+    } = {};
 
     // Check for similar images
     const similarCorrections = Array.from(this.corrections.values())
@@ -99,7 +111,7 @@ export class LearningService {
       // Cooking method suggestions
       const cookingMethods = similarCorrections
         .filter(c => c.correctionType === 'cooking_method')
-        .flatMap(c => c.correctedData.foods?.map(f => f.cookingMethod).filter(Boolean) || []);
+        .flatMap(c => c.correctedData.foods.map(f => f.cookingMethod).filter(Boolean)) as string[];
       
       if (cookingMethods.length > 0) {
         suggestions.cookingMethodSuggestions = [...new Set(cookingMethods)];

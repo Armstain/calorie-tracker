@@ -113,6 +113,7 @@ button,
   font-size: 16px; /* Prevent zoom on iOS */
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
+  color: #111827; /* Ensure dark text */
 }
 
 .input-mobile:focus {
@@ -120,6 +121,14 @@ button,
   ring: 2px;
   ring-color: #3b82f6;
   border-color: transparent;
+}
+
+/* Force all input text to be black - no exceptions */
+input,
+textarea,
+select {
+  color: #000000 !important;
+  background-color: #ffffff !important;
 }
 
 /* Touch-friendly hover states */

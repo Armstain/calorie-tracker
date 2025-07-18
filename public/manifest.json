@@ -1,52 +1,38 @@
 {
-  "name": "CalorieMeter - AI Food Calorie Tracker",
+  "name": "CalorieMeter - AI Food Tracker",
   "short_name": "CalorieMeter",
-  "description": "Track your daily calories with AI-powered food analysis. Take photos of your meals and get instant calorie estimates using Gemini AI.",
+  "description": "AI-powered food calorie tracking with photo analysis",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#3b82f6",
+  "background_color": "#fef3c7",
+  "theme_color": "#f59e0b",
   "orientation": "portrait-primary",
-  "scope": "/",
-  "lang": "en",
-  "categories": ["health", "lifestyle", "productivity"],
   "icons": [
     {
-      "src": "/icon-192x192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/icon-512x512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png"
+      "purpose": "any maskable"
     }
   ],
+  "categories": ["health", "lifestyle", "food"],
   "screenshots": [
     {
       "src": "/screenshot-mobile.png",
       "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow"
-    },
-    {
-      "src": "/screenshot-desktop.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
     }
   ],
   "features": [
     "camera",
-    "offline-support",
-    "local-storage"
-  ],
-  "prefer_related_applications": false
+    "local-storage",
+    "offline-support"
+  ]
 }

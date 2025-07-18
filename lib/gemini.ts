@@ -1,8 +1,8 @@
 // Gemini AI service for food analysis
 
 import { FoodAnalysisResult, ApiError } from '@/types';
-import { GEMINI_CONFIG, GEMINI_MODELS, getApiKey, getModelConfig, testModelAvailability } from '@/lib/config';
-import { validation } from '@/lib/utils';
+import { GEMINI_CONFIG, GEMINI_MODELS, getApiKey, getRateLimits, testModelAvailability } from '@/lib/config';
+import { validation, errorUtils } from '@/lib/utils';
 import { cache, cacheUtils } from '@/lib/cache';
 
 export class GeminiService {
@@ -11,6 +11,9 @@ export class GeminiService {
   private lastRequestTime = 0;
   private availableModels: Set<keyof typeof GEMINI_MODELS> = new Set();
   private modelTestCache: Map<string, boolean> = new Map();
+  private dailyRequestCount = 0;
+  private dailyCountResetDate = new Date().toDateString();
+  private retryDelays = [1000, 2000, 4000, 8000]; // Exponential backoff delays in ms
 
   static getInstance(): GeminiService {
     if (!GeminiService.instance) {
@@ -19,43 +22,81 @@ export class GeminiService {
     return GeminiService.instance;
   }
 
-  // Rate limiting helper
-  private async enforceRateLimit(modelName?: keyof typeof GEMINI_MODELS): Promise<void> {
+  // Enhanced rate limiting helper with daily and per-minute limits
+  private async enforceRateLimit(modelName?: keyof typeof GEMINI_MODELS, apiKey?: string): Promise<void> {
     const now = Date.now();
+    const today = new Date().toDateString();
     const timeSinceLastRequest = now - this.lastRequestTime;
     
-    // Reset counter if more than a minute has passed
+    // Reset per-minute counter if more than a minute has passed
     if (timeSinceLastRequest > 60000) {
       this.requestCount = 0;
     }
     
-    // Get rate limit for the specific model
-    const model = modelName || GEMINI_CONFIG.DEFAULT_MODEL;
-    const maxRequests = GEMINI_MODELS[model].maxRequestsPerMinute;
+    // Reset daily counter if it's a new day
+    if (today !== this.dailyCountResetDate) {
+      this.dailyRequestCount = 0;
+      this.dailyCountResetDate = today;
+    }
     
-    // Check if we're hitting rate limits
-    if (this.requestCount >= maxRequests) {
+    // Get rate limits for the specific model and API key
+    const model = modelName || GEMINI_CONFIG.DEFAULT_MODEL;
+    const rateLimits = getRateLimits(apiKey, model);
+    
+    // Check if we're hitting per-minute rate limits
+    if (this.requestCount >= rateLimits.requestsPerMinute) {
       const waitTime = 60000 - timeSinceLastRequest;
       if (waitTime > 0) {
-        throw this.createApiError('Rate limit exceeded. Please wait a moment and try again.', 429);
+        throw this.createApiError(`Rate limit exceeded (${this.requestCount}/${rateLimits.requestsPerMinute} requests per minute). Please wait ${Math.ceil(waitTime/1000)} seconds and try again.`, 429);
       }
     }
     
+    // Check if we're hitting daily rate limits
+    if (this.dailyRequestCount >= rateLimits.requestsPerDay) {
+      throw this.createApiError(`Daily rate limit exceeded (${this.dailyRequestCount}/${rateLimits.requestsPerDay} requests per day). Please try again tomorrow.`, 429);
+    }
+    
+    // Update counters
     this.requestCount++;
+    this.dailyRequestCount++;
     this.lastRequestTime = now;
+    
+    // Log rate limit usage for debugging
+    console.log(`Rate limit usage: ${this.requestCount}/${rateLimits.requestsPerMinute} per minute, ${this.dailyRequestCount}/${rateLimits.requestsPerDay} per day`);
   }
 
-  // Validate API key by testing with available models
+  // Enhanced API key validation with caching and detailed error reporting
   async validateApiKey(apiKey?: string): Promise<boolean> {
     try {
       const key = apiKey || getApiKey();
+      
+      // Basic format validation
       if (!validation.validateApiKey(key)) {
+        console.warn('API key validation failed: Invalid format');
         return false;
       }
       
-      // Test with the default model first
+      // Check cache for previously validated keys
+      const cacheKey = `api_key_validation_${key.substring(0, 10)}`;
+      const cachedResult = cache.get<boolean>(cacheKey);
+      if (cachedResult !== null) {
+        return cachedResult;
+      }
+      
+      // Test with models in fallback order
       for (const modelName of GEMINI_CONFIG.FALLBACK_ORDER) {
         try {
+          // Check if this model is already known to be available
+          const modelCacheKey = `model_available_${modelName}_${key.substring(0, 10)}`;
+          const modelAvailable = cache.get<boolean>(modelCacheKey);
+          
+          if (modelAvailable === true) {
+            // Cache the validation result for 1 hour
+            cache.set(cacheKey, true, 60 * 60 * 1000);
+            return true;
+          }
+          
+          // Test the model with a minimal request
           const modelConfig = GEMINI_MODELS[modelName];
           const response = await fetch(`${modelConfig.url}?key=${key}`, {
             method: 'POST',
@@ -71,20 +112,38 @@ export class GeminiService {
           
           // If we get a valid response (not auth error), the key works
           if (response.status !== 401 && response.status !== 403) {
+            // Cache both the key validation and model availability
+            cache.set(cacheKey, true, 60 * 60 * 1000); // 1 hour
+            cache.set(modelCacheKey, true, 60 * 60 * 1000); // 1 hour
+            
+            // Add to available models set
+            this.availableModels.add(modelName);
+            this.modelTestCache.set(modelName, true);
+            
+            console.log(`API key validated successfully with model: ${modelName}`);
             return true;
           }
-        } catch {
+          
+          // Log specific error for debugging
+          const errorData = await response.json().catch(() => ({}));
+          console.warn(`API key validation failed for model ${modelName}: ${response.status} - ${errorData?.error?.message || 'Unknown error'}`);
+        } catch (error) {
+          console.warn(`Error testing model ${modelName}:`, error);
           continue; // Try next model
         }
       }
       
+      // All models failed, cache the negative result for 5 minutes
+      cache.set(cacheKey, false, 5 * 60 * 1000);
+      console.warn('API key validation failed: All models failed');
       return false;
-    } catch {
+    } catch (error) {
+      console.error('API key validation error:', error);
       return false;
     }
   }
 
-  // Main food analysis method with model fallback
+  // Enhanced food analysis method with improved retry logic and error handling
   async analyzeFood(imageBase64: string, userApiKey?: string): Promise<FoodAnalysisResult> {
     try {
       // Validate inputs
@@ -96,52 +155,112 @@ export class GeminiService {
       const cacheKey = cacheUtils.getImageCacheKey(imageBase64);
       const cachedResult = cache.get<FoodAnalysisResult>(cacheKey);
       if (cachedResult) {
+        console.log('Returning cached analysis result');
         return cachedResult;
       }
 
-      // Get API key
+      // Validate API key before proceeding
       const apiKey = getApiKey(userApiKey);
+      const isKeyValid = await this.validateApiKey(apiKey);
+      if (!isKeyValid) {
+        throw this.createApiError('Invalid API key. Please check your Gemini API key in settings.', 403);
+      }
 
-      // Try models in fallback order
+      // Try models in fallback order with retry logic
       const errors: string[] = [];
       for (const modelName of GEMINI_CONFIG.FALLBACK_ORDER) {
-        try {
-          console.log(`Trying model: ${modelName}`);
-          const result = await this.tryAnalyzeWithModel(imageBase64, apiKey, modelName);
-          
-          // Cache the result for 10 minutes
-          cache.set(cacheKey, result, 10 * 60 * 1000);
-          
-          return result;
-        } catch (error) {
-          const errorMsg = error && typeof error === 'object' && 'message' in error 
-            ? String(error.message) 
-            : 'Unknown error';
-          errors.push(`${modelName}: ${errorMsg}`);
-          
-          // If it's a rate limit or auth error, don't try other models
-          if (error && typeof error === 'object' && 'statusCode' in error) {
-            const statusCode = error.statusCode as number;
-            if (statusCode === 401 || statusCode === 403) {
-              throw error; // Re-throw auth errors immediately
+        // Try each model with multiple retries
+        let lastError: unknown = null;
+        let retryCount = 0;
+        
+        while (retryCount <= this.retryDelays.length) {
+          try {
+            console.log(`Trying model: ${modelName}${retryCount > 0 ? ` (retry ${retryCount})` : ''}`);
+            
+            // Attempt analysis with current model
+            const result = await this.tryAnalyzeWithModel(imageBase64, apiKey, modelName);
+            
+            // Success! Cache the result for 10 minutes
+            cache.set(cacheKey, result, 10 * 60 * 1000);
+            console.log(`Analysis successful with model: ${modelName}`);
+            
+            return result;
+          } catch (error) {
+            lastError = error;
+            const errorMsg = error && typeof error === 'object' && 'message' in error 
+              ? String(error.message) 
+              : 'Unknown error';
+            
+            // Check if we should retry this model
+            if (error && typeof error === 'object' && 'statusCode' in error) {
+              const statusCode = error.statusCode as number;
+              
+              // Don't retry auth errors or invalid requests
+              if (statusCode === 401 || statusCode === 403 || statusCode === 400) {
+                errors.push(`${modelName}: ${errorMsg} (${statusCode})`);
+                break; // Exit retry loop for this model
+              }
+              
+              // For rate limit errors, wait longer
+              if (statusCode === 429 && retryCount < this.retryDelays.length) {
+                const delayMs = this.retryDelays[retryCount];
+                console.log(`Rate limit hit, retrying ${modelName} after ${delayMs}ms delay`);
+                await new Promise(resolve => setTimeout(resolve, delayMs));
+                retryCount++;
+                continue;
+              }
+              
+              // For server errors, retry with backoff
+              if ((statusCode >= 500 && statusCode < 600) && retryCount < this.retryDelays.length) {
+                const delayMs = this.retryDelays[retryCount];
+                console.log(`Server error (${statusCode}), retrying ${modelName} after ${delayMs}ms delay`);
+                await new Promise(resolve => setTimeout(resolve, delayMs));
+                retryCount++;
+                continue;
+              }
             }
+            
+            // For network errors, retry with backoff
+            if (error instanceof TypeError && error.message.includes('network') && retryCount < this.retryDelays.length) {
+              const delayMs = this.retryDelays[retryCount];
+              console.log(`Network error, retrying ${modelName} after ${delayMs}ms delay`);
+              await new Promise(resolve => setTimeout(resolve, delayMs));
+              retryCount++;
+              continue;
+            }
+            
+            // Add error to list and break retry loop for this model
+            errors.push(`${modelName}: ${errorMsg}`);
+            console.warn(`Model ${modelName} failed after ${retryCount} retries:`, errorMsg);
+            break;
           }
-          
-          console.warn(`Model ${modelName} failed:`, errorMsg);
-          continue; // Try next model
+        }
+        
+        // If we got an auth error, don't try other models
+        if (lastError && typeof lastError === 'object' && 'statusCode' in lastError) {
+          const statusCode = lastError.statusCode as number;
+          if (statusCode === 401 || statusCode === 403) {
+            throw lastError; // Re-throw auth errors immediately
+          }
         }
       }
 
       // All models failed
-      throw this.createApiError(`All models failed. Errors: ${errors.join('; ')}`);
+      throw this.createApiError(`Food analysis failed with all models. ${errors.join('; ')}`);
 
     } catch (error) {
+      // Pass through API errors
       if (error && typeof error === 'object' && 'type' in error && error.type === 'api') {
         throw error;
       }
       
+      // Log and wrap other errors
       console.error('Gemini API error:', error);
-      throw this.createApiError('Analysis failed. Please check your internet connection and try again.');
+      const errorMessage = error && typeof error === 'object' && 'message' in error 
+        ? String(error.message) 
+        : 'Unknown error';
+      
+      throw this.createApiError(`Analysis failed: ${errorMessage}. Please check your internet connection and try again.`);
     }
   }
 
@@ -152,7 +271,7 @@ export class GeminiService {
     modelName: keyof typeof GEMINI_MODELS
   ): Promise<FoodAnalysisResult> {
     // Enforce rate limiting for this specific model
-    await this.enforceRateLimit(modelName);
+    await this.enforceRateLimit(modelName, apiKey);
 
     const modelConfig = GEMINI_MODELS[modelName];
 
@@ -322,8 +441,14 @@ export class GeminiService {
         timestamp: new Date().toISOString(),
         imageUrl: originalImage,
         modelUsed: modelName || 'gemini-1.5-flash',
-        mealType: (parsedData as any).mealType || undefined,
-        restaurantName: (parsedData as unknown).restaurantName || undefined,
+        mealType: (() => {
+          const mealType = (parsedData as { mealType?: string }).mealType;
+          const validMealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
+          return validMealTypes.includes(mealType || '') 
+            ? mealType as 'breakfast' | 'lunch' | 'dinner' | 'snack'
+            : undefined;
+        })(),
+        restaurantName: (parsedData as { restaurantName?: string }).restaurantName || undefined,
         totalMacros: totalMacros.protein > 0 || totalMacros.carbs > 0 || totalMacros.fat > 0 ? totalMacros : undefined
       };
 

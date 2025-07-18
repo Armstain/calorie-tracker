@@ -1,56 +1,39 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { RotateCcw, Check, Upload } from 'lucide-react';
+import { RotateCcw, Check, Upload, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CameraProps } from '@/types';
 
 export default function WorkingCamera({ onPhotoCapture, onError }: CameraProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [status, setStatus] = useState("Ready to test");
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isActive, setIsActive] = useState(false);
-  const [useBackCamera, setUseBackCamera] = useState(true);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const testCamera = async () => {
+  const startCamera = async () => {
     try {
-      setStatus(`Requesting ${useBackCamera ? "back" : "front"} camera...`);
+      setIsLoading(true);
 
-      // Try back camera first, then front camera as fallback
-      const constraints = [];
-
-      if (useBackCamera) {
-        constraints.push({
+      // Try back camera first, then any camera as fallback
+      const constraints = [
+        {
           video: { facingMode: "environment" },
           audio: false,
-        });
-      } else {
-        constraints.push({
-          video: { facingMode: "user" },
+        },
+        {
+          video: true,
           audio: false,
-        });
-      }
-
-      // Fallback to any camera
-      constraints.push({
-        video: true,
-        audio: false,
-      });
+        },
+      ];
 
       let mediaStream = null;
       let lastError = null;
 
       for (const constraint of constraints) {
         try {
-          const facingMode =
-            typeof constraint.video === "object" && constraint.video.facingMode
-              ? constraint.video.facingMode
-              : "any";
-          setStatus(`Trying ${facingMode} camera...`);
           mediaStream = await navigator.mediaDevices.getUserMedia(constraint);
-          setStatus(`${facingMode} camera obtained`);
           break;
         } catch (err) {
           lastError = err;
@@ -69,30 +52,28 @@ export default function WorkingCamera({ onPhotoCapture, onError }: CameraProps) 
         video.srcObject = mediaStream;
 
         video.onloadedmetadata = () => {
-          setStatus("Video metadata loaded");
           video.play().catch(console.error);
         };
 
         video.oncanplay = () => {
-          setStatus("Video can play");
           setIsActive(true);
         };
 
         video.onerror = (error) => {
-          setStatus(`Video error: ${error}`);
+          console.error("Video error:", error);
         };
 
         try {
           await video.play();
-          setStatus("Video should be playing");
         } catch (playError) {
-          setStatus(`Play failed: ${playError}`);
+          console.warn("Video play failed:", playError);
         }
       }
     } catch (error) {
-      setStatus(`Error: ${error}`);
-      console.error("Camera test error:", error);
+      console.error("Camera error:", error);
       onError(`Camera error: ${error}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -101,17 +82,7 @@ export default function WorkingCamera({ onPhotoCapture, onError }: CameraProps) 
       stream.getTracks().forEach((track) => track.stop());
       setStream(null);
       setIsActive(false);
-      setStatus("Camera stopped");
     }
-  };
-
-  const switchCamera = async () => {
-    stopCamera();
-    setUseBackCamera(!useBackCamera);
-    // Small delay to ensure camera is fully stopped
-    setTimeout(() => {
-      testCamera();
-    }, 500);
   };
 
   const capturePhoto = () => {
@@ -136,9 +107,8 @@ export default function WorkingCamera({ onPhotoCapture, onError }: CameraProps) 
       const imageData = canvas.toDataURL("image/jpeg", 0.8);
 
       setCapturedImage(imageData);
-      setStatus("Photo captured");
+      stopCamera();
     } catch (error) {
-      setStatus(`Capture failed: ${error}`);
       onError(`Capture failed: ${error}`);
     } finally {
       setIsLoading(false);
@@ -154,7 +124,7 @@ export default function WorkingCamera({ onPhotoCapture, onError }: CameraProps) 
 
   const retakePhoto = () => {
     setCapturedImage(null);
-    testCamera();
+    startCamera();
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -181,116 +151,65 @@ export default function WorkingCamera({ onPhotoCapture, onError }: CameraProps) 
     }
   };
 
-  // Auto-start camera
-  useState(() => {
-    testCamera();
-  });
-
   return (
-    <div className="w-full max-w-md mx-auto space-y-4">
-      <h3 className="text-lg font-bold text-center">Camera Feed</h3>
-      <p className="text-sm text-center">Status: {status}</p>
-
-      {/* EXACT same video element as SimpleCameraTest */}
-      <div className="bg-black rounded-lg overflow-hidden" style={{ minHeight: "300px" }}>
-        <video
-          ref={videoRef}
-          className="w-full h-auto"
-          playsInline
-          muted
-          autoPlay
-          style={{
-            minHeight: "300px",
-            backgroundColor: "#000",
-          }}
-        />
-        {!isActive && (
-          <div className="flex items-center justify-center h-72 text-white">
-            Camera preview will appear here
+    <div className="w-full max-w-xs mx-auto space-y-3">
+      {!capturedImage && (
+        <>
+          {/* Compact header */}
+          <div className="text-center py-2">
+            <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center mx-auto mb-2">
+              <Camera className="w-5 h-5 text-white" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-900">Capture Food</h2>
+            <p className="text-gray-500 text-xs mt-1">Get instant calorie estimates</p>
           </div>
-        )}
-      </div>
 
-      <div className="space-y-2">
-        <button
-          onClick={testCamera}
-          disabled={isActive || isLoading}
-          className="w-full px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-400"
-        >
-          Start {useBackCamera ? "Back" : "Front"} Camera
-        </button>
-
-        <button
-          onClick={switchCamera}
-          disabled={!isActive}
-          className="w-full px-4 py-2 bg-orange-500 text-white rounded disabled:bg-gray-400"
-        >
-          Switch to {useBackCamera ? "Front" : "Back"} Camera
-        </button>
-
-        <button
-          onClick={capturePhoto}
-          disabled={!isActive || isLoading}
-          className="w-full px-4 py-2 bg-green-500 text-white rounded disabled:bg-gray-400"
-        >
-          {isLoading ? 'Capturing...' : 'Capture Photo'}
-        </button>
-
-        <button
-          onClick={stopCamera}
-          disabled={!isActive}
-          className="w-full px-4 py-2 bg-red-500 text-white rounded disabled:bg-gray-400"
-        >
-          Stop Camera
-        </button>
-      </div>
+          {/* Single upload button that can access camera */}
+          <label className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-medium py-3 px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center group shadow-md hover:shadow-lg">
+            <Camera className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+            <span>{isLoading ? "Processing..." : "Take Photo or Upload"}</span>
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handleFileUpload}
+              className="hidden"
+              disabled={isLoading}
+            />
+          </label>
+        </>
+      )}
 
       {capturedImage && (
-        <div className="space-y-4">
-          <div className="text-center">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Photo Preview</h3>
-          </div>
-          
-          <div className="relative bg-gray-100 rounded-xl overflow-hidden shadow-lg">
+        <>
+          <div className="relative bg-gray-100 rounded-xl overflow-hidden shadow-lg aspect-square">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={capturedImage}
               alt="Captured food"
-              className="w-full h-64 object-cover"
+              className="w-full h-full object-cover"
             />
           </div>
-          
-          <div className="flex gap-3">
+
+          {/* Horizontal action buttons */}
+          <div className="flex gap-2">
             <Button
               onClick={confirmPhoto}
-              className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-medium py-3 px-4 rounded-xl transition-all shadow-lg gap-2"
+              className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-medium py-2.5 px-3 rounded-xl transition-all shadow-md"
             >
-              <Check className="w-5 h-5" />
-              Analyze Photo
+              <Check className="w-4 h-4 mr-1" />
+              <span className="text-sm">Analyze</span>
             </Button>
             <Button
               onClick={retakePhoto}
               variant="secondary"
-              className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-4 rounded-xl transition-colors gap-2"
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 px-3 rounded-xl transition-colors"
             >
               <RotateCcw className="w-4 h-4" />
-              Retake
             </Button>
           </div>
-        </div>
+        </>
       )}
-
-      <label className="w-full bg-white hover:bg-amber-50 border-2 border-dashed border-amber-300 hover:border-amber-400 text-amber-700 font-medium py-4 px-6 rounded-xl transition-all cursor-pointer block text-center group">
-        <Upload className="w-6 h-6 mx-auto mb-2 group-hover:scale-110 transition-transform" />
-        Upload Photo
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileUpload}
-          className="hidden"
-          disabled={isLoading}
-        />
-      </label>
     </div>
   );
 }

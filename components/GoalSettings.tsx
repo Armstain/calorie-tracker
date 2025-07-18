@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { UserSettings } from '@/types';
 import { formatCalories } from '@/lib/utils';
+import DataManagement from '@/components/DataManagement';
 
 interface GoalSettingsProps {
   settings: UserSettings;
@@ -21,6 +22,7 @@ export default function GoalSettings({
   goalAchievementRate = 0
 }: GoalSettingsProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [showDataManagement, setShowDataManagement] = useState(false);
   const [formData, setFormData] = useState({
     dailyCalorieGoal: settings.dailyCalorieGoal.toString(),
     apiKey: settings.apiKey || '',
@@ -351,6 +353,30 @@ export default function GoalSettings({
           </div>
         </div>
       )}
+
+      {/* Data Management Section */}
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Data Management
+        </h3>
+        <p className="text-gray-600 mb-4">
+          Export your data for backup, import from another device, or manage your stored information.
+        </p>
+        
+        <Button
+          onClick={() => setShowDataManagement(!showDataManagement)}
+          variant="outline"
+          className="w-full"
+        >
+          {showDataManagement ? 'Hide' : 'Show'} Data Management Options
+        </Button>
+        
+        {showDataManagement && (
+          <div className="mt-6">
+            <DataManagement onDataChange={() => onSettingsUpdate({})} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
