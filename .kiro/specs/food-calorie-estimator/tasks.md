@@ -207,12 +207,6 @@ While the core application is complete and production-ready, here are potential 
 - [ ] **Nutrition Labels**: Scan nutrition labels as alternative to photo analysis
 - [x] **Food Database**: Local database of common foods for quick entry
 
-
-
-
-
-
-
 - [ ] **Portion Size Calibration**: Use objects in photos for better portion estimation
 
 ### 📊 Enhanced Analytics

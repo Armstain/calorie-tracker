@@ -83,6 +83,67 @@ export const validation = {
   // Validate API key format
   validateApiKey(apiKey: string): boolean {
     return typeof apiKey === 'string' && apiKey.length > 10;
+  },
+
+  // Validate user profile data
+  validateUserProfile(profile: Partial<import('@/types').UserProfile>): profile is import('@/types').UserProfile {
+    return !!(
+      typeof profile.hasCompletedOnboarding === 'boolean' &&
+      profile.personalInfo &&
+      profile.activity &&
+      profile.goals &&
+      profile.preferences &&
+      profile.metadata &&
+      typeof profile.metadata.createdAt === 'string' &&
+      typeof profile.metadata.lastUpdated === 'string' &&
+      typeof profile.metadata.onboardingVersion === 'string'
+    );
+  },
+
+  // Validate age range
+  validateAge(age: number): boolean {
+    return typeof age === 'number' && age >= 13 && age <= 120;
+  },
+
+  // Validate height values
+  validateHeight(height: { value: number; unit: 'cm' | 'ft_in' }): boolean {
+    if (!height || typeof height.value !== 'number') return false;
+    
+    if (height.unit === 'cm') {
+      return height.value >= 100 && height.value <= 250;
+    } else if (height.unit === 'ft_in') {
+      return height.value >= 3 && height.value <= 8;
+    }
+    
+    return false;
+  },
+
+  // Validate weight values
+  validateWeight(weight: { value: number; unit: 'kg' | 'lbs' }): boolean {
+    if (!weight || typeof weight.value !== 'number') return false;
+    
+    if (weight.unit === 'kg') {
+      return weight.value >= 30 && weight.value <= 300;
+    } else if (weight.unit === 'lbs') {
+      return weight.value >= 66 && weight.value <= 660;
+    }
+    
+    return false;
+  },
+
+  // Validate activity level
+  validateActivityLevel(level: string): level is 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active' {
+    return ['sedentary', 'light', 'moderate', 'active', 'very_active'].includes(level);
+  },
+
+  // Validate exercise frequency
+  validateExerciseFrequency(frequency: number): boolean {
+    return typeof frequency === 'number' && frequency >= 0 && frequency <= 7;
+  },
+
+  // Validate fitness goal
+  validateFitnessGoal(goal: string): goal is 'weight_loss' | 'weight_gain' | 'maintenance' | 'muscle_building' {
+    return ['weight_loss', 'weight_gain', 'maintenance', 'muscle_building'].includes(goal);
   }
 };
 

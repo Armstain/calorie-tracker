@@ -2,20 +2,23 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Check, Camera, AlertTriangle, Edit3, MapPin, Clock, ChefHat } from 'lucide-react';
+import { Check, Camera, AlertTriangle, Edit3, MapPin, Clock, ChefHat, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ResultsProps } from '@/types';
+import { ResultsProps, FoodItem } from '@/types';
 import { formatCalories } from '@/lib/utils';
 import { learningService } from '@/lib/learningService';
+import NaturalLanguageCorrection from '@/components/NaturalLanguageCorrection';
 
 export default function ResultsDisplay({ 
   analysisResult, 
   onAddToDaily, 
-  onRetakePhoto 
+  onRetakePhoto,
+  onAnalysisUpdate
 }: ResultsProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [naturalCorrectionIndex, setNaturalCorrectionIndex] = useState<number | null>(null);
   const [correctionData, setCorrectionData] = useState<{
     calories: string;
     cookingMethod: string;
@@ -41,6 +44,38 @@ export default function ResultsDisplay({
     setEditingIndex(index);
   };
 
+  const handleNaturalCorrection = (index: number) => {
+    setNaturalCorrectionIndex(index);
+  };
+
+  const handleCorrectionApplied = (correctedFood: FoodItem, newTotalCalories: number) => {
+    if (naturalCorrectionIndex === null) return;
+
+    // Update the analysis result with the corrected food
+    const updatedFoods = [...analysisResult.foods];
+    updatedFoods[naturalCorrectionIndex] = correctedFood;
+
+    const updatedResult = {
+      ...analysisResult,
+      foods: updatedFoods,
+      totalCalories: newTotalCalories
+    };
+
+    // Update parent component's state
+    if (onAnalysisUpdate) {
+      onAnalysisUpdate(updatedResult);
+    }
+
+    setNaturalCorrectionIndex(null);
+
+    // Save the correction to learning service
+    learningService.saveCorrection(
+      analysisResult,
+      updatedResult,
+      'ingredients' // Natural language corrections typically involve ingredient/food identification changes
+    );
+  };
+
   const saveCorrection = () => {
     if (editingIndex === null) return;
     
@@ -53,30 +88,36 @@ export default function ResultsDisplay({
       ? correctionData.cookingMethod as 'grilled' | 'fried' | 'baked' | 'steamed' | 'raw' | 'boiled' | 'roasted'
       : undefined;
 
-    // Save the correction to learning service
-    learningService.saveCorrection(
-      analysisResult,
-      {
-        foods: [{
-          ...originalFood,
-          calories: correctedCalories,
-          cookingMethod,
-          ingredients: correctionData.ingredients.split(',').map(i => i.trim()).filter(Boolean)
-        }]
-      },
-      'calories'
-    );
-
-    // Update the analysis result (this would ideally trigger a re-render)
-    analysisResult.foods[editingIndex] = {
+    const correctedFood = {
       ...originalFood,
       calories: correctedCalories,
       cookingMethod,
       ingredients: correctionData.ingredients.split(',').map(i => i.trim()).filter(Boolean)
     };
 
-    // Recalculate total calories
-    analysisResult.totalCalories = analysisResult.foods.reduce((sum, food) => sum + food.calories, 0);
+    // Update the analysis result
+    const updatedFoods = [...analysisResult.foods];
+    updatedFoods[editingIndex] = correctedFood;
+    
+    const newTotalCalories = updatedFoods.reduce((sum, food) => sum + food.calories, 0);
+    
+    const updatedResult = {
+      ...analysisResult,
+      foods: updatedFoods,
+      totalCalories: newTotalCalories
+    };
+
+    // Update parent component's state
+    if (onAnalysisUpdate) {
+      onAnalysisUpdate(updatedResult);
+    }
+
+    // Save the correction to learning service
+    learningService.saveCorrection(
+      analysisResult,
+      updatedResult,
+      'calories' // Manual corrections typically involve calorie adjustments
+    );
 
     setEditingIndex(null);
     setCorrectionData({ calories: '', cookingMethod: '', ingredients: '' });
@@ -349,8 +390,17 @@ export default function ResultsDisplay({
                 </div>
               )}
 
-              {/* Quick Correction Button */}
-              <div className="mt-3 pt-3 border-t border-gray-200">
+              {/* Correction Buttons */}
+              <div className="mt-3 pt-3 border-t border-gray-200 flex gap-2">
+                <Button
+                  onClick={() => handleNaturalCorrection(index)}
+                  variant="outline"
+                  size="sm"
+                  className="text-xs text-blue-600 hover:text-blue-800 border-blue-200 hover:border-blue-300"
+                >
+                  <MessageSquare className="w-3 h-3 mr-1" />
+                  Natural Correction
+                </Button>
                 <Button
                   onClick={() => handleQuickCorrection(index)}
                   variant="outline"
@@ -358,7 +408,7 @@ export default function ResultsDisplay({
                   className="text-xs text-gray-600 hover:text-gray-800"
                 >
                   <Edit3 className="w-3 h-3 mr-1" />
-                  Correct This Item
+                  Manual Edit
                 </Button>
               </div>
             </div>
@@ -438,15 +488,15 @@ export default function ResultsDisplay({
         </Button>
       </div>
 
-      {/* Correction Modal */}
+      {/* Manual Correction Modal */}
       {editingIndex !== null && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Correct Food Analysis
+              Manual Food Correction
             </h3>
             <p className="text-sm text-gray-600 mb-4">
-              Help improve AI accuracy by correcting this analysis:
+              Manually adjust the food analysis details:
             </p>
             
             <div className="space-y-4">
@@ -522,6 +572,16 @@ export default function ResultsDisplay({
             </p>
           </div>
         </div>
+      )}
+
+      {/* Natural Language Correction Modal */}
+      {naturalCorrectionIndex !== null && (
+        <NaturalLanguageCorrection
+          analysisResult={analysisResult}
+          foodIndex={naturalCorrectionIndex}
+          onCorrectionApplied={handleCorrectionApplied}
+          onCancel={() => setNaturalCorrectionIndex(null)}
+        />
       )}
 
       {/* Disclaimer */}

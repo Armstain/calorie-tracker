@@ -69,7 +69,7 @@ export class LearningService {
     this.updateLearningPatterns(correction);
     this.saveCorrections();
 
-    console.log(`Learning: User corrected ${correctionType}`, correction);
+
   }
 
   // Get suggestions based on learned patterns
@@ -275,6 +275,9 @@ export class LearningService {
 
   private loadCorrections(): void {
     try {
+      if (typeof window === 'undefined') {
+        return;
+      }
       const stored = localStorage.getItem('ai_learning_corrections');
       if (stored) {
         const data = JSON.parse(stored);
@@ -288,6 +291,9 @@ export class LearningService {
 
   private saveCorrections(): void {
     try {
+      if (typeof window === 'undefined') {
+        return;
+      }
       const data = {
         corrections: Array.from(this.corrections.entries()),
         patterns: Array.from(this.patterns.entries()),

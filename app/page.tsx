@@ -15,16 +15,18 @@ import DailyTracker from "@/components/DailyTracker";
 import HistoryView from "@/components/HistoryView";
 import GoalSettings from "@/components/GoalSettings";
 import SplashScreen from "@/components/SplashScreen";
+import OnboardingFlow from "@/components/onboarding/OnboardingFlow";
 import ErrorNotification, {
-  LoadingOverlay,
   NetworkStatusIndicator,
 } from "@/components/ErrorNotification";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
 import { useNetworkStatus } from "@/lib/hooks/useNetworkStatus";
+import { useToast } from "@/lib/hooks/useToast";
+import { ToastContainer } from "@/components/ui/toast";
 import { storageService } from "@/lib/storage";
 import { geminiService } from "@/lib/gemini";
-import { FoodAnalysisResult, FoodEntry, UserSettings } from "@/types";
+import { FoodAnalysisResult, FoodEntry, UserSettings, UserProfile } from "@/types";
 import { dateUtils } from "@/lib/utils";
 import WorkingCamera from "@/components/WorkingCamera";
 import HealthIntegration from "@/components/HealthIntegration";
@@ -40,16 +42,20 @@ type AppView =
   | "settings";
 
 export default function Home() {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [isCheckingOnboarding, setIsCheckingOnboarding] = useState(true);
   const [currentView, setCurrentView] = useState<AppView>("capture");
   const [analysisResult, setAnalysisResult] =
     useState<FoodAnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [settings, setSettings] = useState<UserSettings>(
-    storageService.getUserSettings()
-  );
+  const [settings, setSettings] = useState<UserSettings>(() => {
+    return storageService.getUserSettings();
+  });
   const [todaysEntries, setTodaysEntries] = useState<FoodEntry[]>([]);
-  const [weeklyData, setWeeklyData] = useState(storageService.getWeeklyData());
+  const [weeklyData, setWeeklyData] = useState(() => {
+    return storageService.getWeeklyData();
+  });
   const [showFoodDatabase, setShowFoodDatabase] = useState(false);
 
   const {
@@ -61,6 +67,39 @@ export default function Home() {
     canRetry,
   } = useErrorHandler();
   const { isOnline, isSlowConnection } = useNetworkStatus();
+  const {
+    loading: showLoadingToast,
+    success: showSuccessToast,
+    dismiss
+  } = useToast();
+
+  // Check onboarding status on app load
+  useEffect(() => {
+    const checkOnboardingStatus = () => {
+      try {
+        const hasCompleted = storageService.hasCompletedOnboarding();
+        
+        if (hasCompleted) {
+          // Existing user - skip splash screen and go directly to main app
+          setShowOnboarding(false);
+          setShowSplash(false);
+        } else {
+          // New user - show onboarding flow
+          setShowOnboarding(true);
+          setShowSplash(false);
+        }
+      } catch (error) {
+        console.error('Error checking onboarding status:', error);
+        // On error, default to showing onboarding for safety
+        setShowOnboarding(true);
+        setShowSplash(false);
+      } finally {
+        setIsCheckingOnboarding(false);
+      }
+    };
+
+    checkOnboardingStatus();
+  }, []);
 
   const refreshData = useCallback(() => {
     setTodaysEntries(storageService.getTodaysEntries());
@@ -82,6 +121,12 @@ export default function Home() {
         return;
       }
 
+      // Show loading toast
+      const loadingToastId = showLoadingToast(
+        "Analyzing food...",
+        "AI is identifying food items and calculating calories"
+      );
+
       setIsAnalyzing(true);
       try {
         const result = await geminiService.analyzeFood(
@@ -90,13 +135,22 @@ export default function Home() {
         );
         setAnalysisResult(result);
         setCurrentView("results");
+
+        // Dismiss loading toast and show success toast
+        dismiss(loadingToastId);
+        showSuccessToast(
+          "Analysis complete!",
+          `Found ${result.foods.length} food item${result.foods.length !== 1 ? 's' : ''} with ${result.totalCalories} calories`,
+          4000
+        );
       } catch (error) {
+        dismiss(loadingToastId);
         showError(error as Error);
       } finally {
         setIsAnalyzing(false);
       }
     },
-    [isOnline, settings.apiKey, showError]
+    [isOnline, settings.apiKey, showError, showLoadingToast, showSuccessToast, dismiss]
   );
 
   const handleAddToDaily = useCallback(async () => {
@@ -114,10 +168,17 @@ export default function Home() {
       refreshData();
       setCurrentView("tracker");
       setAnalysisResult(null);
+      
+      // Show success toast
+      showSuccessToast(
+        "Added to daily total!",
+        `${analysisResult.totalCalories} calories added to today's intake`,
+        3000
+      );
     } catch (error) {
       showError(error as Error);
     }
-  }, [analysisResult, refreshData, showError]);
+  }, [analysisResult, refreshData, showError, showSuccessToast]);
 
   const handleRetakePhoto = useCallback(() => {
     setAnalysisResult(null);
@@ -182,6 +243,52 @@ export default function Home() {
     setShowSplash(false);
   };
 
+  const handleOnboardingComplete = useCallback((profile: UserProfile) => {
+    try {
+      // Save the profile and mark onboarding as complete
+      storageService.markOnboardingComplete(profile);
+      
+      // Update daily calorie goal if calculated from profile
+      const calculatedCalories = storageService.calculateDailyCalories(profile);
+      if (calculatedCalories) {
+        storageService.updateDailyGoal(calculatedCalories);
+      }
+      
+      // Refresh data to reflect new settings
+      refreshData();
+      
+      // Hide onboarding and show main app
+      setShowOnboarding(false);
+      
+      // Show splash screen briefly for existing users who just completed onboarding
+      setShowSplash(true);
+    } catch (error) {
+      console.error('Error completing onboarding:', error);
+      showError(error as Error);
+    }
+  }, [refreshData, showError]);
+
+  const handleOnboardingSkip = useCallback(() => {
+    // Create minimal profile for users who skip onboarding
+    const minimalProfile: UserProfile = {
+      hasCompletedOnboarding: true,
+      personalInfo: {},
+      activity: {},
+      goals: {},
+      preferences: {
+        units: 'metric',
+        notifications: true
+      },
+      metadata: {
+        createdAt: new Date().toISOString(),
+        lastUpdated: new Date().toISOString(),
+        onboardingVersion: '1.0'
+      }
+    };
+    
+    handleOnboardingComplete(minimalProfile);
+  }, [handleOnboardingComplete]);
+
   const handleFoodDatabaseAdd = useCallback((food: CommonFood, calories: number, portion: string) => {
     try {
       // Create a food entry from the database selection
@@ -206,6 +313,33 @@ export default function Home() {
     }
   }, [refreshData, showError]);
 
+  // Show loading state while checking onboarding status
+  if (isCheckingOnboarding) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center mx-auto animate-pulse">
+            <Utensils className="w-6 h-6 text-white" />
+          </div>
+          <p className="text-gray-600">Loading CalorieMeter...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show onboarding flow for new users
+  if (showOnboarding) {
+    return (
+      <ErrorBoundary>
+        <OnboardingFlow
+          onComplete={handleOnboardingComplete}
+          onSkip={handleOnboardingSkip}
+        />
+      </ErrorBoundary>
+    );
+  }
+
+  // Show splash screen for existing users (brief transition)
   if (showSplash) {
     return <SplashScreen onComplete={handleSplashComplete} />;
   }
@@ -454,6 +588,7 @@ export default function Home() {
               analysisResult={analysisResult}
               onAddToDaily={handleAddToDaily}
               onRetakePhoto={handleRetakePhoto}
+              onAnalysisUpdate={setAnalysisResult}
             />
           )}
 
@@ -486,6 +621,7 @@ export default function Home() {
               onSettingsUpdate={handleSettingsUpdate}
               weeklyAverage={weeklyAverage}
               goalAchievementRate={goalAchievementRate}
+              onProfileUpdate={refreshData}
             />
           )}
         </main>
@@ -570,12 +706,7 @@ export default function Home() {
           autoHide={true}
         />
 
-        {/* Loading Overlay */}
-        <LoadingOverlay
-          isVisible={isAnalyzing}
-          message="Analyzing your food..."
-          canCancel={false}
-        />
+
 
         {/* Network Status */}
         <NetworkStatusIndicator
@@ -590,6 +721,9 @@ export default function Home() {
             onClose={() => setShowFoodDatabase(false)}
           />
         )}
+
+        {/* Toast Container */}
+        <ToastContainer />
       </div>
     </ErrorBoundary>
   );

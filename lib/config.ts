@@ -60,6 +60,7 @@ export const STORAGE_KEYS = {
   USER_SETTINGS: 'calorie_tracker_settings',
   DAILY_GOAL: 'calorie_tracker_daily_goal',
   LAST_CLEANUP: 'calorie_tracker_last_cleanup',
+  USER_PROFILE: 'calorie_tracker_user_profile',
 } as const;
 
 // Get environment variables with validation

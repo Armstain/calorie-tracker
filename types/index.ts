@@ -71,6 +71,7 @@ export interface ResultsProps {
   analysisResult: FoodAnalysisResult;
   onAddToDaily: () => void;
   onRetakePhoto: () => void;
+  onAnalysisUpdate?: (updatedResult: FoodAnalysisResult) => void;
 }
 
 export interface TrackerProps {
@@ -103,4 +104,39 @@ export interface ApiError extends AppError {
 
 export interface StorageError extends AppError {
   type: 'storage';
+}
+
+// User Profile types for onboarding and personalization
+export interface UserProfile {
+  hasCompletedOnboarding: boolean;
+  personalInfo: {
+    age?: number;
+    gender?: 'male' | 'female';
+    height?: { value: number; unit: 'cm' | 'ft_in' };
+    weight?: { value: number; unit: 'kg' | 'lbs' };
+  };
+  activity: {
+    level?: 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active';
+    exerciseFrequency?: number; // days per week
+  };
+  goals: {
+    primary?: 'weight_loss' | 'weight_gain' | 'maintenance' | 'muscle_building';
+    targetCalories?: number;
+    healthObjectives?: string[];
+  };
+  preferences: {
+    units?: 'metric' | 'imperial';
+    notifications?: boolean;
+  };
+  metadata: {
+    createdAt: string;
+    lastUpdated: string;
+    onboardingVersion: string;
+  };
+}
+
+export interface StoredProfile {
+  version: '1.0';
+  profile: UserProfile;
+  checksum?: string; // For data integrity
 }

@@ -270,6 +270,140 @@ describe('StorageService', () => {
       expect(mockLocalStorage.removeItem).toHaveBeenCalledWith(STORAGE_KEYS.DAILY_ENTRIES)
       expect(mockLocalStorage.removeItem).toHaveBeenCalledWith(STORAGE_KEYS.USER_SETTINGS)
       expect(mockLocalStorage.removeItem).toHaveBeenCalledWith(STORAGE_KEYS.LAST_CLEANUP)
+      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith(STORAGE_KEYS.USER_PROFILE)
+    })
+  })
+
+  describe('User Profile and Onboarding', () => {
+    const mockProfile = {
+      hasCompletedOnboarding: true,
+      personalInfo: {
+        age: 30,
+        gender: 'male' as const,
+        height: { value: 180, unit: 'cm' as const },
+        weight: { value: 75, unit: 'kg' as const }
+      },
+      activity: {
+        level: 'moderate' as const,
+        exerciseFrequency: 3
+      },
+      goals: {
+        primary: 'maintenance' as const,
+        targetCalories: 2000
+      },
+      preferences: {
+        units: 'metric' as const,
+        notifications: true
+      },
+      metadata: {
+        createdAt: '2024-01-15T10:00:00Z',
+        lastUpdated: '2024-01-15T10:00:00Z',
+        onboardingVersion: '1.0'
+      }
+    }
+
+    describe('hasCompletedOnboarding', () => {
+      it('should return false when no profile exists', () => {
+        mockLocalStorage.getItem.mockReturnValue(null)
+        
+        const result = storageService.hasCompletedOnboarding()
+        
+        expect(result).toBe(false)
+      })
+
+      it('should return true when profile exists and onboarding is complete', () => {
+        const storedProfile = {
+          version: '1.0',
+          profile: mockProfile
+        }
+        mockLocalStorage.getItem.mockReturnValue(JSON.stringify(storedProfile))
+        
+        const result = storageService.hasCompletedOnboarding()
+        
+        expect(result).toBe(true)
+      })
+
+      it('should return false when profile exists but onboarding is not complete', () => {
+        const incompleteProfile = {
+          ...mockProfile,
+          hasCompletedOnboarding: false
+        }
+        const storedProfile = {
+          version: '1.0',
+          profile: incompleteProfile
+        }
+        mockLocalStorage.getItem.mockReturnValue(JSON.stringify(storedProfile))
+        
+        const result = storageService.hasCompletedOnboarding()
+        
+        expect(result).toBe(false)
+      })
+    })
+
+    describe('markOnboardingComplete', () => {
+      it('should save profile with onboarding marked as complete', () => {
+        const inputProfile = {
+          ...mockProfile,
+          hasCompletedOnboarding: false
+        }
+        
+        storageService.markOnboardingComplete(inputProfile)
+        
+        expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
+          STORAGE_KEYS.USER_PROFILE,
+          expect.stringContaining('"hasCompletedOnboarding":true')
+        )
+        
+        const savedData = JSON.parse(mockLocalStorage.setItem.mock.calls[0][1])
+        expect(savedData.version).toBe('1.0')
+        expect(savedData.profile.hasCompletedOnboarding).toBe(true)
+        expect(savedData.profile.metadata.onboardingVersion).toBe('1.0')
+      })
+    })
+
+    describe('getUserProfile', () => {
+      it('should return null when no profile exists', () => {
+        mockLocalStorage.getItem.mockReturnValue(null)
+        
+        const result = storageService.getUserProfile()
+        
+        expect(result).toBeNull()
+      })
+
+      it('should return profile when valid profile exists', () => {
+        const storedProfile = {
+          version: '1.0',
+          profile: mockProfile
+        }
+        mockLocalStorage.getItem.mockReturnValue(JSON.stringify(storedProfile))
+        
+        const result = storageService.getUserProfile()
+        
+        expect(result).toEqual(mockProfile)
+      })
+    })
+
+    describe('calculateDailyCalories', () => {
+      it('should calculate daily calories based on profile data', () => {
+        const result = storageService.calculateDailyCalories(mockProfile)
+        
+        expect(result).toBeGreaterThan(0)
+        expect(typeof result).toBe('number')
+      })
+
+      it('should return null for incomplete profile', () => {
+        const incompleteProfile = {
+          ...mockProfile,
+          personalInfo: {
+            age: 30
+            // Missing other required fields
+          }
+        }
+        
+        const result = storageService.calculateDailyCalories(incompleteProfile)
+        
+        expect(result).toBeNull()
+      })
     })
   })
 })

@@ -16,6 +16,9 @@ jest.mock('@/lib/storage', () => ({
     saveFoodEntry: jest.fn(),
     updateDailyGoal: jest.fn(),
     updateUserSettings: jest.fn(),
+    hasCompletedOnboarding: jest.fn(() => true), // Mock as existing user by default
+    markOnboardingComplete: jest.fn(),
+    calculateDailyCalories: jest.fn(() => 2000),
   },
 }))
 
@@ -36,20 +39,35 @@ jest.mock('@/lib/hooks/useNetworkStatus', () => ({
 describe('App Integration', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    // Reset to existing user by default
+    const { storageService } = require('@/lib/storage')
+    storageService.hasCompletedOnboarding.mockReturnValue(true)
   })
 
-  it('should render the main application', () => {
+  it('should show onboarding flow for new users', () => {
+    const { storageService } = require('@/lib/storage')
+    storageService.hasCompletedOnboarding.mockReturnValue(false)
+
+    render(<Home />)
+
+    // Should show onboarding welcome step
+    expect(screen.getByText('Welcome to CalorieMeter')).toBeInTheDocument()
+    expect(screen.getByText('Get Started')).toBeInTheDocument()
+    expect(screen.getByText('Skip for now')).toBeInTheDocument()
+  })
+
+  it('should render the main application for existing users', () => {
     render(<Home />)
 
     expect(screen.getByText('CalorieMeter')).toBeInTheDocument()
-    expect(screen.getByText('Capture Food Photo')).toBeInTheDocument()
+    expect(screen.getByText('Capture Your Food')).toBeInTheDocument()
   })
 
   it('should navigate between different views', () => {
     render(<Home />)
 
     // Should start on capture view
-    expect(screen.getByText('Capture Food Photo')).toBeInTheDocument()
+    expect(screen.getByText('Capture Your Food')).toBeInTheDocument()
 
     // Navigate to tracker view (desktop navigation)
     const todayButton = screen.getAllByText('Today')[0] // Get desktop nav button
@@ -109,7 +127,7 @@ describe('App Integration', () => {
     fireEvent.click(captureButton)
 
     // Should be back to capture view
-    expect(screen.getByText('Capture Food Photo')).toBeInTheDocument()
+    expect(screen.getByText('Capture Your Food')).toBeInTheDocument()
   })
 
   it('should display proper loading states', () => {
