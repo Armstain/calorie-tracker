@@ -2,8 +2,6 @@
 
 A modern AI-powered calorie tracking app built with Next.js. Take photos of your food and get instant nutritional analysis using AI.
 
-![CalorieMeter Demo]([https://calorietracker-puce.vercel.app/))
-
 ## ✨ Key Features
 
 - 📸 **Smart Food Analysis** - Point, shoot, and get instant calorie counts
