@@ -3,7 +3,6 @@
 import { useState, useRef, useCallback } from "react";
 import { Camera, Upload, Check, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-// Removed unused Card imports
 import { CameraProps } from "@/types";
 import { imageUtils } from "@/lib/utils";
 import { APP_CONFIG } from "@/lib/config";
@@ -21,30 +20,22 @@ export default function CameraCapture({
   const startCamera = useCallback(async () => {
     try {
       setIsLoading(true);
-
-      // Check if camera is supported
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         throw new Error("Camera not supported on this device");
       }
 
       console.log("Requesting camera access...");
-
-      // Try different constraint combinations for better mobile compatibility
-      // Start with simple approach that worked in debug tool
       const constraints = [
-        // First try: Basic video only (like debug tool that worked)
         {
           video: true,
           audio: false,
         },
-        // Second try: Back camera if available
         {
           video: {
             facingMode: "environment",
           },
           audio: false,
         },
-        // Third try: Back camera with size constraints
         {
           video: {
             facingMode: "environment",
@@ -53,7 +44,6 @@ export default function CameraCapture({
           },
           audio: false,
         },
-        // Fourth try: Any camera with size constraints
         {
           video: {
             width: { min: 640, ideal: 1280 },
@@ -90,8 +80,6 @@ export default function CameraCapture({
       if (videoRef.current) {
         console.log("Setting video source...");
         const video = videoRef.current;
-
-        // Use the exact same approach as the working debug tool
         video.srcObject = stream;
 
         video.onloadedmetadata = () => {
@@ -257,14 +245,11 @@ export default function CameraCapture({
           );
         }
 
-        // Validate file size (10MB limit)
         if (file.size > 10 * 1024 * 1024) {
           throw new Error(
             "File too large. Please use an image smaller than 10MB."
           );
         }
-
-        // Compress and convert to base64
         const imageData = await imageUtils.compressImage(file, 1024);
         setCapturedImage(imageData);
       } catch (error) {
@@ -276,7 +261,6 @@ export default function CameraCapture({
         );
       } finally {
         setIsLoading(false);
-        // Reset file input
         event.target.value = "";
       }
     },
@@ -287,7 +271,6 @@ export default function CameraCapture({
     <div className="w-full max-w-lg mx-auto p-4">
       {!isActive && !capturedImage && (
         <div className="space-y-6">
-          {/* Enhanced header */}
           <div className="text-center">
             <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl">
               <Camera className="w-10 h-10 text-white" />
@@ -296,7 +279,6 @@ export default function CameraCapture({
             <p className="text-gray-600 text-lg">Choose how to capture your meal</p>
           </div>
 
-          {/* Large horizontal buttons */}
           <div className="grid grid-cols-2 gap-4">
             <Button
               onClick={startCamera}
@@ -321,7 +303,6 @@ export default function CameraCapture({
             </label>
           </div>
 
-          {/* Additional info */}
           <div className="text-center text-gray-500 text-sm">
             <p>📸 Take a photo or upload from gallery</p>
             <p>🤖 Get instant AI-powered calorie analysis</p>
@@ -331,7 +312,6 @@ export default function CameraCapture({
 
       {isActive && (
         <div className="space-y-6">
-          {/* Enhanced Camera Preview */}
           <div className="relative bg-black rounded-3xl overflow-hidden shadow-2xl aspect-square">
             <video
               ref={videoRef}
@@ -341,22 +321,17 @@ export default function CameraCapture({
               autoPlay
             />
             
-            {/* Professional frame overlay */}
             <div className="absolute inset-6 border-2 border-white/30 rounded-2xl pointer-events-none" />
-            
-            {/* Status indicator */}
+
             <div className="absolute top-4 left-4 bg-green-500/90 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 shadow-lg">
               <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
               CAMERA LIVE
             </div>
-            
-            {/* Instruction overlay */}
+
             <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-black/70 backdrop-blur-sm text-white px-6 py-3 rounded-full text-base font-semibold">
               Position your food in the frame
             </div>
           </div>
-
-          {/* Large horizontal control buttons */}
           <div className="grid grid-cols-2 gap-4">
             <Button
               onClick={stopCamera}

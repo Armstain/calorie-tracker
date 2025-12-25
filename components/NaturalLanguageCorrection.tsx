@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MessageSquare, Loader2, Check, X } from "lucide-react";
+import { MessageSquare, Check, X } from "lucide-react";
 import { FoodAnalysisResult, FoodItem } from "@/types";
 import { useToast } from "@/lib/hooks/useToast";
 
@@ -25,7 +25,7 @@ export default function NaturalLanguageCorrection({
 }: NaturalLanguageCorrectionProps) {
   const [correctionText, setCorrectionText] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const { loading, success, error: showError, updateToast } = useToast();
+  const { loading, updateToast } = useToast();
 
   const food = analysisResult.foods[foodIndex];
 
@@ -33,30 +33,23 @@ export default function NaturalLanguageCorrection({
     if (!correctionText.trim()) return;
 
     setIsProcessing(true);
-
-    // Show loading toast
     const loadingToastId = loading(
       "Processing correction...",
       "AI is analyzing your correction"
     );
-
-    // Simple retry logic for rate limiting
     const maxRetries = 2;
     let lastError: Error | null = null;
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         if (attempt > 0) {
-          // Update toast for retry
           updateToast(loadingToastId, {
             title: `Retrying... (${attempt + 1}/3)`,
             description: "Please wait while we process your correction"
           });
           
-          // Wait before retry (exponential backoff)
           await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
         }
-      // Create a correction prompt for the AI
       const correctionPrompt = `You are a food nutrition expert. A user wants to correct a food analysis.
 
 ORIGINAL FOOD:
@@ -92,8 +85,6 @@ Rules:
 - If cooking method changes, adjust calories accordingly
 - Provide realistic nutritional estimates
 - Return ONLY valid JSON, no other text`;
-
-      // Use Gemini to process the correction
       const response = await fetch("/api/gemini-correction", {
         method: "POST",
         headers: {
@@ -124,9 +115,6 @@ Rules:
         throw new Error("No response received from AI");
       }
 
-
-
-      // Parse the AI response
       let correctedFood: FoodItem;
       try {
         const jsonMatch = data.response.match(/\{[\s\S]*\}/);
@@ -153,7 +141,6 @@ Rules:
             healthScore: parsed.healthScore || food.healthScore,
           };
         } else {
-          // Fallback: try to parse the entire response as JSON
           try {
             const parsed = JSON.parse(data.response);
             correctedFood = {
@@ -187,14 +174,11 @@ Rules:
           "Failed to understand the correction. Please try rephrasing."
         );
       }
-
-      // Calculate new total calories
       const otherFoodsCalories = analysisResult.foods
         .filter((_, index) => index !== foodIndex)
         .reduce((sum, f) => sum + f.calories, 0);
       const newTotalCalories = otherFoodsCalories + correctedFood.calories;
 
-        // Success! Update toast and apply correction
         updateToast(loadingToastId, {
           type: 'success',
           title: 'Correction applied!',
@@ -202,27 +186,24 @@ Rules:
           duration: 3000
         });
 
-        // Apply the correction
         onCorrectionApplied(correctedFood, newTotalCalories);
         setIsProcessing(false);
-        onCancel(); // Close the modal
-        return; // Success, exit retry loop
+
+        onCancel();
+        return;
 
       } catch (error) {
         lastError = error instanceof Error ? error : new Error('Unknown error');
         console.error(`Correction processing error (attempt ${attempt + 1}):`, lastError);
-        
-        // If it's a rate limit error and we have retries left, continue
+
         if (lastError.message.includes('Too many requests') && attempt < maxRetries) {
           continue;
         }
-        
-        // For other errors or if we're out of retries, break
+
         break;
       }
     }
 
-    // If we get here, all attempts failed
     updateToast(loadingToastId, {
       type: 'error',
       title: 'Correction failed',

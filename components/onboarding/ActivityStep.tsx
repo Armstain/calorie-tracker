@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { UserProfile } from '@/types';
+import { Input } from '@/components/ui/input';
 
 interface ActivityStepProps {
   onContinue: (data: Partial<UserProfile['activity']>) => void;
@@ -87,7 +88,7 @@ export default function ActivityStep({ onContinue, onBack, initialData }: Activi
   };
 
   return (
-    <div className="flex flex-col min-h-screen p-6 bg-gray-50">
+    <div className="flex flex-col min-h-screen p-6 bg-gradient-to-br from-amber-50 to-orange-50">
       <div className="w-full max-w-md mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -110,7 +111,7 @@ export default function ActivityStep({ onContinue, onBack, initialData }: Activi
                 key={level.value}
                 className={`bg-white rounded-lg border p-4 cursor-pointer transition-all duration-200 ${
                   selectedLevel === level.value
-                    ? 'border-green-500 bg-green-50 shadow-md'
+                    ? 'border-amber-500 bg-amber-50 shadow-md'
                     : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
                 }`}
                 onClick={() => setSelectedLevel(level.value)}
@@ -119,7 +120,7 @@ export default function ActivityStep({ onContinue, onBack, initialData }: Activi
                   <div className="flex-shrink-0 mt-1">
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                       selectedLevel === level.value
-                        ? 'border-green-500 bg-green-500'
+                        ? 'border-amber-500 bg-amber-500'
                         : 'border-gray-300'
                     }`}>
                       {selectedLevel === level.value && (
@@ -160,37 +161,31 @@ export default function ActivityStep({ onContinue, onBack, initialData }: Activi
             <label htmlFor="exerciseFrequency" className="block text-sm font-medium text-gray-700 mb-2">
               How many days per week do you exercise?
             </label>
-            <div className="relative">
-              <input
-                type="number"
-                id="exerciseFrequency"
-                value={exerciseFrequency}
-                onChange={(e) => setExerciseFrequency(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                placeholder="0-7 days"
-                min="0"
-                max="7"
-              />
-              <div className="absolute right-3 top-2 text-gray-400 text-sm">
-                days/week
-              </div>
-            </div>
+            <Input
+              id="exerciseFrequency"
+              type="number"
+              value={exerciseFrequency}
+              onChange={(e) => setExerciseFrequency(e.target.value)}
+              placeholder="0-7 days"
+              min={0}
+              max={7}
+            />
             <p className="mt-1 text-xs text-gray-500">
               Include any structured exercise, sports, or physical activities
             </p>
           </div>
 
           {/* Info Box */}
-          <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+          <div className="bg-orange-50 rounded-lg p-4 border border-orange-100">
             <div className="flex items-start space-x-3">
-              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-blue-600 text-sm">💡</span>
+              <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-orange-600 text-sm">💡</span>
               </div>
               <div>
-                <h3 className="font-medium text-blue-900 mb-1">
+                <h3 className="font-medium text-orange-900 mb-1">
                   Why we ask this
                 </h3>
-                <p className="text-sm text-blue-800">
+                <p className="text-sm text-orange-800">
                   Your activity level helps us calculate your Total Daily Energy Expenditure (TDEE) 
                   to provide accurate calorie recommendations for your goals.
                 </p>
@@ -212,7 +207,7 @@ export default function ActivityStep({ onContinue, onBack, initialData }: Activi
               disabled={!isValid}
               className={`flex-1 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 ${
                 isValid
-                  ? 'bg-green-600 hover:bg-green-700 text-white'
+                  ? 'bg-amber-600 hover:bg-amber-700 text-white'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >

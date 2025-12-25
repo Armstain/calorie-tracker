@@ -140,7 +140,7 @@ export default function GoalsStep({ onContinue, onBack, initialData, profileData
   };
 
   return (
-    <div className="flex flex-col min-h-screen p-6 bg-gray-50">
+    <div className="flex flex-col min-h-screen p-6 bg-gradient-to-br from-amber-50 to-orange-50">
       <div className="w-full max-w-md mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -163,7 +163,7 @@ export default function GoalsStep({ onContinue, onBack, initialData, profileData
                 key={goal.value}
                 className={`rounded-lg border p-4 cursor-pointer transition-all duration-200 ${
                   selectedGoal === goal.value
-                    ? `border-green-500 bg-green-50 shadow-md`
+                    ? `border-amber-500 bg-amber-50 shadow-md`
                     : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-sm'
                 }`}
                 onClick={() => setSelectedGoal(goal.value)}
@@ -172,7 +172,7 @@ export default function GoalsStep({ onContinue, onBack, initialData, profileData
                   <div className="flex-shrink-0 mt-1">
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                       selectedGoal === goal.value
-                        ? 'border-green-500 bg-green-500'
+                        ? 'border-amber-500 bg-amber-500'
                         : 'border-gray-300'
                     }`}>
                       {selectedGoal === goal.value && (
@@ -212,7 +212,7 @@ export default function GoalsStep({ onContinue, onBack, initialData, profileData
                 <h3 className="font-semibold text-gray-900 mb-2">
                   Your Daily Calorie Target
                 </h3>
-                <div className="text-3xl font-bold text-green-600 mb-1">
+                <div className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-1">
                   {targetCalories.toLocaleString()}
                 </div>
                 <p className="text-sm text-gray-600">
@@ -241,14 +241,14 @@ export default function GoalsStep({ onContinue, onBack, initialData, profileData
                   onClick={() => handleObjectiveToggle(objective)}
                   className={`text-left p-3 rounded-lg border text-sm transition-colors ${
                     selectedObjectives.includes(objective)
-                      ? 'border-green-500 bg-green-50 text-green-700'
+                      ? 'border-amber-500 bg-amber-50 text-amber-700'
                       : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
                   }`}
                 >
                   <div className="flex items-center space-x-2">
                     <div className={`w-4 h-4 rounded border flex items-center justify-center ${
                       selectedObjectives.includes(objective)
-                        ? 'border-green-500 bg-green-500'
+                        ? 'border-amber-500 bg-amber-500'
                         : 'border-gray-300'
                     }`}>
                       {selectedObjectives.includes(objective) && (
@@ -263,16 +263,16 @@ export default function GoalsStep({ onContinue, onBack, initialData, profileData
           </div>
 
           {/* Info Box */}
-          <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+          <div className="bg-orange-50 rounded-lg p-4 border border-orange-100">
             <div className="flex items-start space-x-3">
-              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-blue-600 text-sm">💡</span>
+              <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-orange-600 text-sm">💡</span>
               </div>
               <div>
-                <h3 className="font-medium text-blue-900 mb-1">
+                <h3 className="font-medium text-orange-900 mb-1">
                   Personalized recommendations
                 </h3>
-                <p className="text-sm text-blue-800">
+                <p className="text-sm text-orange-800">
                   Your calorie target is calculated using the Harris-Benedict equation based on your 
                   age, gender, height, weight, and activity level, then adjusted for your specific goal.
                 </p>
@@ -294,7 +294,7 @@ export default function GoalsStep({ onContinue, onBack, initialData, profileData
               disabled={!isValid}
               className={`flex-1 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 ${
                 isValid
-                  ? 'bg-green-600 hover:bg-green-700 text-white'
+                  ? 'bg-amber-600 hover:bg-amber-700 text-white'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >

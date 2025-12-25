@@ -1,6 +1,45 @@
 import { StorageService } from '@/lib/storage'
 import { UserSettings, FoodEntry } from '@/types'
 import { STORAGE_KEYS, APP_CONFIG } from '@/lib/config'
+import { it } from 'node:test'
+import { it } from 'node:test'
+import { describe } from 'node:test'
+import { it } from 'node:test'
+import { it } from 'node:test'
+import { describe } from 'node:test'
+import { it } from 'node:test'
+import { describe } from 'node:test'
+import { it } from 'node:test'
+import { it } from 'node:test'
+import { it } from 'node:test'
+import { describe } from 'node:test'
+import { describe } from 'node:test'
+import { it } from 'node:test'
+import { describe } from 'node:test'
+import { it } from 'node:test'
+import { it } from 'node:test'
+import { describe } from 'node:test'
+import { it } from 'node:test'
+import { afterEach } from 'node:test'
+import { beforeEach } from 'node:test'
+import { describe } from 'node:test'
+import { it } from 'node:test'
+import { it } from 'node:test'
+import { describe } from 'node:test'
+import { it } from 'node:test'
+import { it } from 'node:test'
+import { describe } from 'node:test'
+import { it } from 'node:test'
+import { it } from 'node:test'
+import { describe } from 'node:test'
+import { it } from 'node:test'
+import { describe } from 'node:test'
+import { it } from 'node:test'
+import { it } from 'node:test'
+import { it } from 'node:test'
+import { describe } from 'node:test'
+import { beforeEach } from 'node:test'
+import { describe } from 'node:test'
 
 // Mock localStorage
 const mockLocalStorage = {
@@ -109,7 +148,7 @@ describe('StorageService', () => {
   })
 
   describe('saveFoodEntry', () => {
-    it('should save valid food entry', () => {
+    it('should save valid food entry', async () => {
       mockLocalStorage.getItem.mockReturnValue('[]')
       
       const entryData = {
@@ -119,7 +158,7 @@ describe('StorageService', () => {
         date: '2024-01-15'
       }
       
-      const savedEntry = storageService.saveFoodEntry(entryData)
+      const savedEntry = await storageService.saveFoodEntry(entryData)
       
       expect(savedEntry.id).toBeDefined()
       expect(savedEntry.foods).toEqual(entryData.foods)
@@ -129,7 +168,7 @@ describe('StorageService', () => {
       )
     })
 
-    it('should sort entries by timestamp', () => {
+    it('should sort entries by timestamp', async () => {
       const existingEntries = [
         {
           id: 'old-entry',
@@ -149,7 +188,7 @@ describe('StorageService', () => {
         date: '2024-01-15'
       }
       
-      storageService.saveFoodEntry(newEntryData)
+      await storageService.saveFoodEntry(newEntryData)
       
       const savedData = JSON.parse(mockLocalStorage.setItem.mock.calls[0][1])
       expect(savedData[0].timestamp).toBe('2024-01-15T12:00:00Z') // Newer entry first
@@ -213,9 +252,16 @@ describe('StorageService', () => {
         }
       ]
       
-      mockLocalStorage.getItem
-        .mockReturnValueOnce(JSON.stringify({ dailyCalorieGoal: 2000 })) // getUserSettings
-        .mockReturnValueOnce(JSON.stringify(entries)) // getAllEntries
+      // Mock localStorage.getItem to return appropriate values based on key
+      mockLocalStorage.getItem.mockImplementation((key: string) => {
+        if (key === STORAGE_KEYS.USER_SETTINGS) {
+          return JSON.stringify({ dailyCalorieGoal: 2000 })
+        }
+        if (key === STORAGE_KEYS.DAILY_ENTRIES) {
+          return JSON.stringify(entries)
+        }
+        return null
+      })
       
       const weeklyData = storageService.getWeeklyData()
       

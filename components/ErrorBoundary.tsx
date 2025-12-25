@@ -2,7 +2,6 @@
 
 import React, { Component, ReactNode } from 'react';
 import { AlertTriangle } from 'lucide-react';
-// Removed unused imports
 
 interface Props {
   children: ReactNode;
@@ -39,11 +38,7 @@ export class ErrorBoundary extends Component<Props, State> {
       errorInfo
     });
 
-    // Log error for debugging
     console.error('ErrorBoundary caught an error:', error, errorInfo);
-    
-    // You could also send this to an error reporting service
-    // errorReportingService.captureException(error, { extra: errorInfo });
   }
 
   handleRetry = () => {
@@ -109,7 +104,6 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-// Higher-order component for wrapping components with error boundary
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
   fallback?: ReactNode

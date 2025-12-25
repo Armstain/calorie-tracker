@@ -1,14 +1,13 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { RotateCcw, Check, Upload, Camera } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { RotateCcw, Check, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CameraProps } from '@/types';
 
 export default function WorkingCamera({ onPhotoCapture, onError }: CameraProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [isActive, setIsActive] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -55,9 +54,7 @@ export default function WorkingCamera({ onPhotoCapture, onError }: CameraProps) 
           video.play().catch(console.error);
         };
 
-        video.oncanplay = () => {
-          setIsActive(true);
-        };
+        video.oncanplay = () => {};
 
         video.onerror = (error) => {
           console.error("Video error:", error);
@@ -77,43 +74,18 @@ export default function WorkingCamera({ onPhotoCapture, onError }: CameraProps) 
     }
   };
 
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
-      setIsActive(false);
-    }
-  };
+  
 
-  const capturePhoto = () => {
-    if (!videoRef.current) return;
-
-    try {
-      setIsLoading(true);
-      const video = videoRef.current;
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      if (!ctx) {
-        onError('Canvas not supported');
-        return;
+  // Ensure camera tracks are stopped when component unmounts or stream changes
+  useEffect(() => {
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
       }
+    };
+  }, [stream]);
 
-      canvas.width = video.videoWidth || 640;
-      canvas.height = video.videoHeight || 480;
-
-      ctx.drawImage(video, 0, 0);
-
-      const imageData = canvas.toDataURL("image/jpeg", 0.8);
-
-      setCapturedImage(imageData);
-      stopCamera();
-    } catch (error) {
-      onError(`Capture failed: ${error}`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  
 
   const confirmPhoto = () => {
     if (capturedImage) {

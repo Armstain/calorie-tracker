@@ -165,7 +165,7 @@ export default function OnboardingFlow({ onComplete, onSkip, initialProfile }: O
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
-              className="bg-green-600 h-2 rounded-full transition-all duration-300 ease-out"
+              className="bg-gradient-to-r from-amber-500 to-orange-500 h-2 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -248,7 +248,7 @@ export default function OnboardingFlow({ onComplete, onSkip, initialProfile }: O
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50">
       {renderProgressIndicator()}
       
       {/* Main content area with top padding when progress bar is shown */}
@@ -268,7 +268,7 @@ export default function OnboardingFlow({ onComplete, onSkip, initialProfile }: O
             </p>
             <button
               onClick={() => setCurrentStep('welcome')}
-              className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+              className="bg-amber-600 hover:bg-amber-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
             >
               Start Over
             </button>

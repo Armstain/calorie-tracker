@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import {
   Camera,
   BarChart3,
@@ -16,6 +16,7 @@ import HistoryView from "@/components/HistoryView";
 import GoalSettings from "@/components/GoalSettings";
 import SplashScreen from "@/components/SplashScreen";
 import OnboardingFlow from "@/components/onboarding/OnboardingFlow";
+import StorageAlert from "@/components/StorageAlert";
 import ErrorNotification, {
   NetworkStatusIndicator,
 } from "@/components/ErrorNotification";
@@ -25,13 +26,21 @@ import { useNetworkStatus } from "@/lib/hooks/useNetworkStatus";
 import { useToast } from "@/lib/hooks/useToast";
 import { ToastContainer } from "@/components/ui/toast";
 import { storageService } from "@/lib/storage";
-import { geminiService } from "@/lib/gemini";
-import { FoodAnalysisResult, FoodEntry, UserSettings, UserProfile } from "@/types";
+import { FoodAnalysisResult, UserSettings, UserProfile, AppError } from "@/types";
 import { dateUtils } from "@/lib/utils";
 import WorkingCamera from "@/components/WorkingCamera";
 import HealthIntegration from "@/components/HealthIntegration";
 import FoodDatabaseEntry from "@/components/FoodDatabaseEntry";
 import { CommonFood } from "@/lib/foodDatabase";
+
+import {
+  useTodaysEntries,
+  useWeeklyData,
+  useUserSettings,
+  useFoodAnalysis,
+  useSaveFoodEntry,
+  useUpdateUserSettings,
+} from "@/lib/queries";
 
 type AppView =
   | "capture"
@@ -48,15 +57,18 @@ export default function Home() {
   const [currentView, setCurrentView] = useState<AppView>("capture");
   const [analysisResult, setAnalysisResult] =
     useState<FoodAnalysisResult | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [settings, setSettings] = useState<UserSettings>(() => {
-    return storageService.getUserSettings();
-  });
-  const [todaysEntries, setTodaysEntries] = useState<FoodEntry[]>([]);
-  const [weeklyData, setWeeklyData] = useState(() => {
-    return storageService.getWeeklyData();
-  });
   const [showFoodDatabase, setShowFoodDatabase] = useState(false);
+  const analysisAbortRef = useRef<AbortController | null>(null);
+
+  // TanStack Query hooks for data fetching
+  const { data: todaysEntries = [], isLoading: isLoadingEntries, refetch: refetchEntries } = useTodaysEntries();
+  const { data: weeklyData = [], refetch: refetchWeekly } = useWeeklyData();
+  const { data: settings, isLoading: isLoadingSettings, refetch: refetchSettings } = useUserSettings();
+
+  // TanStack Query mutations
+  const foodAnalysisMutation = useFoodAnalysis();
+  const saveFoodEntryMutation = useSaveFoodEntry();
+  const updateSettingsMutation = useUpdateUserSettings();
 
   const {
     error,
@@ -68,12 +80,17 @@ export default function Home() {
   } = useErrorHandler();
   const { isOnline, isSlowConnection } = useNetworkStatus();
   const {
-    loading: showLoadingToast,
-    success: showSuccessToast,
-    dismiss
+    success: showSuccessToast
   } = useToast();
 
-  // Check onboarding status on app load
+  const isNoFoodRecognizedError = useMemo(() => {
+    if (!error || typeof error !== 'object') return false;
+    if (!('statusCode' in error)) return false;
+    return (error as { statusCode?: unknown }).statusCode === 422;
+  }, [error]);
+
+
+
   useEffect(() => {
     const checkOnboardingStatus = () => {
       try {
@@ -102,15 +119,10 @@ export default function Home() {
   }, []);
 
   const refreshData = useCallback(() => {
-    setTodaysEntries(storageService.getTodaysEntries());
-    setWeeklyData(storageService.getWeeklyData());
-    setSettings(storageService.getUserSettings());
-  }, []);
-
-  // Load initial data
-  useEffect(() => {
-    refreshData();
-  }, [refreshData]);
+    refetchEntries();
+    refetchWeekly();
+    refetchSettings();
+  }, [refetchEntries, refetchWeekly, refetchSettings]);
 
   const handlePhotoCapture = useCallback(
     async (imageData: string) => {
@@ -121,64 +133,104 @@ export default function Home() {
         return;
       }
 
-      // Show loading toast
-      const loadingToastId = showLoadingToast(
-        "Analyzing food...",
-        "AI is identifying food items and calculating calories"
-      );
-
-      setIsAnalyzing(true);
-      try {
-        const result = await geminiService.analyzeFood(
-          imageData,
-          settings.apiKey
-        );
-        setAnalysisResult(result);
-        setCurrentView("results");
-
-        // Dismiss loading toast and show success toast
-        dismiss(loadingToastId);
-        showSuccessToast(
-          "Analysis complete!",
-          `Found ${result.foods.length} food item${result.foods.length !== 1 ? 's' : ''} with ${result.totalCalories} calories`,
-          4000
-        );
-      } catch (error) {
-        dismiss(loadingToastId);
-        showError(error as Error);
-      } finally {
-        setIsAnalyzing(false);
+      // Cancel any in-flight analysis before starting a new one
+      if (analysisAbortRef.current) {
+        analysisAbortRef.current.abort();
       }
+      const controller = new AbortController();
+      analysisAbortRef.current = controller;
+
+      foodAnalysisMutation.mutate(
+        { imageData, apiKey: settings?.apiKey || '', signal: controller.signal },
+        {
+          onSuccess: (result) => {
+            analysisAbortRef.current = null;
+            setAnalysisResult(result);
+            setCurrentView("results");
+
+            showSuccessToast(
+              "Analysis complete!",
+              `Found ${result.foods.length} food item${result.foods.length !== 1 ? 's' : ''} with ${result.totalCalories} calories`,
+              4000
+            );
+          },
+          onError: (error: unknown) => {
+            analysisAbortRef.current = null;
+
+            // User clicked Stop Scan (canceled request)
+            if (error && typeof error === 'object' && 'code' in error && (error as { code?: unknown }).code === 'canceled') {
+              return;
+            }
+
+            // Ensure error has proper format for useErrorHandler
+            if (error && typeof error === 'object' && 'type' in error && 'message' in error) {
+              showError(error as AppError);
+            } else {
+              // Fallback for malformed errors
+              let errorMessage = 'Food analysis failed. Please check your connection and try again.';
+
+              if (error && typeof error === 'object' && 'message' in error) {
+                errorMessage = String((error as { message: unknown }).message);
+              } else if (typeof error === 'string') {
+                errorMessage = error;
+              }
+
+              showError({
+                type: 'network' as const,
+                message: errorMessage
+              });
+            }
+          },
+          onSettled: () => {
+            analysisAbortRef.current = null;
+          },
+        }
+      );
     },
-    [isOnline, settings.apiKey, showError, showLoadingToast, showSuccessToast, dismiss]
+    [isOnline, settings?.apiKey, showError, showSuccessToast, foodAnalysisMutation]
   );
 
-  const handleAddToDaily = useCallback(async () => {
+  const handleStopScan = useCallback(() => {
+    if (analysisAbortRef.current) {
+      analysisAbortRef.current.abort();
+      analysisAbortRef.current = null;
+    }
+
+    // Clear mutation state immediately so the UI stops showing "Analyzing..."
+    foodAnalysisMutation.reset();
+  }, [foodAnalysisMutation]);
+
+  const handleAddToDaily = useCallback(() => {
     if (!analysisResult) return;
 
-    try {
-      storageService.saveFoodEntry({
-        timestamp: analysisResult.timestamp,
-        foods: analysisResult.foods,
-        totalCalories: analysisResult.totalCalories,
-        imageData: analysisResult.imageUrl,
-        date: dateUtils.getCurrentDate(),
-      });
+    const entry = {
+      timestamp: analysisResult.timestamp,
+      foods: analysisResult.foods,
+      totalCalories: analysisResult.totalCalories,
+      imageData: analysisResult.imageUrl,
+      date: dateUtils.getCurrentDate(),
+    };
 
-      refreshData();
-      setCurrentView("tracker");
-      setAnalysisResult(null);
-      
-      // Show success toast
-      showSuccessToast(
-        "Added to daily total!",
-        `${analysisResult.totalCalories} calories added to today's intake`,
-        3000
-      );
-    } catch (error) {
-      showError(error as Error);
-    }
-  }, [analysisResult, refreshData, showError, showSuccessToast]);
+    saveFoodEntryMutation.mutate(
+      { entry },
+      {
+        onSuccess: () => {
+          setCurrentView("tracker");
+          setAnalysisResult(null);
+
+          // Show success toast
+          showSuccessToast(
+            "Added to daily total!",
+            `${analysisResult.totalCalories} calories added to today's intake`,
+            3000
+          );
+        },
+        onError: (error) => {
+          showError(error as Error);
+        },
+      }
+    );
+  }, [analysisResult, saveFoodEntryMutation, showError, showSuccessToast]);
 
   const handleRetakePhoto = useCallback(() => {
     setAnalysisResult(null);
@@ -187,26 +239,30 @@ export default function Home() {
 
   const handleGoalUpdate = useCallback(
     (newGoal: number) => {
-      try {
-        storageService.updateDailyGoal(newGoal);
-        refreshData();
-      } catch (error) {
-        showError(error as Error);
-      }
+      updateSettingsMutation.mutate(
+        { settings: { dailyCalorieGoal: newGoal } },
+        {
+          onError: (error) => {
+            showError(error as Error);
+          },
+        }
+      );
     },
-    [refreshData, showError]
+    [updateSettingsMutation, showError]
   );
 
   const handleSettingsUpdate = useCallback(
     (newSettings: Partial<UserSettings>) => {
-      try {
-        storageService.updateUserSettings(newSettings);
-        refreshData();
-      } catch (error) {
-        showError(error as Error);
-      }
+      updateSettingsMutation.mutate(
+        { settings: newSettings },
+        {
+          onError: (error) => {
+            showError(error as Error);
+          },
+        }
+      );
     },
-    [refreshData, showError]
+    [updateSettingsMutation, showError]
   );
 
   const handleDateSelect = useCallback((date: string) => {
@@ -219,25 +275,24 @@ export default function Home() {
     [todaysEntries]
   );
 
-  const weeklyAverage = useMemo(
-    () =>
-      weeklyData.length > 0
-        ? Math.round(
-            weeklyData.reduce((sum, day) => sum + day.totalCalories, 0) /
-              weeklyData.length
-          )
-        : 0,
-    [weeklyData]
-  );
+  const weeklyAverage = useMemo(() => {
+    return weeklyData.length > 0
+      ? Math.round(
+          weeklyData.reduce((sum, day) => sum + day.totalCalories, 0) /
+            weeklyData.length
+        )
+      : 0;
+  }, [weeklyData]);
 
-  const goalAchievementRate = useMemo(
-    () =>
-      weeklyData.length > 0
-        ? (weeklyData.filter((day) => day.goalMet).length / weeklyData.length) *
-          100
-        : 0,
-    [weeklyData]
-  );
+  const goalAchievementRate = useMemo(() => {
+    if (weeklyData.length === 0 || !settings?.dailyCalorieGoal) return 0;
+
+    const goalMetDays = weeklyData.filter(
+      (day) => day.totalCalories >= settings.dailyCalorieGoal
+    ).length;
+
+    return (goalMetDays / weeklyData.length) * 100;
+  }, [weeklyData, settings?.dailyCalorieGoal]);
 
   const handleSplashComplete = () => {
     setShowSplash(false);
@@ -289,7 +344,7 @@ export default function Home() {
     handleOnboardingComplete(minimalProfile);
   }, [handleOnboardingComplete]);
 
-  const handleFoodDatabaseAdd = useCallback((food: CommonFood, calories: number, portion: string) => {
+  const handleFoodDatabaseAdd = useCallback(async (food: CommonFood, calories: number, portion: string) => {
     try {
       // Create a food entry from the database selection
       const foodEntry = {
@@ -304,7 +359,7 @@ export default function Home() {
         date: dateUtils.getCurrentDate(),
       };
 
-      storageService.saveFoodEntry(foodEntry);
+      await storageService.saveFoodEntry(foodEntry);
       refreshData();
       setCurrentView("tracker");
       setShowFoodDatabase(false);
@@ -464,28 +519,46 @@ export default function Home() {
                     View Details →
                   </button>
                 </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-bold text-gray-900">{currentTotal}</span>
-                      <span className="text-sm text-gray-500">/ {settings.dailyCalorieGoal} cal</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                      <div
-                        className="bg-gradient-to-r from-amber-400 to-orange-500 h-2 rounded-full transition-all duration-300"
-                        style={{
-                          width: `${Math.min((currentTotal / settings.dailyCalorieGoal) * 100, 100)}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm text-gray-500">Remaining</div>
-                    <div className="text-lg font-semibold text-gray-800">
-                      {Math.max(settings.dailyCalorieGoal - currentTotal, 0)}
+                {isLoadingSettings || isLoadingEntries ? (
+                  <div className="animate-pulse">
+                    <div className="flex items-center gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-baseline gap-2 mb-2">
+                          <div className="h-8 bg-gray-300 rounded w-16"></div>
+                          <div className="h-4 bg-gray-300 rounded w-20"></div>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2"></div>
+                      </div>
+                      <div className="text-right">
+                        <div className="h-4 bg-gray-300 rounded w-16 mb-1"></div>
+                        <div className="h-6 bg-gray-300 rounded w-12"></div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : settings ? (
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-2xl font-bold text-gray-900">{currentTotal}</span>
+                        <span className="text-sm text-gray-500">/ {settings.dailyCalorieGoal} cal</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                        <div
+                          className="bg-gradient-to-r from-amber-400 to-orange-500 h-2 rounded-full transition-all duration-300"
+                          style={{
+                            width: `${Math.min((currentTotal / settings.dailyCalorieGoal) * 100, 100)}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm text-gray-500">Remaining</div>
+                      <div className="text-lg font-semibold text-gray-800">
+                        {Math.max(settings.dailyCalorieGoal - currentTotal, 0)}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
               </div>
 
               {/* Welcome Message for New Users */}
@@ -567,12 +640,34 @@ export default function Home() {
                   onPhotoCapture={handlePhotoCapture}
                   onError={showError}
                 />
+                {foodAnalysisMutation.isPending && (
+                  <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="animate-spin rounded-full h-5 w-5 border-2 border-amber-500 border-t-transparent"></div>
+                        <div className="text-sm text-amber-700">
+                          <div className="font-medium">Analyzing your food...</div>
+                          <div className="text-xs text-amber-600">AI is identifying ingredients and calculating calories</div>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleStopScan}
+                        className="px-3 py-1.5 text-sm font-medium text-amber-700 hover:text-amber-800 hover:bg-amber-100 border border-amber-300 rounded-lg transition-colors"
+                      >
+                        Stop scan
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Quick Tips */}
               <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
                 <h4 className="font-medium text-blue-800 mb-2">💡 Pro Tips</h4>
                 <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• <span className="text-green-600 font-medium">Ready to use!</span> Default API key is already configured</li>
                   <li>• Ensure good lighting for better AI recognition</li>
                   <li>• Include the whole plate for accurate portion estimates</li>
                   <li>• Try different angles if the first analysis isn&apos;t accurate</li>
@@ -592,7 +687,7 @@ export default function Home() {
             />
           )}
 
-          {currentView === "tracker" && (
+          {currentView === "tracker" && settings && (
             <DailyTracker
               dailyGoal={settings.dailyCalorieGoal}
               currentTotal={currentTotal}
@@ -615,7 +710,7 @@ export default function Home() {
             />
           )}
 
-          {currentView === "settings" && (
+          {currentView === "settings" && settings && (
             <GoalSettings
               settings={settings}
               onSettingsUpdate={handleSettingsUpdate}
@@ -702,7 +797,7 @@ export default function Home() {
           isVisible={isErrorVisible}
           onClose={hideError}
           onRetry={() => retry()}
-          canRetry={canRetry}
+          canRetry={canRetry && !isNoFoodRecognizedError}
           autoHide={true}
         />
 
@@ -713,6 +808,9 @@ export default function Home() {
           isOnline={isOnline}
           isSlowConnection={isSlowConnection}
         />
+
+        {/* Storage Alert */}
+        <StorageAlert onOptimize={refreshData} />
 
         {/* Food Database Entry Modal */}
         {showFoodDatabase && (

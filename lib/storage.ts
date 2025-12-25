@@ -3,6 +3,7 @@
 import { FoodEntry, DailyData, UserSettings, StorageError, UserProfile, StoredProfile } from '@/types';
 import { STORAGE_KEYS, APP_CONFIG } from '@/lib/config';
 import { dateUtils, validation, generateId } from '@/lib/utils';
+import { storageOptimizer } from '@/lib/storageOptimizer';
 
 export class StorageService {
   private static instance: StorageService;
@@ -89,10 +90,13 @@ export class StorageService {
   }
 
   // Food Entry Management
-  saveFoodEntry(entry: Omit<FoodEntry, 'id'>): FoodEntry {
+  async saveFoodEntry(entry: Omit<FoodEntry, 'id'>): Promise<FoodEntry> {
     try {
+      // Optimize entry before saving (removes images by default)
+      const optimizedEntry = await storageOptimizer.optimizeFoodEntry(entry);
+      
       const fullEntry: FoodEntry = {
-        ...entry,
+        ...optimizedEntry,
         id: generateId(),
       };
 
@@ -284,6 +288,44 @@ export class StorageService {
     }
   }
 
+  // Clear today's entries
+  clearTodaysEntries(): number {
+    try {
+      const todaysEntries = this.getTodaysEntries();
+      const allEntries = this.getAllEntries();
+      const todaysDate = dateUtils.getCurrentDate();
+      
+      const filteredEntries = allEntries.filter(entry => entry.date !== todaysDate);
+      
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEYS.DAILY_ENTRIES, JSON.stringify(filteredEntries));
+      }
+      
+      return todaysEntries.length;
+    } catch (error) {
+      throw this.createStorageError('Failed to clear today\'s entries', error);
+    }
+  }
+
+  // Clear this week's entries
+  clearWeekEntries(): number {
+    try {
+      const weekDates = dateUtils.getWeekDateRange();
+      const allEntries = this.getAllEntries();
+      
+      const filteredEntries = allEntries.filter(entry => !weekDates.includes(entry.date));
+      const deletedCount = allEntries.length - filteredEntries.length;
+      
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEYS.DAILY_ENTRIES, JSON.stringify(filteredEntries));
+      }
+      
+      return deletedCount;
+    } catch (error) {
+      throw this.createStorageError('Failed to clear week entries', error);
+    }
+  }
+
   // Storage quota management
   getStorageInfo(): { used: number; available: number; percentage: number } {
     try {
@@ -306,6 +348,23 @@ export class StorageService {
     } catch {
       return { used: 0, available: 0, percentage: 0 };
     }
+  }
+
+  // Storage optimization methods
+  getOptimizationRecommendations() {
+    return storageOptimizer.getOptimizationRecommendations();
+  }
+
+  performStorageOptimization(): { deletedEntries: number; spaceSaved: number } {
+    return storageOptimizer.performCleanup();
+  }
+
+  updateOptimizationConfig(config: Partial<Parameters<typeof storageOptimizer.updateConfig>[0]>) {
+    storageOptimizer.updateConfig(config);
+  }
+
+  getOptimizationConfig() {
+    return storageOptimizer.getConfig();
   }
 
   // User Profile Management

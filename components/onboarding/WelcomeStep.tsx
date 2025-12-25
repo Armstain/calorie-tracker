@@ -9,12 +9,14 @@ interface WelcomeStepProps {
 
 export default function WelcomeStep({ onContinue, onSkip }: WelcomeStepProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-br from-green-50 to-blue-50">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-br from-amber-50 to-orange-50">
       <div className="w-full max-w-md mx-auto text-center space-y-8">
         {/* App Logo/Icon */}
         <div className="flex justify-center mb-8">
-          <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center">
-            <span className="text-3xl">🍎</span>
+          <div className="w-20 h-20 bg-amber-500 rounded-full flex items-center justify-center">
+            <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" clipRule="evenodd" />
+            </svg>
           </div>
         </div>
 
@@ -36,24 +38,24 @@ export default function WelcomeStep({ onContinue, onSkip }: WelcomeStepProps) {
             </h2>
             <div className="space-y-3">
               <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-green-600 text-sm">✓</span>
+                <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-amber-600 text-sm">✓</span>
                 </div>
                 <p className="text-gray-700">
                   Get accurate calorie recommendations based on your personal goals
                 </p>
               </div>
               <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-green-600 text-sm">✓</span>
+                <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-amber-600 text-sm">✓</span>
                 </div>
                 <p className="text-gray-700">
                   Track your progress with personalized insights
                 </p>
               </div>
               <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-green-600 text-sm">✓</span>
+                <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-amber-600 text-sm">✓</span>
                 </div>
                 <p className="text-gray-700">
                   Receive health recommendations tailored to you
@@ -63,16 +65,16 @@ export default function WelcomeStep({ onContinue, onSkip }: WelcomeStepProps) {
           </div>
 
           {/* Privacy Message */}
-          <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+          <div className="bg-orange-50 rounded-lg p-4 border border-orange-100">
             <div className="flex items-start space-x-3">
-              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-blue-600 text-sm">🔒</span>
+              <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-orange-600 text-sm">🔒</span>
               </div>
               <div>
-                <h3 className="font-medium text-blue-900 mb-1">
+                <h3 className="font-medium text-orange-900 mb-1">
                   Your privacy matters
                 </h3>
-                <p className="text-sm text-blue-800">
+                <p className="text-sm text-orange-800">
                   All your data stays on your device. We never share or store your personal information on external servers.
                 </p>
               </div>
@@ -84,7 +86,7 @@ export default function WelcomeStep({ onContinue, onSkip }: WelcomeStepProps) {
         <div className="space-y-3 pt-4">
           <button
             onClick={onContinue}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors duration-200 shadow-sm"
+            className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors duration-200"
           >
             Get Started
           </button>

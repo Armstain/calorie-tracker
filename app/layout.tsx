@@ -1,15 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Nunito, Nunito_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import { QueryProvider } from "@/lib/providers/QueryProvider";
 
-const nunitoSans = Nunito({
-  variable: "--font-nunito-sans",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const nunitoMono = Nunito_Sans({
-  variable: "--font-nunito-mono",
-  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -87,6 +83,10 @@ export default function RootLayout({
           href="https://generativelanguage.googleapis.com"
         />
 
+        {/* Favicon */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        
         {/* Apple touch icons */}
         <link
           rel="apple-touch-icon"
@@ -99,17 +99,13 @@ export default function RootLayout({
           sizes="32x32"
           href="/favicon-32x32.png"
         />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/favicon-16x16.png"
-        />
       </head>
       <body
-        className={`${nunitoSans.variable} ${nunitoMono.variable} antialiased`}
+        className={`${inter.variable} antialiased`}
       >
-        {children}
+        <QueryProvider>
+          {children}
+        </QueryProvider>
       </body>
     </html>
   );

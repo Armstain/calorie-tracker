@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CheckCircle, AlertTriangle, Info, User, RotateCcw } from 'lucide-react';
+import { CheckCircle, AlertTriangle, Info, User, RotateCcw, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { UserSettings, UserProfile } from '@/types';
 import { formatCalories } from '@/lib/utils';
 import { storageService } from '@/lib/storage';
 import DataManagement from '@/components/DataManagement';
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell } from 'recharts';
 
 interface GoalSettingsProps {
   settings: UserSettings;
@@ -396,6 +397,35 @@ export default function GoalSettings({
               </div>
             </div>
           )}
+
+          {/* Weekly Progress Chart */}
+          <div className="mt-6 pt-6 border-t border-gray-100">
+            <div className="flex items-center gap-2 mb-4">
+              <TrendingUp className="w-5 h-5 text-gray-600" />
+              <h4 className="font-medium text-gray-900">Weekly Progress</h4>
+            </div>
+            
+            <div className="h-32">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={[
+                  { name: 'Goal', value: settings.dailyCalorieGoal, color: '#e5e7eb' },
+                  { name: 'Average', value: weeklyAverage, color: weeklyAverage >= settings.dailyCalorieGoal ? '#10b981' : '#f59e0b' }
+                ]}>
+                  <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                  <YAxis tick={{ fontSize: 12 }} tickFormatter={(value) => `${Math.round(value / 100)}k`} />
+                  <Tooltip formatter={(value: number) => [formatCalories(value), 'Calories']} />
+                  <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                    {[
+                      { name: 'Goal', value: settings.dailyCalorieGoal, color: '#e5e7eb' },
+                      { name: 'Average', value: weeklyAverage, color: weeklyAverage >= settings.dailyCalorieGoal ? '#10b981' : '#f59e0b' }
+                    ].map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
       )}
 

@@ -1,37 +1,46 @@
-// Environment configuration for the Food Calorie Estimator app
-
 export interface EnvironmentConfig {
   GEMINI_API_KEY: string;
   NEXT_PUBLIC_APP_URL: string;
   NODE_ENV: 'development' | 'production';
 }
 
-// Gemini AI configuration with model fallback support
 export const GEMINI_MODELS = {
-  'gemini-2.0-flash': {
-    url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+  'gemini-2.5-flash': {
+    url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
     maxRequestsPerMinute: 15,
     maxRequestsPerDay: 1500,
-    priority: 1, // Highest priority
+    priority: 0, // Default - balanced speed and capability
   },
-  'gemini-1.5-pro': {
-    url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent',
+  'gemini-2.5-pro': {
+    url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent',
     maxRequestsPerMinute: 2,
     maxRequestsPerDay: 50,
-    priority: 2,
+    priority: 1, // Highest capability, lower rate limits
   },
-  'gemini-1.5-flash': {
-    url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+  'gemini-2.5-flash-lite': {
+    url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent',
+    maxRequestsPerMinute: 30,
+    maxRequestsPerDay: 3000,
+    priority: 2, // Speed optimized for simple tasks
+  },
+  'gemini-3-flash-preview': {
+    url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent',
     maxRequestsPerMinute: 15,
     maxRequestsPerDay: 1500,
-    priority: 3, // Fallback
+    priority: 3,
+  },
+  'gemini-3-pro-preview': {
+    url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent',
+    maxRequestsPerMinute: 2,
+    maxRequestsPerDay: 50,
+    priority: 4,
   },
 } as const;
 
 export const GEMINI_CONFIG = {
   MODELS: GEMINI_MODELS,
-  DEFAULT_MODEL: 'gemini-2.0-flash',
-  FALLBACK_ORDER: ['gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.5-flash'],
+  DEFAULT_MODEL: 'gemini-2.5-flash',
+  FALLBACK_ORDER: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.5-flash-lite', 'gemini-3-flash-preview', 'gemini-3-pro-preview'],
   MAX_IMAGE_SIZE: 1024 * 1024, // 1MB
   TIMEOUT: 30000, // 30 seconds
 } as const;
@@ -44,13 +53,11 @@ export const APP_CONFIG = {
   IMAGE_QUALITY: 0.8,
   MAX_IMAGE_SIZE: 1024 * 1024, // 1MB in bytes
   SUPPORTED_IMAGE_FORMATS: ['image/jpeg', 'image/png', 'image/webp'],
-  // Default test API key for users to try the app
   DEFAULT_TEST_API_KEY: 'AIzaSyCwIBFPUSFZf5Ew00lT4fq6SbfEsCbCMkI',
-  // Rate limiting for default test key
   DEFAULT_KEY_LIMITS: {
-    REQUESTS_PER_MINUTE: 10, // Lower limit for shared test key
-    REQUESTS_PER_DAY: 100,   // Daily limit for test users
-    MAX_CONCURRENT_USERS: 50, // Estimated concurrent users
+    REQUESTS_PER_MINUTE: 10,
+    REQUESTS_PER_DAY: 100,
+    MAX_CONCURRENT_USERS: 50,
   },
 } as const;
 

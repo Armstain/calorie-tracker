@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Try models in fallback order with retry logic
-    const modelsToTry = ['gemini-1.5-flash', 'gemini-1.5-pro'];
+    const modelsToTry = GEMINI_CONFIG.FALLBACK_ORDER;
     const retryDelays = [1000, 2000, 4000]; // Exponential backoff
     
     for (const modelName of modelsToTry) {

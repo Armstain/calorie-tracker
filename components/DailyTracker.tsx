@@ -1,15 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Utensils, PartyPopper, Trash2, RotateCcw, Plus } from "lucide-react";
+import { Utensils, PartyPopper, Trash2, RotateCcw, Plus, PieChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TrackerProps } from "@/types";
 import { formatCalories, dateUtils } from "@/lib/utils";
-import { storageService } from "@/lib/storage";
 import Image from "next/image";
 import FoodDatabaseEntry from "@/components/FoodDatabaseEntry";
 import { CommonFood } from "@/lib/foodDatabase";
+import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { useDeleteFoodEntry, useSaveFoodEntry } from "@/lib/queries";
+import { useToast } from "@/lib/hooks/useToast";
 
 export default function DailyTracker({
   dailyGoal,
@@ -20,9 +22,15 @@ export default function DailyTracker({
   const [isEditingGoal, setIsEditingGoal] = useState(false);
   const [goalInput, setGoalInput] = useState(dailyGoal.toString());
   const [expandedEntry, setExpandedEntry] = useState<string | null>(null);
-  const [showResetConfirm, setShowResetConfirm] = useState(false);
-  const [deleteEntryId, setDeleteEntryId] = useState<string | null>(null);
+  const [resetStep, setResetStep] = useState<'idle' | 'confirm' | 'processing'>('idle');
   const [showFoodDatabase, setShowFoodDatabase] = useState(false);
+
+  // TanStack Query mutations
+  const deleteEntryMutation = useDeleteFoodEntry();
+  const saveFoodEntryMutation = useSaveFoodEntry();
+
+  // Toast notifications
+  const { addToast } = useToast();
 
   useEffect(() => {
     setGoalInput(dailyGoal.toString());
@@ -73,70 +81,151 @@ export default function DailyTracker({
   };
 
   const handleDeleteEntry = (entryId: string) => {
-    setDeleteEntryId(entryId);
-  };
+    // Find the entry to get its details for undo
+    const entryToDelete = todaysEntries.find(entry => entry.id === entryId);
+    if (!entryToDelete) return;
 
-  const confirmDeleteEntry = () => {
-    if (deleteEntryId) {
-      try {
-        storageService.deleteEntry(deleteEntryId);
-        // Trigger refresh by calling onGoalUpdate with current goal
-        onGoalUpdate(dailyGoal);
-        setDeleteEntryId(null);
-      } catch (error) {
-        console.error('Error deleting entry:', error);
-        // Could show error message here
+    // Immediately delete with undo option
+    deleteEntryMutation.mutate(
+      { entryId },
+      {
+        onSuccess: () => {
+          // Show success toast with undo action
+          addToast({
+            type: 'success',
+            title: "Meal removed",
+            description: `${entryToDelete.foods[0]?.name || 'Meal'} (${entryToDelete.totalCalories} cal) was removed`,
+            duration: 8000, // Longer duration for undo
+            action: {
+              label: "Undo",
+              onClick: () => {
+                // Re-add the entry
+                saveFoodEntryMutation.mutate(
+                  { entry: entryToDelete },
+                  {
+                    onSuccess: () => {
+                      addToast({
+                        type: 'success',
+                        title: "Meal restored",
+                        description: "The meal has been added back to your log"
+                      });
+                    },
+                    onError: () => {
+                      addToast({
+                        type: 'error',
+                        title: "Failed to restore meal",
+                        description: "Please try adding the meal again manually"
+                      });
+                    }
+                  }
+                );
+              }
+            }
+          });
+        },
+        onError: (error) => {
+          console.error('Error deleting entry:', error);
+          addToast({
+            type: 'error',
+            title: "Failed to remove meal",
+            description: "Please try again"
+          });
+        }
       }
-    }
-  };
-
-  const cancelDeleteEntry = () => {
-    setDeleteEntryId(null);
+    );
   };
 
   const handleResetProgress = () => {
-    setShowResetConfirm(true);
-  };
+    if (resetStep === 'idle') {
+      setResetStep('confirm');
+      // Auto-reset to idle after 5 seconds if no action
+      setTimeout(() => {
+        setResetStep(current => current === 'confirm' ? 'idle' : current);
+      }, 5000);
+    } else if (resetStep === 'confirm') {
+      setResetStep('processing');
 
-  const confirmResetProgress = () => {
-    try {
-      // Delete all today's entries
-      todaysEntries.forEach(entry => {
-        storageService.deleteEntry(entry.id);
+      // Store entries for potential undo
+      const entriesToDelete = [...todaysEntries];
+      let deletedCount = 0;
+      const totalEntries = entriesToDelete.length;
+
+      if (totalEntries === 0) {
+        setResetStep('idle');
+        return;
+      }
+
+      entriesToDelete.forEach(entry => {
+        deleteEntryMutation.mutate(
+          { entryId: entry.id },
+          {
+            onSuccess: () => {
+              deletedCount++;
+              if (deletedCount === totalEntries) {
+                setResetStep('idle');
+                // Show success with undo option
+                addToast({
+                  type: 'success',
+                  title: "Progress reset",
+                  description: `Cleared ${totalEntries} meal entries`,
+                  duration: 10000,
+                  action: {
+                    label: "Undo Reset",
+                    onClick: () => {
+                      // Restore all entries
+                      entriesToDelete.forEach(entry => {
+                        saveFoodEntryMutation.mutate({ entry });
+                      });
+                      addToast({
+                        type: 'success',
+                        title: "Progress restored",
+                        description: "All meals have been added back"
+                      });
+                    }
+                  }
+                });
+              }
+            },
+            onError: (error) => {
+              console.error('Error deleting entry:', error);
+              setResetStep('idle');
+              addToast({
+                type: 'error',
+                title: "Failed to reset progress",
+                description: "Please try again"
+              });
+            }
+          }
+        );
       });
-      // Trigger refresh
-      onGoalUpdate(dailyGoal);
-      setShowResetConfirm(false);
-    } catch (error) {
-      console.error('Error resetting progress:', error);
     }
-  };
-
-  const cancelResetProgress = () => {
-    setShowResetConfirm(false);
   };
 
   const handleFoodDatabaseAdd = (food: CommonFood, calories: number, portion: string) => {
-    try {
-      // Create a food entry from the database selection
-      const foodEntry = {
-        timestamp: new Date().toISOString(),
-        foods: [{
-          name: food.name,
-          calories: calories,
-          quantity: portion,
-          confidence: 1.0 // Database entries have 100% confidence
-        }],
-        totalCalories: calories,
-        date: dateUtils.getCurrentDate(),
-      };
+    // Create a food entry from the database selection
+    const foodEntry = {
+      timestamp: new Date().toISOString(),
+      foods: [{
+        name: food.name,
+        calories: calories,
+        quantity: portion,
+        confidence: 1.0 // Database entries have 100% confidence
+      }],
+      totalCalories: calories,
+      date: dateUtils.getCurrentDate(),
+    };
 
-      storageService.saveFoodEntry(foodEntry);
-      onGoalUpdate(dailyGoal); // Trigger refresh
-      setShowFoodDatabase(false);
-    } catch (error) {
-      console.error('Error adding food from database:', error);
-    }
+    saveFoodEntryMutation.mutate(
+      { entry: foodEntry },
+      {
+        onSuccess: () => {
+          setShowFoodDatabase(false);
+        },
+        onError: (error) => {
+          console.error('Error adding food from database:', error);
+        }
+      }
+    );
   };
 
   return (
@@ -228,9 +317,88 @@ export default function DailyTracker({
           </div>
         </div>
 
+        {/* Progress Visualization */}
+        {todaysEntries.length > 0 && (
+          <div className="mt-6 pt-6 border-t border-gray-100">
+            <div className="flex items-center gap-2 mb-4">
+              <PieChart className="w-5 h-5 text-gray-600" />
+              <h4 className="font-medium text-gray-900">Calorie Breakdown</h4>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Pie Chart */}
+              <div className="h-48">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RechartsPieChart>
+                    <Tooltip 
+                      formatter={(value: number) => [formatCalories(value), 'Calories']}
+                      labelFormatter={(label) => `${label}`}
+                    />
+                    <Pie
+                      data={[
+                        { name: 'Consumed', value: currentTotal, color: isOverGoal ? '#ef4444' : '#10b981' },
+                        { name: 'Remaining', value: Math.max(remainingCalories, 0), color: '#e5e7eb' }
+                      ]}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={40}
+                      outerRadius={80}
+                      paddingAngle={2}
+                      dataKey="value"
+                    >
+                      {[
+                        { name: 'Consumed', value: currentTotal, color: isOverGoal ? '#ef4444' : '#10b981' },
+                        { name: 'Remaining', value: Math.max(remainingCalories, 0), color: '#e5e7eb' }
+                      ].map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                  </RechartsPieChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Meal Breakdown */}
+              <div className="space-y-3">
+                <h5 className="font-medium text-gray-900">Meals Today</h5>
+                {todaysEntries.slice(0, 4).map((entry) => {
+                  const mealTime = new Date(entry.timestamp).toLocaleTimeString([], { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                  });
+                  const mealPercentage = (entry.totalCalories / dailyGoal) * 100;
+                  
+                  return (
+                    <div key={entry.id} className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="text-sm font-medium text-gray-900">
+                          {entry.foods.length === 1 ? entry.foods[0].name : `${entry.foods.length} items`}
+                        </div>
+                        <div className="text-xs text-gray-500">{mealTime}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-gray-900">
+                          {formatCalories(entry.totalCalories)}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {Math.round(mealPercentage)}% of goal
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+                {todaysEntries.length > 4 && (
+                  <div className="text-xs text-gray-500 text-center pt-2">
+                    +{todaysEntries.length - 4} more meals
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Status Message */}
         <div
-          className={`text-center p-3 rounded-lg ${
+          className={`text-center p-3 rounded-lg mt-4 ${
             isOverGoal
               ? "bg-red-50 text-red-700"
               : remainingCalories === 0
@@ -263,15 +431,34 @@ export default function DailyTracker({
                 <div className="text-sm text-gray-600">
                   Total: {formatCalories(currentTotal)} cal
                 </div>
-                <Button
-                  onClick={handleResetProgress}
-                  variant="outline"
-                  size="sm"
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
-                >
-                  <RotateCcw className="w-4 h-4 mr-1" />
-                  Reset Day
-                </Button>
+                <div className="flex items-center gap-2">
+                  {resetStep === 'confirm' && (
+                    <div className="flex items-center gap-2 px-2 py-1 bg-red-50 border border-red-200 rounded text-xs">
+                      <span className="text-red-700">Reset {todaysEntries.length} entries?</span>
+                      <button
+                        onClick={() => setResetStep('idle')}
+                        className="text-red-600 hover:text-red-700 underline"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                  <Button
+                    onClick={handleResetProgress}
+                    variant="outline"
+                    size="sm"
+                    disabled={resetStep === 'processing'}
+                    className={`${
+                      resetStep === 'confirm'
+                        ? 'bg-red-600 text-white hover:bg-red-700 border-red-600'
+                        : 'text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200'
+                    }`}
+                  >
+                    <RotateCcw className="w-4 h-4 mr-1" />
+                    {resetStep === 'processing' ? 'Resetting...' :
+                     resetStep === 'confirm' ? 'Confirm' : 'Reset Day'}
+                  </Button>
+                </div>
               </>
             )}
           </div>
@@ -403,67 +590,7 @@ export default function DailyTracker({
         </div>
       </div>
 
-      {/* Delete Entry Confirmation Modal */}
-      {deleteEntryId && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Remove Meal Entry
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to remove this meal from today&apos;s log? This action cannot be undone.
-            </p>
-            
-            <div className="flex gap-3">
-              <Button
-                onClick={confirmDeleteEntry}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Remove Meal
-              </Button>
-              <Button
-                onClick={cancelDeleteEntry}
-                variant="outline"
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Reset Progress Confirmation Modal */}
-      {showResetConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Reset Today&apos;s Progress
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to reset today&apos;s progress? This will remove all {todaysEntries.length} meal entries and cannot be undone.
-            </p>
-            
-            <div className="flex gap-3">
-              <Button
-                onClick={confirmResetProgress}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Reset Progress
-              </Button>
-              <Button
-                onClick={cancelResetProgress}
-                variant="outline"
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Food Database Entry Modal */}
       {showFoodDatabase && (

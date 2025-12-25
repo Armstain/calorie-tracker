@@ -1,38 +1,77 @@
 'use client';
 
 import { useState } from 'react';
-import { BarChart3, List, TrendingUp, TrendingDown, ArrowRight, CheckCircle } from 'lucide-react';
+import { BarChart3, List, TrendingUp, TrendingDown, ArrowRight, CheckCircle, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-// Removed unused Card and Badge imports
-import { HistoryProps, DailyData } from '@/types';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  Area,
+  AreaChart,
+  ReferenceLine,
+  Cell
+} from 'recharts';
+import { HistoryProps } from '@/types';
 import { formatCalories, dateUtils, calculateWeeklyAverage } from '@/lib/utils';
 
 export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'chart' | 'list'>('chart');
+  const [chartType, setChartType] = useState<'bar' | 'line' | 'area'>('bar');
 
   const weeklyAverage = calculateWeeklyAverage(weeklyData);
   const totalCalories = weeklyData.reduce((sum, day) => sum + day.totalCalories, 0);
   const daysWithGoalMet = weeklyData.filter(day => day.goalMet).length;
   const goalAchievementRate = weeklyData.length > 0 ? (daysWithGoalMet / weeklyData.length) * 100 : 0;
 
+  // Prepare data for Recharts
+  const chartData = weeklyData.map((day) => ({
+    date: day.date,
+    displayDate: dateUtils.formatDisplayDate(day.date).split(' ').slice(0, 2).join(' '),
+    shortDate: dateUtils.formatDisplayDate(day.date).split(' ')[0],
+    calories: day.totalCalories,
+    goal: day.goalCalories,
+    goalMet: day.goalMet,
+    entries: day.entries.length,
+    percentage: day.goalCalories > 0 ? (day.totalCalories / day.goalCalories) * 100 : 0,
+    color: day.goalMet ? '#10b981' : day.totalCalories >= day.goalCalories * 0.8 ? '#f59e0b' : '#ef4444'
+  }));
+
+  // Custom tooltip for charts
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: { displayDate: string; calories: number; goal: number; entries: number; goalMet: boolean; percentage: number } }>; label?: string }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+          <p className="font-medium text-gray-900">{data.displayDate}</p>
+          <p className="text-sm text-gray-600">
+            <span className="font-medium">{formatCalories(data.calories)}</span> of {formatCalories(data.goal)} calories
+          </p>
+          <p className="text-sm text-gray-600">
+            {data.entries} meal{data.entries !== 1 ? 's' : ''} logged
+          </p>
+          <p className={`text-sm font-medium ${data.goalMet ? 'text-green-600' : 'text-red-600'}`}>
+            {data.goalMet ? '✓ Goal Met' : `${Math.round(data.percentage)}% of goal`}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   const handleDateClick = (date: string) => {
     setSelectedDate(selectedDate === date ? null : date);
     onDateSelect(date);
   };
 
-  const getBarHeight = (calories: number) => {
-    if (weeklyData.length === 0) return 0;
-    const maxCalories = Math.max(...weeklyData.map(day => Math.max(day.totalCalories, day.goalCalories)));
-    return Math.max((calories / maxCalories) * 100, 2); // Minimum 2% for visibility
-  };
 
-  const getBarColor = (day: DailyData) => {
-    if (day.totalCalories === 0) return 'bg-gray-200';
-    if (day.goalMet) return 'bg-green-500';
-    if (day.totalCalories >= day.goalCalories * 0.8) return 'bg-yellow-500';
-    return 'bg-red-400';
-  };
 
   const getTrendDirection = () => {
     if (weeklyData.length < 2) return null;
@@ -128,7 +167,7 @@ export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) 
       )}
 
       {/* View Mode Toggle */}
-      <div className="flex justify-center">
+      <div className="flex flex-col sm:flex-row justify-center gap-4">
         <div className="bg-gray-100 rounded-lg p-1 flex">
           <Button
             onClick={() => setViewMode('chart')}
@@ -157,12 +196,61 @@ export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) 
             List View
           </Button>
         </div>
+
+        {/* Chart Type Toggle (only show in chart view) */}
+        {viewMode === 'chart' && weeklyData.length > 0 && (
+          <div className="bg-gray-100 rounded-lg p-1 flex">
+            <Button
+              onClick={() => setChartType('bar')}
+              variant={chartType === 'bar' ? 'default' : 'ghost'}
+              size="sm"
+              className={`px-3 py-2 rounded-md font-medium transition-colors ${
+                chartType === 'bar' 
+                  ? 'bg-white text-gray-900 shadow-sm' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Bar
+            </Button>
+            <Button
+              onClick={() => setChartType('line')}
+              variant={chartType === 'line' ? 'default' : 'ghost'}
+              size="sm"
+              className={`px-3 py-2 rounded-md font-medium transition-colors ${
+                chartType === 'line' 
+                  ? 'bg-white text-gray-900 shadow-sm' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Line
+            </Button>
+            <Button
+              onClick={() => setChartType('area')}
+              variant={chartType === 'area' ? 'default' : 'ghost'}
+              size="sm"
+              className={`px-3 py-2 rounded-md font-medium transition-colors ${
+                chartType === 'area' 
+                  ? 'bg-white text-gray-900 shadow-sm' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Area
+            </Button>
+          </div>
+        )}
       </div>
 
-      {/* Chart View */}
       {viewMode === 'chart' && (
         <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">Daily Calorie Intake</h3>
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-gray-900">Daily Calorie Intake</h3>
+            {weeklyData.length > 0 && (
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Target className="w-4 h-4" />
+                <span>Goal: {formatCalories(weeklyData[0]?.goalCalories || 2000)}</span>
+              </div>
+            )}
+          </div>
           
           {weeklyData.length === 0 ? (
             <div className="text-center py-12">
@@ -171,57 +259,159 @@ export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) 
               <p className="text-sm text-gray-500 mt-1">Start logging meals to see your trends!</p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {/* Chart */}
-              <div className="flex items-end justify-between h-64 bg-gray-50 rounded-lg p-4">
-                {weeklyData.map((day) => (
-                  <div key={day.date} className="flex flex-col items-center flex-1">
-                    {/* Bar */}
-                    <div className="relative w-full max-w-12 mb-2">
-                      {/* Goal line */}
-                      <div 
-                        className="absolute w-full border-t-2 border-dashed border-gray-400"
-                        style={{ 
-                          bottom: `${getBarHeight(day.goalCalories)}%`,
-                          transform: 'translateY(1px)'
-                        }}
+            <div className="space-y-6">
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  {chartType === 'bar' ? (
+                    <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis 
+                        dataKey="shortDate" 
+                        tick={{ fontSize: 12 }}
+                        stroke="#6b7280"
                       />
-                      
-                      {/* Actual calories bar */}
-                      <div
-                        className={`w-full rounded-t-md cursor-pointer transition-all hover:opacity-80 ${getBarColor(day)}`}
-                        style={{ height: `${getBarHeight(day.totalCalories)}%` }}
-                        onClick={() => handleDateClick(day.date)}
-                        title={`${formatCalories(day.totalCalories)} calories`}
+                      <YAxis 
+                        tick={{ fontSize: 12 }}
+                        stroke="#6b7280"
+                        tickFormatter={(value) => `${Math.round(value / 100)}k`}
                       />
-                    </div>
-                    
-                    {/* Date label */}
-                    <div className="text-xs text-gray-600 text-center">
-                      <div>{dateUtils.formatDisplayDate(day.date).split(' ')[0]}</div>
-                      <div>{dateUtils.formatDisplayDate(day.date).split(' ')[1]}</div>
-                    </div>
-                  </div>
-                ))}
+                      <Tooltip content={<CustomTooltip />} />
+                      <ReferenceLine 
+                        y={weeklyAverage} 
+                        stroke="#8b5cf6" 
+                        strokeDasharray="5 5" 
+                        label={{ value: "Average", position: "top" }}
+                      />
+                      <Bar 
+                        dataKey="calories" 
+                        radius={[4, 4, 0, 0]}
+                        onClick={(data: { payload?: { date: string } }) => data.payload?.date && handleDateClick(data.payload.date)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {chartData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  ) : chartType === 'line' ? (
+                    <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis 
+                        dataKey="shortDate" 
+                        tick={{ fontSize: 12 }}
+                        stroke="#6b7280"
+                      />
+                      <YAxis 
+                        tick={{ fontSize: 12 }}
+                        stroke="#6b7280"
+                        tickFormatter={(value) => `${Math.round(value / 100)}k`}
+                      />
+                      <Tooltip content={<CustomTooltip />} />
+                      <ReferenceLine 
+                        y={weeklyAverage} 
+                        stroke="#8b5cf6" 
+                        strokeDasharray="5 5" 
+                        label={{ value: "Average", position: "top" }}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="calories" 
+                        stroke="#3b82f6" 
+                        strokeWidth={3}
+                        dot={{ fill: '#3b82f6', strokeWidth: 2, r: 6 }}
+                        activeDot={{ r: 8, stroke: '#3b82f6', strokeWidth: 2 }}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="goal" 
+                        stroke="#6b7280" 
+                        strokeWidth={2}
+                        strokeDasharray="5 5"
+                        dot={false}
+                      />
+                    </LineChart>
+                  ) : (
+                    <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis 
+                        dataKey="shortDate" 
+                        tick={{ fontSize: 12 }}
+                        stroke="#6b7280"
+                      />
+                      <YAxis 
+                        tick={{ fontSize: 12 }}
+                        stroke="#6b7280"
+                        tickFormatter={(value) => `${Math.round(value / 100)}k`}
+                      />
+                      <Tooltip content={<CustomTooltip />} />
+                      <ReferenceLine 
+                        y={weeklyAverage} 
+                        stroke="#8b5cf6" 
+                        strokeDasharray="5 5" 
+                        label={{ value: "Average", position: "top" }}
+                      />
+                      <Area 
+                        type="monotone" 
+                        dataKey="calories" 
+                        stroke="#3b82f6" 
+                        fill="url(#colorCalories)"
+                        strokeWidth={2}
+                      />
+                      <defs>
+                        <linearGradient id="colorCalories" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                        </linearGradient>
+                      </defs>
+                    </AreaChart>
+                  )}
+                </ResponsiveContainer>
               </div>
 
-              {/* Legend */}
-              <div className="flex flex-wrap justify-center gap-4 text-sm">
+              <div className="flex flex-wrap justify-center gap-6 text-sm">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-green-500 rounded"></div>
-                  <span>Goal Met</span>
+                  <span>Goal Met ({daysWithGoalMet} days)</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-yellow-500 rounded"></div>
-                  <span>Close to Goal</span>
+                  <span>Close to Goal (80%+)</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-red-400 rounded"></div>
                   <span>Below Goal</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-1 border-t-2 border-dashed border-gray-400"></div>
-                  <span>Goal Line</span>
+                  <div className="w-3 h-1 border-t-2 border-dashed border-purple-500"></div>
+                  <span>Weekly Average</span>
+                </div>
+              </div>
+
+              {/* Quick Stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-gray-100">
+                <div className="text-center">
+                  <div className="text-lg font-semibold text-blue-600">
+                    {Math.round(goalAchievementRate)}%
+                  </div>
+                  <div className="text-xs text-gray-600">Success Rate</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-semibold text-green-600">
+                    {Math.max(...chartData.map(d => d.calories)).toLocaleString()}
+                  </div>
+                  <div className="text-xs text-gray-600">Highest Day</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-semibold text-orange-600">
+                    {Math.min(...chartData.map(d => d.calories)).toLocaleString()}
+                  </div>
+                  <div className="text-xs text-gray-600">Lowest Day</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-semibold text-purple-600">
+                    {chartData.reduce((sum, d) => sum + d.entries, 0)}
+                  </div>
+                  <div className="text-xs text-gray-600">Total Meals</div>
                 </div>
               </div>
             </div>

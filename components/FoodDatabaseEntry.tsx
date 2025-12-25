@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import FoodDatabaseService, { CommonFood, FoodCategory } from '@/lib/foodDatabase';
+import FoodDatabaseService, { CommonFood } from '@/lib/foodDatabase';
 
 interface FoodDatabaseEntryProps {
   onFoodAdd: (food: CommonFood, calories: number, portion: string) => void;

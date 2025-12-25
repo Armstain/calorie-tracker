@@ -7,10 +7,15 @@ import {
   Trash2,
   AlertTriangle,
   CheckCircle,
+  Zap,
+  Settings,
+  HardDrive,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { storageService } from "@/lib/storage";
 import { learningService } from "@/lib/learningService";
+import { useClearTodaysEntries, useClearWeekEntries, useClearAllData } from "@/lib/queries";
+import { useToast } from "@/lib/hooks/useToast";
 
 interface DataManagementProps {
   onDataChange?: () => void;
@@ -19,13 +24,24 @@ interface DataManagementProps {
 export default function DataManagement({ onDataChange }: DataManagementProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
-  const [showClearConfirm, setClearConfirm] = useState<
-    "day" | "week" | "all" | null
-  >(null);
+  const [isOptimizing, setIsOptimizing] = useState(false);
+  const [clearingState, setClearingState] = useState<{
+    type: "day" | "week" | "all" | null;
+    step: "idle" | "confirm" | "processing";
+  }>({ type: null, step: "idle" });
+  const [showOptimizationSettings, setShowOptimizationSettings] = useState(false);
   const [importStatus, setImportStatus] = useState<{
     type: "success" | "error" | null;
     message: string;
   }>({ type: null, message: "" });
+
+  // TanStack Query mutations
+  const clearTodaysEntriesMutation = useClearTodaysEntries();
+  const clearWeekEntriesMutation = useClearWeekEntries();
+  const clearAllDataMutation = useClearAllData();
+
+  // Toast notifications
+  const { addToast } = useToast();
 
   // Export all data as JSON
   const handleExportData = async () => {
@@ -150,73 +166,109 @@ export default function DataManagement({ onDataChange }: DataManagementProps) {
 
   // Clear data functions
   const handleClearData = (type: "day" | "week" | "all") => {
-    setClearConfirm(type);
-  };
+    if (clearingState.step === 'idle') {
+      setClearingState({ type, step: 'confirm' });
+      // Auto-reset after 8 seconds if no action
+      setTimeout(() => {
+        setClearingState(prev =>
+          prev.type === type && prev.step === 'confirm'
+            ? { type: null, step: 'idle' }
+            : prev
+        );
+      }, 8000);
+    } else if (clearingState.type === type && clearingState.step === 'confirm') {
+      setClearingState({ type, step: 'processing' });
 
-  const confirmClearData = () => {
-    try {
-      switch (showClearConfirm) {
-        case "day":
-          // Clear today's entries
-          const todaysEntries = storageService.getTodaysEntries();
-          todaysEntries.forEach((entry) =>
-            storageService.deleteEntry(entry.id)
-          );
-          setImportStatus({
-            type: "success",
-            message: `Cleared ${todaysEntries.length} entries from today.`,
-          });
-          break;
+      const getActionName = (type: string) => {
+        switch (type) {
+          case 'day': return "today's entries";
+          case 'week': return "this week's entries";
+          case 'all': return "all data";
+          default: return "data";
+        }
+      };
 
-        case "week":
-          // Clear this week's entries
-          const weeklyData = storageService.getWeeklyData();
-          let weeklyCount = 0;
-          weeklyData.forEach((day) => {
-            day.entries.forEach((entry) => {
-              storageService.deleteEntry(entry.id);
-              weeklyCount++;
-            });
-          });
-          setImportStatus({
-            type: "success",
-            message: `Cleared ${weeklyCount} entries from this week.`,
-          });
-          break;
+      const mutation = type === 'day' ? clearTodaysEntriesMutation :
+                      type === 'week' ? clearWeekEntriesMutation :
+                      clearAllDataMutation;
 
-        case "all":
-          // Clear all data
-          storageService.clearAllData();
-          setImportStatus({
-            type: "success",
-            message: "All data cleared successfully.",
+      mutation.mutate(undefined, {
+        onSuccess: (deletedCount) => {
+          setClearingState({ type: null, step: 'idle' });
+          const countText = typeof deletedCount === 'number' ? ` (${deletedCount} entries)` : '';
+          addToast({
+            type: 'success',
+            title: "Data cleared",
+            description: `Successfully cleared ${getActionName(type)}${countText}`,
+            duration: 5000
           });
-          break;
-      }
-
-      // Trigger data refresh
-      if (onDataChange) {
-        onDataChange();
-      }
-    } catch (error) {
-      console.error("Clear data error:", error);
-      setImportStatus({
-        type: "error",
-        message: "Failed to clear data. Please try again.",
+        },
+        onError: (error) => {
+          console.error(`Clear ${type} data error:`, error);
+          setClearingState({ type: null, step: 'idle' });
+          addToast({
+            type: 'error',
+            title: "Clear failed",
+            description: `Failed to clear ${getActionName(type)}. Please try again.`
+          });
+        }
       });
-    } finally {
-      setClearConfirm(null);
-      setTimeout(() => setImportStatus({ type: null, message: "" }), 5000);
     }
   };
 
   const cancelClearData = () => {
-    setClearConfirm(null);
+    setClearingState({ type: null, step: 'idle' });
   };
 
-  // Get storage info
+  // Storage optimization functions
+  const handleOptimizeStorage = async () => {
+    try {
+      setIsOptimizing(true);
+      const result = storageService.performStorageOptimization();
+      
+      setImportStatus({
+        type: "success",
+        message: `Optimization complete! Deleted ${result.deletedEntries} entries and saved ${Math.round(result.spaceSaved / 1024)} KB.`,
+      });
+
+      if (onDataChange) {
+        onDataChange();
+      }
+    } catch (error) {
+      console.error("Optimization error:", error);
+      setImportStatus({
+        type: "error",
+        message: "Failed to optimize storage. Please try again.",
+      });
+    } finally {
+      setIsOptimizing(false);
+      setTimeout(() => setImportStatus({ type: null, message: "" }), 5000);
+    }
+  };
+
+  const updateOptimizationSettings = (settings: Partial<Parameters<typeof storageService.updateOptimizationConfig>[0]>) => {
+    try {
+      storageService.updateOptimizationConfig(settings);
+      setImportStatus({
+        type: "success",
+        message: "Optimization settings updated successfully.",
+      });
+      setTimeout(() => setImportStatus({ type: null, message: "" }), 3000);
+    } catch (error) {
+      console.error("Settings update error:", error);
+      setImportStatus({
+        type: "error",
+        message: "Failed to update settings.",
+      });
+      setTimeout(() => setImportStatus({ type: null, message: "" }), 3000);
+    }
+  };
+
+  // Get storage info and optimization data
   const storageInfo = storageService.getStorageInfo();
   const storagePercentage = Math.round(storageInfo.percentage);
+  const optimizationRecommendations = storageService.getOptimizationRecommendations();
+  const optimizationConfig = storageService.getOptimizationConfig();
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6">
@@ -280,7 +332,134 @@ export default function DataManagement({ onDataChange }: DataManagementProps) {
           <div className="text-xs text-gray-500">
             Browser storage limit: ~5MB (estimated)
           </div>
+
+          {storagePercentage > 70 && (
+            <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-center gap-2 text-yellow-800">
+                <AlertTriangle className="w-4 h-4" />
+                <span className="text-sm font-medium">Storage Warning</span>
+              </div>
+              <p className="text-xs text-yellow-700 mt-1">
+                Your storage is getting full. Consider optimizing or clearing old data.
+              </p>
+            </div>
+          )}
         </div>
+      </div>
+
+      {/* Storage Optimization */}
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Storage Optimization
+          </h3>
+          <Button
+            onClick={() => setShowOptimizationSettings(!showOptimizationSettings)}
+            variant="outline"
+            size="sm"
+          >
+            <Settings className="w-4 h-4" />
+          </Button>
+        </div>
+
+        <div className="space-y-4">
+          {/* Storage Tip */}
+          <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+            <div className="flex items-center gap-2 text-green-800 mb-2">
+              <CheckCircle className="w-4 h-4" />
+              <span className="text-sm font-medium">💡 Storage Tip</span>
+            </div>
+            <p className="text-xs text-green-700">
+              Images are automatically deleted after AI analysis. This saves 90% of storage space while keeping all your calorie data!
+            </p>
+          </div>
+
+          {optimizationRecommendations.canOptimize ? (
+            <div className="space-y-3">
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center gap-2 text-blue-800 mb-2">
+                  <HardDrive className="w-4 h-4" />
+                  <span className="text-sm font-medium">Optimization Available</span>
+                </div>
+                <ul className="text-xs text-blue-700 space-y-1">
+                  {optimizationRecommendations.recommendations.map((rec, index) => (
+                    <li key={index}>• {rec}</li>
+                  ))}
+                </ul>
+                <p className="text-xs text-blue-600 mt-2">
+                  Potential savings: ~{optimizationRecommendations.potentialSavings} KB
+                </p>
+              </div>
+
+              <Button
+                onClick={handleOptimizeStorage}
+                disabled={isOptimizing}
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+              >
+                <Zap className="w-4 h-4 mr-2" />
+                {isOptimizing ? "Optimizing..." : "Optimize Storage"}
+              </Button>
+            </div>
+          ) : (
+            <div className="text-center py-4">
+              <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-2" />
+              <p className="text-sm text-gray-600">Storage is already optimized!</p>
+            </div>
+          )}
+        </div>
+
+        {/* Optimization Settings */}
+        {showOptimizationSettings && (
+          <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
+            <h4 className="text-sm font-medium text-gray-900 mb-3">Optimization Settings</h4>
+            <div className="space-y-3 text-sm">
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col">
+                  <span className="text-gray-600">Store Images:</span>
+                  <span className="text-xs text-gray-500">Recommended: OFF (saves 90% storage)</span>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={optimizationConfig.enableImageStorage}
+                    onChange={(e) => updateOptimizationSettings({ enableImageStorage: e.target.checked })}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Auto-cleanup (days):</span>
+                <select
+                  value={optimizationConfig.autoCleanupDays}
+                  onChange={(e) => updateOptimizationSettings({ autoCleanupDays: parseInt(e.target.value) })}
+                  className="px-2 py-1 border border-gray-300 rounded text-sm"
+                >
+                  <option value={7}>7 days</option>
+                  <option value={14}>14 days</option>
+                  <option value={30}>30 days</option>
+                  <option value={60}>60 days</option>
+                  <option value={90}>90 days</option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Max Image Size:</span>
+                <select
+                  value={optimizationConfig.maxImageSize}
+                  onChange={(e) => updateOptimizationSettings({ maxImageSize: parseInt(e.target.value) })}
+                  className="px-2 py-1 border border-gray-300 rounded text-sm"
+                >
+                  <option value={50}>50 KB</option>
+                  <option value={100}>100 KB</option>
+                  <option value={200}>200 KB</option>
+                  <option value={500}>500 KB</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Export Data */}
@@ -343,32 +522,101 @@ export default function DataManagement({ onDataChange }: DataManagementProps) {
         </p>
 
         <div className="space-y-3">
-          <Button
-            onClick={() => handleClearData("day")}
-            variant="outline"
-            className="w-full text-orange-600 hover:text-orange-700 hover:bg-orange-50 border-orange-200"
-          >
-            <Trash2 className="w-4 h-4 mr-2" />
-            Clear Today&apos;s Data
-          </Button>
+          {/* Clear Today's Data */}
+          <div className="space-y-2">
+            {clearingState.type === 'day' && clearingState.step === 'confirm' && (
+              <div className="flex items-center justify-between p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                <span className="text-sm text-orange-700">Clear today&apos;s entries?</span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={cancelClearData}
+                    className="text-xs text-orange-600 hover:text-orange-700 underline"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+            <Button
+              onClick={() => handleClearData("day")}
+              variant="outline"
+              disabled={clearingState.step === 'processing'}
+              className={`w-full ${
+                clearingState.type === 'day' && clearingState.step === 'confirm'
+                  ? 'bg-orange-600 text-white hover:bg-orange-700 border-orange-600'
+                  : 'text-orange-600 hover:text-orange-700 hover:bg-orange-50 border-orange-200'
+              }`}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              {clearingState.type === 'day' && clearingState.step === 'processing' ? 'Clearing...' :
+               clearingState.type === 'day' && clearingState.step === 'confirm' ? 'Confirm Clear' :
+               'Clear Today&apos;s Data'}
+            </Button>
+          </div>
 
-          <Button
-            onClick={() => handleClearData("week")}
-            variant="outline"
-            className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
-          >
-            <Trash2 className="w-4 h-4 mr-2" />
-            Clear This Week&apos;s Data
-          </Button>
+          {/* Clear Week's Data */}
+          <div className="space-y-2">
+            {clearingState.type === 'week' && clearingState.step === 'confirm' && (
+              <div className="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg">
+                <span className="text-sm text-red-700">Clear this week&apos;s entries?</span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={cancelClearData}
+                    className="text-xs text-red-600 hover:text-red-700 underline"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+            <Button
+              onClick={() => handleClearData("week")}
+              variant="outline"
+              disabled={clearingState.step === 'processing'}
+              className={`w-full ${
+                clearingState.type === 'week' && clearingState.step === 'confirm'
+                  ? 'bg-red-600 text-white hover:bg-red-700 border-red-600'
+                  : 'text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200'
+              }`}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              {clearingState.type === 'week' && clearingState.step === 'processing' ? 'Clearing...' :
+               clearingState.type === 'week' && clearingState.step === 'confirm' ? 'Confirm Clear' :
+               'Clear This Week&apos;s Data'}
+            </Button>
+          </div>
 
-          <Button
-            onClick={() => handleClearData("all")}
-            variant="outline"
-            className="w-full text-red-700 hover:text-red-800 hover:bg-red-50 border-red-300"
-          >
-            <Trash2 className="w-4 h-4 mr-2" />
-            Clear All Data
-          </Button>
+          {/* Clear All Data */}
+          <div className="space-y-2">
+            {clearingState.type === 'all' && clearingState.step === 'confirm' && (
+              <div className="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg">
+                <span className="text-sm text-red-700 font-medium">⚠️ Clear ALL data permanently?</span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={cancelClearData}
+                    className="text-xs text-red-600 hover:text-red-700 underline"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+            <Button
+              onClick={() => handleClearData("all")}
+              variant="outline"
+              disabled={clearingState.step === 'processing'}
+              className={`w-full ${
+                clearingState.type === 'all' && clearingState.step === 'confirm'
+                  ? 'bg-red-700 text-white hover:bg-red-800 border-red-700'
+                  : 'text-red-700 hover:text-red-800 hover:bg-red-50 border-red-300'
+              }`}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              {clearingState.type === 'all' && clearingState.step === 'processing' ? 'Clearing...' :
+               clearingState.type === 'all' && clearingState.step === 'confirm' ? 'Confirm Clear All' :
+               'Clear All Data'}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -411,42 +659,7 @@ export default function DataManagement({ onDataChange }: DataManagementProps) {
         </div>
       </div>
 
-      {/* Clear Data Confirmation Modal */}
-      {showClearConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Confirm Data Deletion
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to clear{" "}
-              {showClearConfirm === "day"
-                ? "today&apos;s data"
-                : showClearConfirm === "week"
-                ? "this week&apos;s data"
-                : "all your data"}
-              ? This action cannot be undone.
-            </p>
 
-            <div className="flex gap-3">
-              <Button
-                onClick={confirmClearData}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Clear Data
-              </Button>
-              <Button
-                onClick={cancelClearData}
-                variant="outline"
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
