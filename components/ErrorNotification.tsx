@@ -102,9 +102,9 @@ export default function ErrorNotification({
               </p>
 
               {/* Show technical details for transparency */}
-              {'statusCode' in error && error.statusCode && (
+              {error.type === 'api' && 'statusCode' in error && typeof (error as { statusCode?: number }).statusCode === 'number' && (
                 <p className={`text-xs mt-1 ${getTextColor(error.type)} opacity-60`}>
-                  Error code: {error.statusCode}
+                  Error code: {(error as { statusCode: number }).statusCode}
                 </p>
               )}
 
