@@ -102,7 +102,7 @@ Get your free API key at [Google AI Studio](https://makersuite.google.com/app/ap
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT License 
 
 
 ---
