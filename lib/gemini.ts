@@ -272,7 +272,7 @@ export class GeminiService {
         temperature: 0.1,
         topK: 32,
         topP: 1,
-        maxOutputTokens: 1024,
+        maxOutputTokens: 4096,
       }
     };
 
@@ -385,6 +385,7 @@ export class GeminiService {
       }
 
       const foods = Array.isArray(parsedData.foods) ? parsedData.foods : [];
+      
       const validFoods = foods.filter((food: unknown) => 
         food && 
         typeof food === 'object' &&

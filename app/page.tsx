@@ -29,6 +29,7 @@ import { storageService } from "@/lib/storage";
 import { FoodAnalysisResult, UserSettings, UserProfile, AppError } from "@/types";
 import { dateUtils } from "@/lib/utils";
 import WorkingCamera from "@/components/WorkingCamera";
+import AnalysisProgress from "@/components/AnalysisProgress";
 import HealthIntegration from "@/components/HealthIntegration";
 import FoodDatabaseEntry from "@/components/FoodDatabaseEntry";
 import { CommonFood } from "@/lib/foodDatabase";
@@ -640,27 +641,10 @@ export default function Home() {
                   onPhotoCapture={handlePhotoCapture}
                   onError={showError}
                 />
-                {foodAnalysisMutation.isPending && (
-                  <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div className="animate-spin rounded-full h-5 w-5 border-2 border-amber-500 border-t-transparent"></div>
-                        <div className="text-sm text-amber-700">
-                          <div className="font-medium">Analyzing your food...</div>
-                          <div className="text-xs text-amber-600">AI is identifying ingredients and calculating calories</div>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={handleStopScan}
-                        className="px-3 py-1.5 text-sm font-medium text-amber-700 hover:text-amber-800 hover:bg-amber-100 border border-amber-300 rounded-lg transition-colors"
-                      >
-                        Stop scan
-                      </button>
-                    </div>
-                  </div>
-                )}
+                <AnalysisProgress
+                  isAnalyzing={foodAnalysisMutation.isPending}
+                  onStop={handleStopScan}
+                />
               </div>
 
               {/* Quick Tips */}

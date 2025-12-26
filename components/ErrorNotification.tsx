@@ -101,6 +101,13 @@ export default function ErrorNotification({
                 {userFriendlyMessage}
               </p>
 
+              {/* Show technical details for transparency */}
+              {error.statusCode && (
+                <p className={`text-xs mt-1 ${getTextColor(error.type)} opacity-60`}>
+                  Error code: {error.statusCode}
+                </p>
+              )}
+
               {/* Action buttons */}
               <div className="flex gap-2 mt-3">
                 {canRetry && onRetry && (
