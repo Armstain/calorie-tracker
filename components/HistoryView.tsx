@@ -35,7 +35,7 @@ export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) 
   const chartData = weeklyData.map((day) => ({
     date: day.date,
     displayDate: dateUtils.formatDisplayDate(day.date).split(' ').slice(0, 2).join(' '),
-    shortDate: dateUtils.formatDisplayDate(day.date).split(' ')[0],
+    shortDate: dateUtils.formatDisplayDate(day.date).split(' ')[0].replace(',', ''),
     calories: day.totalCalories,
     goal: day.goalCalories,
     goalMet: day.goalMet,
@@ -273,7 +273,7 @@ export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) 
                       <YAxis 
                         tick={{ fontSize: 12 }}
                         stroke="#6b7280"
-                        tickFormatter={(value) => `${Math.round(value / 100)}k`}
+                        tickFormatter={(value) => `${(value / 1000).toFixed(1)}k`}
                       />
                       <Tooltip content={<CustomTooltip />} />
                       <ReferenceLine 
@@ -304,7 +304,7 @@ export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) 
                       <YAxis 
                         tick={{ fontSize: 12 }}
                         stroke="#6b7280"
-                        tickFormatter={(value) => `${Math.round(value / 100)}k`}
+                        tickFormatter={(value) => `${(value / 1000).toFixed(1)}k`}
                       />
                       <Tooltip content={<CustomTooltip />} />
                       <ReferenceLine 
@@ -341,7 +341,7 @@ export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) 
                       <YAxis 
                         tick={{ fontSize: 12 }}
                         stroke="#6b7280"
-                        tickFormatter={(value) => `${Math.round(value / 100)}k`}
+                        tickFormatter={(value) => `${(value / 1000).toFixed(1)}k`}
                       />
                       <Tooltip content={<CustomTooltip />} />
                       <ReferenceLine 
