@@ -47,7 +47,7 @@ npm run dev
 ## 🎯 Smart Features
 
 ### AI-Powered Analysis
-- Multi-model fallback for reliability
+- Multi-model fallback (Gemini 3.8 Flash → 3.6 Flash → 3.5 Flash-Lite → 3.1 Flash-Lite → 2.5 Pro)
 - Identifies multiple foods in one photo
 - Provides detailed nutritional breakdowns
 - Estimates portion sizes and cooking methods
@@ -77,7 +77,7 @@ AI: ✅ Updated to large pizza slice (450 → 680 calories)
 # .env.local
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
-Get your free API key at [Google AI Studio](https://makersuite.google.com/app/apikey)
+Get your free API key at [Google AI Studio](https://aistudio.google.com/app/apikey)
 
 ### Environment Options
 - **Development**: Uses included test API key

@@ -5,7 +5,7 @@ jest.mock('@/lib/config', () => {
     GEMINI_CONFIG: {
       ...actual.GEMINI_CONFIG,
       // Keep tests deterministic: only one model attempted.
-      FALLBACK_ORDER: ['gemini-2.5-flash'],
+      FALLBACK_ORDER: ['gemini-3.8-flash'],
     },
   }
 })
@@ -56,12 +56,14 @@ describe('GeminiService', () => {
       
       expect(result).toBe(true)
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('valid-api-key'),
+        expect.stringContaining('/models'),
         expect.objectContaining({
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: 'GET',
+          headers: expect.objectContaining({ 'x-goog-api-key': 'valid-api-key' }),
         })
       )
+      // Key must not be sent in the URL
+      expect((fetch as jest.Mock).mock.calls[0][0]).not.toContain('valid-api-key')
     })
 
     it('should return false for invalid API key', async () => {
@@ -214,6 +216,60 @@ describe('GeminiService', () => {
       jest.useRealTimers()
     })
 
+    it('should send the image mime type, key header and JSON schema', async () => {
+      const okValidate = { ok: true, status: 200, json: jest.fn().mockResolvedValue({}) }
+      const analyzeResponse = { ok: true, status: 200, json: jest.fn().mockResolvedValue(mockApiResponse) }
+      ;(fetch as jest.Mock)
+        .mockResolvedValueOnce(okValidate)
+        .mockResolvedValueOnce(analyzeResponse)
+
+      await geminiService.analyzeFood('data:image/png;base64,iVBORw0KGgo')
+
+      const [url, init] = (fetch as jest.Mock).mock.calls[1]
+      expect(url).not.toContain('key=')
+      expect(init.headers['x-goog-api-key']).toBe('test-api-key')
+      const body = JSON.parse(init.body)
+      expect(body.contents[0].parts[1].inline_data.mime_type).toBe('image/png')
+      expect(body.generationConfig.responseMimeType).toBe('application/json')
+      expect(body.generationConfig.responseSchema).toBeDefined()
+    })
+
+    it('should report safety-blocked images as unrecognized (422)', async () => {
+      const okValidate = { ok: true, status: 200, json: jest.fn().mockResolvedValue({}) }
+      const blocked = {
+        ok: true,
+        status: 200,
+        json: jest.fn().mockResolvedValue({ candidates: [{ finishReason: 'SAFETY' }] }),
+      }
+      ;(fetch as jest.Mock)
+        .mockResolvedValueOnce(okValidate)
+        .mockResolvedValueOnce(blocked)
+
+      await expect(geminiService.analyzeFood(validImageData)).rejects.toMatchObject({
+        statusCode: 422,
+        message: expect.stringContaining('safety filter'),
+      })
+    })
+
+    it('should keep a confidence of 0 instead of replacing it', async () => {
+      const okValidate = { ok: true, status: 200, json: jest.fn().mockResolvedValue({}) }
+      const response = {
+        ok: true,
+        status: 200,
+        json: jest.fn().mockResolvedValue({
+          candidates: [{
+            content: { parts: [{ text: JSON.stringify({ foods: [{ name: 'x', calories: 10, quantity: '1', confidence: 0 }] }) }] },
+          }],
+        }),
+      }
+      ;(fetch as jest.Mock)
+        .mockResolvedValueOnce(okValidate)
+        .mockResolvedValueOnce(response)
+
+      const result = await geminiService.analyzeFood(validImageData)
+      expect(result.foods[0].confidence).toBe(0)
+    })
+
     it('should reject invalid image data', async () => {
       await expect(geminiService.analyzeFood('invalid-image-data')).rejects.toMatchObject({
         message: expect.stringContaining('Invalid image data'),
@@ -269,11 +325,10 @@ describe('GeminiService', () => {
     })
 
     it('should enforce rate limiting', async () => {
-      const rateLimits = getRateLimits(undefined, 'gemini-2.5-flash')
+      const rateLimits = getRateLimits(undefined, 'gemini-3.8-flash')
 
       ;(fetch as jest.Mock).mockImplementation((_url: string, init?: RequestInit) => {
-        const body = typeof init?.body === 'string' ? init.body : ''
-        const isValidationCall = body.includes('"Hello"')
+        const isValidationCall = init?.method === 'GET'
 
         if (isValidationCall) {
           return Promise.resolve({

@@ -4,46 +4,68 @@ export interface EnvironmentConfig {
   NODE_ENV: 'development' | 'production';
 }
 
+const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
+
+// Free-tier Gemini Developer API models, ordered by preference for food vision.
+// Free tier quota: ~15 RPM / 1,500 RPD per project.
 export const GEMINI_MODELS = {
-  'gemini-2.5-flash': {
-    url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+  'gemini-3.8-flash': {
+    url: `${GEMINI_API_BASE}/models/gemini-3.8-flash:generateContent`,
+    label: 'Gemini 3.8 Flash',
     maxRequestsPerMinute: 15,
     maxRequestsPerDay: 1500,
-    priority: 0, // Default - balanced speed and capability
+    priority: 0, // Default - latest multimodal Flash model
   },
-  'gemini-2.5-pro': {
-    url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent',
-    maxRequestsPerMinute: 2,
-    maxRequestsPerDay: 50,
-    priority: 1, // Highest capability, lower rate limits
+  'gemini-3.6-flash': {
+    url: `${GEMINI_API_BASE}/models/gemini-3.6-flash:generateContent`,
+    label: 'Gemini 3.6 Flash',
+    maxRequestsPerMinute: 15,
+    maxRequestsPerDay: 1500,
+    priority: 1,
   },
-  'gemini-2.5-flash-lite': {
-    url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent',
-    maxRequestsPerMinute: 30,
-    maxRequestsPerDay: 3000,
-    priority: 2, // Speed optimized for simple tasks
+  'gemini-3.5-flash-lite': {
+    url: `${GEMINI_API_BASE}/models/gemini-3.5-flash-lite:generateContent`,
+    label: 'Gemini 3.5 Flash-Lite',
+    maxRequestsPerMinute: 15,
+    maxRequestsPerDay: 1500,
+    priority: 2,
   },
-  'gemini-3-flash-preview': {
-    url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent',
+  'gemini-3.1-flash-lite': {
+    url: `${GEMINI_API_BASE}/models/gemini-3.1-flash-lite:generateContent`,
+    label: 'Gemini 3.1 Flash-Lite',
     maxRequestsPerMinute: 15,
     maxRequestsPerDay: 1500,
     priority: 3,
   },
-  'gemini-3-pro-preview': {
-    url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent',
-    maxRequestsPerMinute: 2,
-    maxRequestsPerDay: 50,
+  'gemini-2.5-pro': {
+    // Legacy: free tier only for accounts that have used 2.5 before.
+    url: `${GEMINI_API_BASE}/models/gemini-2.5-pro:generateContent`,
+    label: 'Gemini 2.5 Pro',
+    maxRequestsPerMinute: 5,
+    maxRequestsPerDay: 100,
     priority: 4,
   },
 } as const;
 
+export type GeminiModelName = keyof typeof GEMINI_MODELS;
+
 export const GEMINI_CONFIG = {
   MODELS: GEMINI_MODELS,
-  DEFAULT_MODEL: 'gemini-2.5-flash',
-  FALLBACK_ORDER: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.5-flash-lite', 'gemini-3-flash-preview', 'gemini-3-pro-preview'],
+  API_BASE: GEMINI_API_BASE,
+  DEFAULT_MODEL: 'gemini-3.8-flash',
+  FALLBACK_ORDER: ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.5-pro'],
   MAX_IMAGE_SIZE: 1024 * 1024, // 1MB
   TIMEOUT: 30000, // 30 seconds
 } as const;
+
+// Build headers for Gemini API requests. The key goes in a header, not the URL,
+// so it doesn't end up in proxy/server logs.
+export function geminiHeaders(apiKey: string): Record<string, string> {
+  return {
+    'Content-Type': 'application/json',
+    'x-goog-api-key': apiKey,
+  };
+}
 
 // App configuration
 export const APP_CONFIG = {
@@ -53,12 +75,6 @@ export const APP_CONFIG = {
   IMAGE_QUALITY: 0.8,
   MAX_IMAGE_SIZE: 1024 * 1024, // 1MB in bytes
   SUPPORTED_IMAGE_FORMATS: ['image/jpeg', 'image/png', 'image/webp'],
-  DEFAULT_TEST_API_KEY: 'AIzaSyCwIBFPUSFZf5Ew00lT4fq6SbfEsCbCMkI',
-  DEFAULT_KEY_LIMITS: {
-    REQUESTS_PER_MINUTE: 10,
-    REQUESTS_PER_DAY: 100,
-    MAX_CONCURRENT_USERS: 50,
-  },
 } as const;
 
 // Storage keys
@@ -81,78 +97,37 @@ export function getConfig(): EnvironmentConfig {
   return config;
 }
 
-// Get API key with user override support and default test key
+// Get API key: user-provided key takes precedence over the server env var.
 export function getApiKey(userApiKey?: string): string {
-  // User-provided API key takes precedence
   if (userApiKey && userApiKey.trim()) {
     return userApiKey.trim();
   }
-  
-  // Fall back to environment variable
+
   const config = getConfig();
   if (config.GEMINI_API_KEY) {
     return config.GEMINI_API_KEY;
   }
-  
-  // Use default test API key as final fallback
-  if (APP_CONFIG.DEFAULT_TEST_API_KEY) {
-    return APP_CONFIG.DEFAULT_TEST_API_KEY;
-  }
-  
+
   throw new Error('No API key available. Please provide your Gemini API key in settings.');
 }
 
-// Check if using default test key
-export function isUsingDefaultTestKey(userApiKey?: string): boolean {
-  const apiKey = getApiKey(userApiKey);
-  return apiKey === APP_CONFIG.DEFAULT_TEST_API_KEY;
-}
-
-// Get rate limits based on key type and model
-export function getRateLimits(userApiKey?: string, modelName?: keyof typeof GEMINI_MODELS) {
+// Get rate limits for a model
+export function getRateLimits(_userApiKey?: string, modelName?: GeminiModelName) {
   const model = modelName || GEMINI_CONFIG.DEFAULT_MODEL;
   const modelConfig = GEMINI_MODELS[model];
-  
-  if (isUsingDefaultTestKey(userApiKey)) {
-    return {
-      requestsPerMinute: APP_CONFIG.DEFAULT_KEY_LIMITS.REQUESTS_PER_MINUTE,
-      requestsPerDay: APP_CONFIG.DEFAULT_KEY_LIMITS.REQUESTS_PER_DAY,
-      isSharedKey: true,
-    };
-  }
-  
+
   return {
     requestsPerMinute: modelConfig.maxRequestsPerMinute,
     requestsPerDay: modelConfig.maxRequestsPerDay,
-    isSharedKey: false,
   };
 }
 
 // Get model configuration with fallback support
-export function getModelConfig(preferredModel?: keyof typeof GEMINI_MODELS) {
+export function getModelConfig(preferredModel?: GeminiModelName) {
   const model = preferredModel || GEMINI_CONFIG.DEFAULT_MODEL;
   return {
     model,
     config: GEMINI_MODELS[model],
     fallbackOrder: GEMINI_CONFIG.FALLBACK_ORDER,
   };
-}
-
-// Test if a model is available (for fallback logic)
-export async function testModelAvailability(modelName: keyof typeof GEMINI_MODELS, apiKey: string): Promise<boolean> {
-  try {
-    const modelConfig = GEMINI_MODELS[modelName];
-    const response = await fetch(`${modelConfig.url}?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: 'test' }] }]
-      })
-    });
-    
-    // Model is available if we don't get 404 or 403 (model not found/not accessible)
-    return response.status !== 404 && response.status !== 403;
-  } catch {
-    return false;
-  }
 }

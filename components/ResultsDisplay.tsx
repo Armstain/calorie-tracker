@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ResultsProps, FoodItem } from '@/types';
 import { formatCalories } from '@/lib/utils';
+import { GEMINI_CONFIG, GEMINI_MODELS } from '@/lib/config';
 import { learningService } from '@/lib/learningService';
 import NaturalLanguageCorrection from '@/components/NaturalLanguageCorrection';
 
@@ -423,17 +424,11 @@ export default function ResultsDisplay({
               <span className="text-gray-500 text-sm">AI Model Used:</span>
               <div className="flex items-center gap-2">
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  analysisResult.modelUsed === 'gemini-2.0-flash' 
-                    ? 'bg-purple-100 text-purple-700' 
-                    : analysisResult.modelUsed === 'gemini-1.5-pro'
-                    ? 'bg-blue-100 text-blue-700'
+                  analysisResult.modelUsed === GEMINI_CONFIG.DEFAULT_MODEL
+                    ? 'bg-purple-100 text-purple-700'
                     : 'bg-green-100 text-green-700'
                 }`}>
-                  {analysisResult.modelUsed === 'gemini-2.0-flash' && '🚀 Gemini 2.0 Flash'}
-                  {analysisResult.modelUsed === 'gemini-1.5-pro' && '⭐ Gemini 1.5 Pro'}
-                  {analysisResult.modelUsed === 'gemini-1.5-flash' && '⚡ Gemini 1.5 Flash'}
-                  {!['gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.5-flash'].includes(analysisResult.modelUsed) && 
-                    `🤖 ${analysisResult.modelUsed}`}
+                  🤖 {GEMINI_MODELS[analysisResult.modelUsed as keyof typeof GEMINI_MODELS]?.label ?? analysisResult.modelUsed}
                 </span>
               </div>
             </div>

@@ -492,12 +492,9 @@ export default function GoalSettings({
             )}
             <div className="text-sm text-gray-500 mt-1 space-y-1">
               <p>
-                <span className="text-green-600 font-medium">✓ Default test key provided</span> - You can start using the app immediately!
-              </p>
-              <p>
-                For unlimited usage, get your own free API key from{' '}
+                Get your own free API key from{' '}
                 <a 
-                  href="https://makersuite.google.com/app/apikey" 
+                  href="https://aistudio.google.com/app/apikey" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-blue-500 hover:text-blue-600 underline"

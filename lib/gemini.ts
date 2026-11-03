@@ -1,7 +1,63 @@
 import { FoodAnalysisResult, ApiError } from '@/types';
-import { GEMINI_CONFIG, GEMINI_MODELS, getApiKey, getRateLimits, isUsingDefaultTestKey } from '@/lib/config';
+import { GEMINI_CONFIG, GEMINI_MODELS, getApiKey, getRateLimits, geminiHeaders } from '@/lib/config';
 import { validation } from '@/lib/utils';
 import { cache, cacheUtils } from '@/lib/cache';
+
+// Short non-reversible fingerprint of an API key for cache keys.
+// (A key prefix is shared by many keys, e.g. "AIzaSy...", so it can't be used.)
+function hashKey(key: string): string {
+  let hash = 5381;
+  for (let i = 0; i < key.length; i++) {
+    hash = ((hash << 5) + hash + key.charCodeAt(i)) | 0;
+  }
+  return `${key.length}_${(hash >>> 0).toString(36)}`;
+}
+
+// Structured output schema so Gemini returns valid JSON in the shape we parse.
+const MACROS_SCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    protein: { type: 'NUMBER' },
+    carbs: { type: 'NUMBER' },
+    fat: { type: 'NUMBER' },
+    fiber: { type: 'NUMBER' },
+  },
+  required: ['protein', 'carbs', 'fat', 'fiber'],
+};
+
+const FOOD_ANALYSIS_SCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    foods: {
+      type: 'ARRAY',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          name: { type: 'STRING' },
+          calories: { type: 'NUMBER' },
+          quantity: { type: 'STRING' },
+          confidence: { type: 'NUMBER' },
+          ingredients: { type: 'ARRAY', items: { type: 'STRING' } },
+          cookingMethod: {
+            type: 'STRING',
+            enum: ['grilled', 'fried', 'baked', 'steamed', 'raw', 'boiled', 'roasted'],
+          },
+          macros: MACROS_SCHEMA,
+          category: {
+            type: 'STRING',
+            enum: ['protein', 'vegetable', 'grain', 'fruit', 'dairy', 'snack', 'beverage'],
+          },
+          healthScore: { type: 'NUMBER' },
+        },
+        required: ['name', 'calories', 'quantity', 'confidence'],
+      },
+    },
+    mealType: { type: 'STRING', enum: ['breakfast', 'lunch', 'dinner', 'snack'] },
+    restaurantName: { type: 'STRING' },
+    totalMacros: MACROS_SCHEMA,
+  },
+  required: ['foods'],
+};
 
 export class GeminiService {
   private static instance: GeminiService;
@@ -65,56 +121,33 @@ export class GeminiService {
         return false;
       }
       
-      const cacheKey = `api_key_validation_${key.substring(0, 10)}`;
+      const cacheKey = `api_key_validation_${hashKey(key)}`;
       const cachedResult = cache.get<boolean>(cacheKey);
       if (cachedResult !== null) {
         return cachedResult;
       }
 
-      const fallbackOrder = GEMINI_CONFIG.FALLBACK_ORDER;
-      for (const modelName of fallbackOrder) {
-          try {
-          const modelCacheKey = `model_available_${modelName}_${key.substring(0, 10)}`;
-          const modelAvailable = cache.get<boolean>(modelCacheKey);
-          
-          if (modelAvailable === true) {
-            cache.set(cacheKey, true, 60 * 60 * 1000);
-            return true;
-          }
-          
-          const modelConfig = this.getModelConfig(modelName);
-          if (!modelConfig) continue;
+      // Listing models checks the key without spending generation quota.
+      const response = await fetch(`${GEMINI_CONFIG.API_BASE}/models`, {
+        method: 'GET',
+        headers: geminiHeaders(key),
+      });
 
-          const response = await fetch(`${modelConfig.url}?key=${key}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              contents: [{
-                parts: [{ text: 'Hello' }]
-              }]
-            })
-          });
-          
-          if (response.status !== 401 && response.status !== 403) {
-            cache.set(cacheKey, true, 60 * 60 * 1000); // 1 hour
-            cache.set(modelCacheKey, true, 60 * 60 * 1000); // 1 hour
-            
-            return true;
-          }
-          
-          const errorData = await response.json().catch(() => ({}));
-          console.warn(`API key validation failed for model ${modelName}: ${response.status} - ${errorData?.error?.message || 'Unknown error'}`);
-        } catch (error) {
-          console.warn(`Error testing model ${modelName}:`, error);
-          continue; // Try next model
-        }
+      if (response.ok) {
+        cache.set(cacheKey, true, 60 * 60 * 1000); // 1 hour
+        return true;
       }
-      
-      cache.set(cacheKey, false, 5 * 60 * 1000);
-      console.warn('API key validation failed: All models failed');
-      return false;
+
+      if (response.status === 400 || response.status === 401 || response.status === 403) {
+        const errorData = await response.json().catch(() => ({}));
+        console.warn(`API key validation failed: ${response.status} - ${errorData?.error?.message || 'Unknown error'}`);
+        cache.set(cacheKey, false, 5 * 60 * 1000);
+        return false;
+      }
+
+      // Rate limits or server errors don't prove the key is bad; let the real request decide.
+      return true;
+
     } catch (error) {
       console.error('API key validation error:', error);
       return false;
@@ -173,19 +206,12 @@ export class GeminiService {
                 break; // Exit retry loop for this model
               }
 
-              if (statusCode === 422) {
+              if (statusCode === 422 || statusCode === 499) {
                 throw error;
               }
               
-              if (statusCode === 429) {
-                const usingSharedDemoKey = isUsingDefaultTestKey(apiKey);
-                if (usingSharedDemoKey) {
-                  throw this.createApiError(
-                    'The built-in demo Gemini API key is currently rate-limited. Add your own Gemini API key in Settings, or set GEMINI_API_KEY in .env.local and restart the dev server.',
-                    429
-                  );
-                }
-
+              if (statusCode === 404 || statusCode === 429) {
+                // 404: model retired or not available to this key; 429: quota hit. Try next model.
                 errors.push(`${modelName}: ${errorMsg} (${statusCode})`);
                 break; // Exit retry loop for this model; try next model
               }
@@ -249,10 +275,11 @@ export class GeminiService {
         throw this.createApiError(`Configuration for model ${modelName} not found`);
     }
 
-    const base64Data = imageBase64.split(',')[1];
-    if (!base64Data) {
+    const match = imageBase64.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+    if (!match) {
       throw this.createApiError('Invalid image format');
     }
+    const [, mimeType, base64Data] = match;
 
     const requestBody = {
       contents: [{
@@ -262,17 +289,17 @@ export class GeminiService {
           },
           {
             inline_data: {
-              mime_type: 'image/jpeg',
+              mime_type: mimeType,
               data: base64Data
             }
           }
         ]
       }],
       generationConfig: {
-        temperature: 0.1,
-        topK: 32,
-        topP: 1,
-        maxOutputTokens: 4096,
+        // Thinking tokens count against this budget, so leave headroom for the JSON.
+        maxOutputTokens: 16384,
+        responseMimeType: 'application/json',
+        responseSchema: FOOD_ANALYSIS_SCHEMA,
       }
     };
 
@@ -290,11 +317,9 @@ export class GeminiService {
 
     let response: Response;
     try {
-      response = await fetch(`${modelConfig.url}?key=${apiKey}`, {
+      response = await fetch(modelConfig.url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: geminiHeaders(apiKey),
         body: JSON.stringify(requestBody),
         signal: controller.signal,
       });
@@ -349,6 +374,8 @@ export class GeminiService {
         throw this.createApiError('Rate limit exceeded. Please wait a moment and try again.', status);
       case 400:
         throw this.createApiError('Invalid request. Please try with a different image.', status);
+      case 404:
+        throw this.createApiError(`Model not available: ${errorMessage}`, status);
       case 500:
       case 502:
       case 503:
@@ -360,13 +387,7 @@ export class GeminiService {
 
   private parseGeminiResponse(data: unknown, originalImage: string, modelName?: string): FoodAnalysisResult {
     try {
-      if (!data || typeof data !== 'object' || !('candidates' in data) || 
-          !Array.isArray(data.candidates) || !data.candidates[0] || 
-          !data.candidates[0].content) {
-        throw new Error('Invalid response format');
-      }
-
-      const responseText = data.candidates[0].content.parts[0].text;
+      const responseText = this.extractResponseText(data);
       
       // Try to parse JSON response
       let parsedData: { foods?: unknown[] };
@@ -399,7 +420,7 @@ export class GeminiService {
         name: food.name,
         calories: Math.round(food.calories),
         quantity: food.quantity || 'serving',
-        confidence: Math.min(Math.max(food.confidence || 0.7, 0), 1),
+        confidence: typeof food.confidence === 'number' ? Math.min(Math.max(food.confidence, 0), 1) : 0.7,
         ingredients: Array.isArray(food.ingredients) ? food.ingredients : [],
         cookingMethod: food.cookingMethod || undefined,
         macros: food.macros ? {
@@ -409,7 +430,7 @@ export class GeminiService {
           fiber: Math.round(food.macros.fiber || 0)
         } : undefined,
         category: food.category || undefined,
-        healthScore: food.healthScore ? Math.min(Math.max(food.healthScore, 1), 10) : undefined
+        healthScore: typeof food.healthScore === 'number' ? Math.min(Math.max(food.healthScore, 1), 10) : undefined
       }));
 
       if (validFoods.length === 0) {
@@ -461,6 +482,51 @@ export class GeminiService {
       console.error('Response parsing error:', error);
       throw this.createApiError('Failed to parse analysis results. Please try again with a clearer image.');
     }
+  }
+
+  // Pull the answer text out of a Gemini response, surfacing blocked/truncated replies.
+  private extractResponseText(data: unknown): string {
+    const response = data as {
+      promptFeedback?: { blockReason?: string };
+      candidates?: Array<{
+        finishReason?: string;
+        content?: { parts?: Array<{ text?: string; thought?: boolean }> };
+      }>;
+    } | null;
+
+    if (response?.promptFeedback?.blockReason) {
+      throw this.createApiError(
+        `This image was blocked by the AI safety filter (${response.promptFeedback.blockReason}). Please try a different photo.`,
+        422
+      );
+    }
+
+    const candidate = response?.candidates?.[0];
+    if (!candidate) {
+      throw new Error('Invalid response format');
+    }
+
+    const finishReason = candidate.finishReason;
+    if (finishReason && ['SAFETY', 'PROHIBITED_CONTENT', 'BLOCKLIST', 'SPII', 'IMAGE_SAFETY'].includes(finishReason)) {
+      throw this.createApiError(
+        'This image was blocked by the AI safety filter. Please try a different photo.',
+        422
+      );
+    }
+
+    const text = (candidate.content?.parts || [])
+      .filter(part => !part.thought && typeof part.text === 'string')
+      .map(part => part.text)
+      .join('');
+
+    if (!text) {
+      if (finishReason === 'MAX_TOKENS') {
+        throw this.createApiError('The AI response was cut off before it finished. Please try again.', 502);
+      }
+      throw new Error('Invalid response format');
+    }
+
+    return text;
   }
 
   // Fallback text parsing for non-JSON responses

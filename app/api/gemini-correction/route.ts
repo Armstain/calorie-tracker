@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getApiKey, GEMINI_MODELS, GEMINI_CONFIG } from '@/lib/config';
+import { getApiKey, GEMINI_MODELS, GEMINI_CONFIG, geminiHeaders } from '@/lib/config';
 
 // Simple in-memory rate limiting
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -47,7 +47,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const apiKey = getApiKey();
+    let apiKey = '';
+    try {
+      apiKey = getApiKey();
+    } catch {
+      // handled below
+    }
     if (!apiKey) {
       return NextResponse.json(
         { error: 'Gemini API key not configured' },
@@ -73,30 +78,37 @@ export async function POST(request: NextRequest) {
               }]
             }],
             generationConfig: {
-              temperature: 0.1,
-              topK: 32,
-              topP: 1,
-              maxOutputTokens: 1024,
+              // Thinking tokens count against this budget on Gemini 3.x.
+              maxOutputTokens: 8192,
             }
           };
 
-          const response = await fetch(`${modelConfig.url}?key=${apiKey}`, {
+          const response = await fetch(modelConfig.url, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: geminiHeaders(apiKey),
             body: JSON.stringify(requestBody),
           });
 
           if (response.ok) {
             const data = await response.json();
             
-            if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+            const parts: Array<{ text?: string; thought?: boolean }> =
+              data.candidates?.[0]?.content?.parts || [];
+            const text = parts
+              .filter(part => !part.thought && typeof part.text === 'string')
+              .map(part => part.text)
+              .join('');
+            if (text) {
               return NextResponse.json({
-                response: data.candidates[0].content.parts[0].text,
+                response: text,
                 modelUsed: modelName
               });
             }
+          }
+
+          // Model retired or not available to this key - go straight to the next model
+          if (response.status === 404) {
+            break;
           }
 
           // Handle specific error cases
