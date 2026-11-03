@@ -202,7 +202,11 @@ export const bmrCalculations = {
       case 'female':
         return this.calculateFemaleBMR(age, weightKg, heightCm);
       default:
-        return null;
+        // 'other' / 'prefer_not_to_say': previously returned null, which
+        // silently broke the whole goal calculation (TDEE and daily goal
+        // both came back null). The average of the two formulas is the
+        // standard fallback and keeps goals working.
+        return (this.calculateMaleBMR(age, weightKg, heightCm) + this.calculateFemaleBMR(age, weightKg, heightCm)) / 2;
     }
   }
 };

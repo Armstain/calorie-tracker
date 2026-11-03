@@ -70,6 +70,10 @@ export default function Home() {
   const [showFoodDatabase, setShowFoodDatabase] = useState(false);
   const [favorites, setFavorites] = useState<FavoriteMeal[]>([]);
   const analysisAbortRef = useRef<AbortController | null>(null);
+  // Signals aborted deliberately by the user (Stop, or a new scan). Any
+  // other abort (browser backgrounding, network drop) is an interruption
+  // the user must hear about, not a silent cancel.
+  const userAbortedSignalsRef = useRef(new Set<AbortSignal>());
   const [mealNote, setMealNote] = useState("");
   const [analysisModelLabel, setAnalysisModelLabel] = useState<string | undefined>();
   const [foundFoods, setFoundFoods] = useState<string[]>([]);
@@ -90,7 +94,6 @@ export default function Home() {
     showError,
     hideError,
     retry,
-    canRetry,
   } = useErrorHandler();
   const { isOnline, isSlowConnection } = useNetworkStatus();
   const {
@@ -143,6 +146,41 @@ export default function Home() {
     setFavorites(getFavorites());
   }, []);
 
+  // Keep the scan alive while it runs: on a phone, letting the screen
+  // sleep can freeze or kill a long background fetch. The wake lock is
+  // best-effort (unsupported browsers just skip it) and is released the
+  // moment the scan settles. It re-requests on return to the tab, since
+  // the browser drops wake locks when the page is hidden.
+  useEffect(() => {
+    if (!foodAnalysisMutation.isPending) return;
+    let sentinel: { release: () => Promise<void> } | null = null;
+    let cancelled = false;
+    const requestLock = async () => {
+      try {
+        const nav = navigator as Navigator & {
+          wakeLock?: { request: (type: string) => Promise<{ release: () => Promise<void> }> };
+        };
+        if (!nav.wakeLock) return;
+        const lock = await nav.wakeLock.request('screen');
+        if (cancelled) { await lock.release().catch(() => {}); return; }
+        sentinel = lock;
+      } catch {
+        // Wake lock denied or unsupported: the scan still runs, just
+        // without the screen-on guarantee.
+      }
+    };
+    requestLock();
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible' && foodAnalysisMutation.isPending) requestLock();
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      cancelled = true;
+      document.removeEventListener('visibilitychange', onVisibility);
+      if (sentinel) sentinel.release().catch(() => {});
+    };
+  }, [foodAnalysisMutation.isPending]);
+
   const handlePhotoCapture = useCallback(
     async (imageData: string) => {
       if (!isOnline) {
@@ -154,6 +192,7 @@ export default function Home() {
 
       // Cancel any in-flight analysis before starting a new one
       if (analysisAbortRef.current) {
+        userAbortedSignalsRef.current.add(analysisAbortRef.current.signal);
         analysisAbortRef.current.abort();
       }
       const controller = new AbortController();
@@ -198,11 +237,23 @@ export default function Home() {
               4000
             );
           },
-          onError: (error: unknown) => {
+          onError: (error: unknown, variables?: { signal?: AbortSignal }) => {
             analysisAbortRef.current = null;
 
-            // User clicked Stop Scan (canceled request)
+            // Canceled requests: silent ONLY when the user cancelled this
+            // exact scan (Stop, or starting a new one). A cancel from
+            // anywhere else — browser backgrounding, network drop — is an
+            // interruption, and silently dropping it is exactly how a
+            // background scan "disappears" with no explanation.
             if (error && typeof error === 'object' && 'code' in error && (error as { code?: unknown }).code === 'canceled') {
+              if (variables?.signal && userAbortedSignalsRef.current.has(variables.signal)) {
+                userAbortedSignalsRef.current.delete(variables.signal);
+                return;
+              }
+              showError({
+                type: 'network' as const,
+                message: 'The scan was interrupted before it finished. Please try again — or add the meal manually with Quick Add.',
+              });
               return;
             }
 
@@ -236,6 +287,7 @@ export default function Home() {
 
   const handleStopScan = useCallback(() => {
     if (analysisAbortRef.current) {
+      userAbortedSignalsRef.current.add(analysisAbortRef.current.signal);
       analysisAbortRef.current.abort();
       analysisAbortRef.current = null;
     }
@@ -876,14 +928,46 @@ export default function Home() {
         {/* Add bottom padding on mobile to account for navigation */}
         <div className="h-16 md:hidden" />
 
+        {/* Scan-in-progress pill: visible on every view while a scan runs,
+            so navigating away (or returning from another tab) never makes
+            a running scan look lost. The result still opens automatically
+            when it finishes. */}
+        {foodAnalysisMutation.isPending && currentView !== 'capture' && (
+          <div className="fixed bottom-20 left-4 right-4 z-40 flex justify-center md:bottom-6">
+            <div className="flex items-center gap-3 bg-amber-500 text-white px-4 py-2.5 rounded-full shadow-lg text-sm font-medium">
+              <span className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" />
+              <span>Scanning your meal{analysisModelLabel ? ` · ${analysisModelLabel}` : ''}…</span>
+              <button
+                onClick={handleStopScan}
+                className="bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full text-xs font-semibold"
+              >
+                Stop
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Error Notification */}
         <ErrorNotification
           error={error}
           isVisible={isErrorVisible}
           onClose={hideError}
           onRetry={() => retry()}
-          canRetry={canRetry && !isNoFoodRecognizedError}
-          autoHide={true}
+          // No Try Again here: retry() without a function only hides the
+          // banner, and a scan cannot be re-run anyway — photos are never
+          // saved, so the user retakes the photo. The secondary action
+          // below is the real next step for each cause.
+          canRetry={false}
+          // Failure messages must not vanish after 5 seconds: a missing
+          // key or a quota message the user never reads helps nobody.
+          autoHide={false}
+          secondaryAction={
+            error && typeof error === 'object' && 'message' in error && typeof (error as { message: unknown }).message === 'string' && (error as { message: string }).message.includes('API key')
+              ? { label: 'Open Settings', onClick: () => { hideError(); setCurrentView('settings'); } }
+              : isNoFoodRecognizedError
+                ? { label: 'Add manually', onClick: () => { hideError(); setShowFoodDatabase(true); } }
+                : undefined
+          }
         />
 
 

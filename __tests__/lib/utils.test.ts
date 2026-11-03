@@ -152,6 +152,22 @@ describe('errorUtils', () => {
       expect(message).toContain('Unable to save data')
     })
 
+    it('should keep specific AI failure causes instead of blaming the connection', () => {
+      const cases: Array<[string, string]> = [
+        ['API key not configured. Please check your settings.', 'Settings'],
+        ['Invalid API key. Please check your Gemini API key in settings.', 'does not work'],
+        ['Rate limit exceeded. Please wait a moment and try again.', 'Quick Add'],
+        ['This image was blocked by the AI safety filter. Please try a different photo.', 'safety filter'],
+        ['Could not recognize any food in this image. Try a clearer photo.', 'Quick Add'],
+        ['The AI response was cut off before it finished. Please try again.', 'cut off'],
+      ]
+      for (const [input, expected] of cases) {
+        expect(errorUtils.getUserFriendlyMessage({ type: 'api', message: input })).toContain(expected)
+      }
+      // And never blame the connection when the cause is not the connection.
+      expect(errorUtils.getUserFriendlyMessage({ type: 'api', message: 'This image was blocked by the AI safety filter. Please try a different photo.' })).not.toContain('internet')
+    })
+
     it('should return network-specific messages', () => {
       const networkError: AppError = { type: 'network', message: 'connection failed' }
       const message = errorUtils.getUserFriendlyMessage(networkError)

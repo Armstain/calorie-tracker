@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+// Slow Gemini replies must not be cut off by the platform's default
+// function timeout. 60s is the ceiling on Vercel's Hobby plan.
+export const maxDuration = 60;
 import { geminiService, type AnalysisProgressEvent } from '@/lib/gemini';
 import { GEMINI_MODELS } from '@/lib/config';
 import { createRateLimiter, getClientId } from '@/lib/rateLimit';

@@ -313,7 +313,26 @@ export class GeminiService {
         }
       }
 
-      throw this.createApiError(`Food analysis failed with all models. ${errors.join('; ')}`);
+      // Summarize instead of dumping one error per model
+      // ("gemini-3.8-flash: ...; gemini-3.6-flash: ...") — the user
+      // cannot act on model names. But if every model failed the same
+      // way (e.g. a timeout), keep that specific message: replacing it
+      // with a generic one would hide the real cause.
+      const causes = [...new Set(errors.map(e => e.replace(/^[^:]+: /, '')))];
+      if (causes.length === 1) {
+        throw this.createApiError(causes[0]);
+      }
+      const joined = errors.join(' ');
+      if (/rate limit/i.test(joined)) {
+        throw this.createApiError('Rate limit exceeded. Please wait a moment and try again, or use Quick Add meanwhile.');
+      }
+      if (/safety filter/i.test(joined)) {
+        throw this.createApiError('This image was blocked by the AI safety filter. Please try a different photo.');
+      }
+      if (/API key/i.test(joined)) {
+        throw this.createApiError('API key problem. Please check your Gemini API key in settings, or use Quick Add instead.');
+      }
+      throw this.createApiError('The AI could not complete this analysis. Try a clearer photo, or add the meal manually with Quick Add.');
 
     } catch (error) {
       if (error && typeof error === 'object' && 'type' in error && error.type === 'api') {
@@ -325,7 +344,13 @@ export class GeminiService {
         ? String(error.message) 
         : 'Unknown error';
       
-      throw this.createApiError(`Analysis failed: ${errorMessage}. Please check your internet connection and try again.`);
+      // Do not blame the connection unless the failure actually was one.
+      const isNetwork = /network|fetch failed|Failed to fetch/i.test(errorMessage);
+      throw this.createApiError(
+        isNetwork
+          ? `Analysis failed: ${errorMessage}. Please check your internet connection and try again.`
+          : `Analysis failed: ${errorMessage}`
+      );
     }
   }
 
@@ -379,7 +404,23 @@ export class GeminiService {
       : modelConfig.url;
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), GEMINI_CONFIG.TIMEOUT);
+    const streamStart = Date.now();
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    const armTimeout = (ms: number) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => controller.abort(), ms);
+    };
+    // Streaming: idle timer, re-armed on every chunk (see readStream).
+    // Non-streaming: one wall-clock timer, now long enough for thinking
+    // models (see GEMINI_CONFIG.TIMEOUT).
+    const onStreamActivity = () => {
+      if (Date.now() - streamStart < GEMINI_CONFIG.STREAM_MAX_TIME) {
+        armTimeout(GEMINI_CONFIG.STREAM_IDLE_TIMEOUT);
+      } else {
+        controller.abort();
+      }
+    };
+    armTimeout(streaming ? GEMINI_CONFIG.STREAM_IDLE_TIMEOUT : GEMINI_CONFIG.TIMEOUT);
 
     const abortFromUpstream = () => controller.abort();
     if (signal) {
@@ -429,7 +470,7 @@ export class GeminiService {
       let data: unknown;
       try {
         data = streaming && response.body
-          ? await this.readStream(response.body, onProgress!)
+          ? await this.readStream(response.body, onProgress!, onStreamActivity)
           : await response.json();
       } catch (error) {
         return toAbortError(error);
@@ -446,7 +487,8 @@ export class GeminiService {
   // one generateContent-shaped response. Reports food names as soon as they appear.
   private async readStream(
     body: ReadableStream<Uint8Array>,
-    onProgress: (event: AnalysisProgressEvent) => void
+    onProgress: (event: AnalysisProgressEvent) => void,
+    onActivity?: () => void
   ): Promise<unknown> {
     const reader = body.getReader();
     const decoder = new TextDecoder();
@@ -457,6 +499,8 @@ export class GeminiService {
     const seenFoods = new Set<string>();
 
     const handleEvent = (payload: string) => {
+      // Every chunk proves the scan is alive: re-arm the idle timer.
+      onActivity?.();
       let chunk: {
         promptFeedback?: { blockReason?: string };
         candidates?: Array<{ finishReason?: string; content?: { parts?: Array<{ text?: string; thought?: boolean }> } }>;
@@ -650,8 +694,10 @@ export class GeminiService {
     } | null;
 
     if (response?.promptFeedback?.blockReason) {
+      // Plain wording only: the raw block reason (e.g. PROHIBITED_CONTENT)
+      // means nothing to the user and looks like an accusation.
       throw this.createApiError(
-        `This image was blocked by the AI safety filter (${response.promptFeedback.blockReason}). Please try a different photo.`,
+        'This image was blocked by the AI safety filter. Please try a different photo.',
         422
       );
     }

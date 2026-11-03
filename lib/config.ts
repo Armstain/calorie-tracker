@@ -55,7 +55,15 @@ export const GEMINI_CONFIG = {
   DEFAULT_MODEL: 'gemini-3.8-flash',
   FALLBACK_ORDER: ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.5-pro'],
   MAX_IMAGE_SIZE: 1024 * 1024, // 1MB
-  TIMEOUT: 30000, // 30 seconds
+  // Wall-clock timeout for a non-streaming call. Thinking models can
+  // take well over the old 30s for a complex plate, so 30s was killing
+  // healthy scans. Streaming calls use the idle/max budgets below.
+  TIMEOUT: 120000, // 120 seconds
+  // Streaming: the timer resets on every chunk that arrives, so a scan
+  // that is actively producing output is never killed for being slow.
+  // Only a stream silent for 60s, or running over 3 minutes total, ends.
+  STREAM_IDLE_TIMEOUT: 60000, // 60 seconds of silence
+  STREAM_MAX_TIME: 180000, // 3 minutes total
 } as const;
 
 // Build headers for Gemini API requests. The key goes in a header, not the URL,
