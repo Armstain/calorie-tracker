@@ -50,6 +50,14 @@ describe('FoodDatabaseService', () => {
       expect(foodDatabase.calculateMacros('apple')).toBeUndefined();
     });
 
+    it('should rank search results: exact name first, then starts-with, then contains', () => {
+      expect(foodDatabase.searchFoods('bhaat')[0].id).toBe('bd-bhaat');
+      expect(foodDatabase.searchFoods('apple')[0].id).toBe('apple');
+      const rice = foodDatabase.searchFoods('rice');
+      expect(rice.length).toBeGreaterThan(0);
+      expect(rice[0].name.toLowerCase()).toMatch(/^rice/);
+    });
+
     it('should keep all foods in valid categories with positive calories', () => {
       const categoryIds = foodDatabase.getCategories().map((c) => c.id);
       for (const food of foodDatabase.getAllFoods()) {

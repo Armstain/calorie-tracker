@@ -8,7 +8,8 @@ import { TrackerProps } from "@/types";
 import { formatCalories, dateUtils } from "@/lib/utils";
 import Image from "next/image";
 import FoodDatabaseEntry from "@/components/FoodDatabaseEntry";
-import { CommonFood } from "@/lib/foodDatabase";
+import { CommonFood, MacroPerUnit } from "@/lib/foodDatabase";
+import { saveFavorite } from "@/lib/favorites";
 import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useDeleteFoodEntry, useSaveFoodEntry } from "@/lib/queries";
 import { useToast } from "@/lib/hooks/useToast";
@@ -201,15 +202,17 @@ export default function DailyTracker({
     }
   };
 
-  const handleFoodDatabaseAdd = (food: CommonFood, calories: number, portion: string) => {
-    // Create a food entry from the database selection
+  const handleFoodDatabaseAdd = (food: CommonFood, calories: number, portion: string, macros?: MacroPerUnit) => {
+    // Create a food entry from the database selection. Macros and the
+    // Bangla name were previously dropped here (same fix as Capture).
     const foodEntry = {
       timestamp: new Date().toISOString(),
       foods: [{
-        name: food.name,
+        name: food.nameBn ? `${food.name} (${food.nameBn})` : food.name,
         calories: calories,
         quantity: portion,
-        confidence: 1.0 // Database entries have 100% confidence
+        confidence: 1.0, // Database entries have 100% confidence
+        ...(macros ? { macros: { protein: macros.protein, carbs: macros.carbs, fat: macros.fat, fiber: macros.fiber } } : {}),
       }],
       totalCalories: calories,
       date: dateUtils.getCurrentDate(),
@@ -596,6 +599,18 @@ export default function DailyTracker({
       {showFoodDatabase && (
         <FoodDatabaseEntry
           onFoodAdd={handleFoodDatabaseAdd}
+          onFavoriteAdd={(food, calories, portion, macros) => {
+            const item = {
+              name: food.nameBn ? `${food.name} (${food.nameBn})` : food.name,
+              calories,
+              quantity: portion,
+              confidence: 1.0,
+              ...(macros ? { macros: { protein: macros.protein, carbs: macros.carbs, fat: macros.fat, fiber: macros.fiber } } : {}),
+            };
+            if (saveFavorite([item])) {
+              addToast({ type: "success", title: "Saved as favorite", description: `${item.name} can now be logged without AI` });
+            }
+          }}
           onClose={() => setShowFoodDatabase(false)}
         />
       )}

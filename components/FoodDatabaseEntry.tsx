@@ -44,7 +44,9 @@ export default function FoodDatabaseEntry({ onFoodAdd, onFavoriteAdd, onClose }:
       foods = foodDatabase.getAllFoods();
     }
     
-    return foods.slice(0, 20); // Limit results for performance
+    // Search shows the best 50 ranked matches; browsing a category shows
+    // up to 100 (a category like vegetables has 84 foods).
+    return foods.slice(0, searchQuery.trim() ? 50 : 100);
   }, [searchQuery, selectedCategory, foodDatabase]);
 
   const handleFoodSelect = (food: CommonFood) => {
@@ -76,13 +78,32 @@ export default function FoodDatabaseEntry({ onFoodAdd, onFavoriteAdd, onClose }:
     }
   };
 
+  // One-tap add: the row's + button logs the base portion immediately,
+  // no portion screen. Tapping the row itself still opens portion choice.
+  const handleQuickAdd = (food: CommonFood) => {
+    onFoodAdd(
+      food,
+      food.caloriesPerUnit,
+      food.unit,
+      food.proteinPerUnit !== undefined
+        ? { protein: food.proteinPerUnit, carbs: food.carbsPerUnit ?? 0, fat: food.fatPerUnit ?? 0, fiber: food.fiberPerUnit ?? 0 }
+        : undefined
+    );
+  };
+
   const handleAddFood = () => {
     if (selectedFood) {
       const calories = foodDatabase.calculateCalories(
         selectedFood.food.id,
         selectedFood.portionMultiplier
       );
-      onFoodAdd(selectedFood.food, calories, selectedFood.portionName);
+      // Pass macros: without this, portion-screen adds logged 0g macros
+      // even though the summary above shows them.
+      const macros = foodDatabase.calculateMacros(
+        selectedFood.food.id,
+        selectedFood.portionMultiplier
+      );
+      onFoodAdd(selectedFood.food, calories, selectedFood.portionName, macros);
       setSelectedFood(null);
     }
   };
@@ -131,28 +152,24 @@ export default function FoodDatabaseEntry({ onFoodAdd, onFavoriteAdd, onClose }:
             />
           </div>
 
-          {/* Category Filter */}
+          {/* Category Filter: a dropdown, not 20 chips. With 19 categories
+              the chip row took up half the modal before any food showed. */}
           {!searchQuery && (
-            <div className="flex flex-wrap gap-2">
-              <Button
-                variant={selectedCategory === '' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setSelectedCategory('')}
+            <div className="flex items-center gap-2">
+              <label htmlFor="quick-add-category" className="text-sm text-gray-600 shrink-0">Category:</label>
+              <select
+                id="quick-add-category"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
               >
-                All
-              </Button>
-              {categories.map((category) => (
-                <Button
-                  key={category.id}
-                  variant={selectedCategory === category.id ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setSelectedCategory(category.id)}
-                  className="flex items-center gap-1"
-                >
-                  <span>{category.icon}</span>
-                  <span>{category.name}</span>
-                </Button>
-              ))}
+                <option value="">All foods</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.icon} {category.name}
+                  </option>
+                ))}
+              </select>
             </div>
           )}
 
@@ -171,15 +188,26 @@ export default function FoodDatabaseEntry({ onFoodAdd, onFavoriteAdd, onClose }:
                     onClick={() => handleFoodSelect(food)}
                     className="p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
                   >
-                    <div className="flex justify-between items-start">
-                      <div>
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="min-w-0">
                         <h4 className="font-medium">{food.name}{food.nameBn ? ` (${food.nameBn})` : ''}</h4>
                         <p className="text-sm text-gray-600">{food.description}</p>
                         <p className="text-xs text-gray-500">{food.caloriesPerUnit} cal per {food.unit}{food.proteinPerUnit !== undefined ? ` · P ${food.proteinPerUnit}g · C ${food.carbsPerUnit}g · F ${food.fatPerUnit}g` : ''}</p>
                       </div>
-                      <Badge variant="secondary">
-                        {categories.find(c => c.id === food.category)?.icon}
-                      </Badge>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Badge variant="secondary">
+                          {categories.find(c => c.id === food.category)?.icon}
+                        </Badge>
+                        <button
+                          type="button"
+                          aria-label={`Add ${food.name} (${food.unit}) immediately`}
+                          title="Add base portion immediately"
+                          onClick={(e) => { e.stopPropagation(); handleQuickAdd(food); }}
+                          className="w-8 h-8 flex items-center justify-center rounded-full bg-green-100 text-green-700 hover:bg-green-200 text-lg font-bold"
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
