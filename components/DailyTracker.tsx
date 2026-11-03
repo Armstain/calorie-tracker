@@ -234,8 +234,8 @@ export default function DailyTracker({
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6">
       {/* Header */}
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+      <div>
+        <h2 className="text-xl font-semibold text-gray-800 mb-1">
           Today&apos;s Progress
         </h2>
         <p className="text-gray-600">
@@ -244,7 +244,7 @@ export default function DailyTracker({
       </div>
 
       {/* Daily Goal Section */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">Daily Goal</h3>
           {!isEditingGoal && (
@@ -272,7 +272,7 @@ export default function DailyTracker({
             />
             <Button
               onClick={handleGoalSave}
-              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium"
+              className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-medium"
             >
               Save
             </Button>
@@ -292,7 +292,7 @@ export default function DailyTracker({
       </div>
 
       {/* Progress Section */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">Progress</h3>
           <div className="text-right">
@@ -414,7 +414,7 @@ export default function DailyTracker({
       </div>
 
       {/* Today's Entries */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">
             Today&apos;s Meals ({todaysEntries.length})
@@ -482,7 +482,7 @@ export default function DailyTracker({
             {todaysEntries.map((entry) => (
               <div
                 key={entry.id}
-                className="border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow"
+                className="border border-amber-100 rounded-xl p-4 hover:shadow-sm transition-shadow"
               >
                 <div className="flex items-center justify-between">
                   <div 
@@ -575,14 +575,14 @@ export default function DailyTracker({
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
+        <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 shadow-sm text-center">
           <div className="text-2xl font-bold text-gray-900">
             {todaysEntries.length}
           </div>
           <div className="text-sm text-gray-600">Meals Logged</div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
+        <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 shadow-sm text-center">
           <div className="text-2xl font-bold text-gray-900">
             {todaysEntries.reduce(
               (total, entry) => total + entry.foods.length,
