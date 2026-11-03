@@ -1,11 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Noto_Sans_Bengali } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/lib/providers/QueryProvider";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+});
+
+// Bangla names in the BD food database need a Bengali font: Inter has no
+// Bengali glyphs, so without this they fall back to an inconsistent system
+// font. Added second in the font stack (see globals.css) so it only kicks
+// in for Bengali characters.
+const bengali = Noto_Sans_Bengali({
+  subsets: ["bengali"],
+  variable: "--font-bengali",
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -51,13 +61,13 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
-  ],
-  colorScheme: "light dark",
+  // No maximumScale / userScalable: false — blocking pinch-zoom is an
+  // accessibility problem, and it buys nothing here.
+  // Light theme only: components hardcode white cards and dark text, so
+  // the dark variables in globals.css only produced a mismatched half-dark
+  // look. Force light until dark mode is implemented properly.
+  themeColor: "#ffffff",
+  colorScheme: "light",
 };
 
 export default function RootLayout({
@@ -101,7 +111,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} antialiased`}
+        className={`${inter.variable} ${bengali.variable} antialiased`}
       >
         <QueryProvider>
           {children}

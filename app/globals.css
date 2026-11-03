@@ -31,7 +31,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
+  /* Bengali second: Latin text uses Inter, Bengali glyphs (absent from
+     Inter) fall through to Noto Sans Bengali instead of a system font. */
+  --font-sans: var(--font-inter), var(--font-bengali), ui-sans-serif, system-ui, sans-serif;
 
   /* Custom color tokens */
   --color-primary: var(--primary);
@@ -41,16 +43,8 @@
   --color-accent: var(--accent);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f0f0f;
-    --foreground: #f5f5f5;
-    --primary-bg: #451a03; /* Amber-950 */
-    --secondary-bg: #431407; /* Orange-950 */
-    --accent-bg: #052e16; /* Green-950 */
-    --neutral-bg: #111827; /* Gray-900 */
-  }
-}
+/* No dark-mode variable overrides: the app is light-only until
+   dark mode is implemented in the components themselves. */
 
 /* Mobile-first responsive optimizations */
 html {
