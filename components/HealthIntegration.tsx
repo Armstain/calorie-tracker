@@ -88,8 +88,8 @@ export default function HealthIntegration({
   };
 
   const getBMICategory = (bmi: number): { category: string; color: string } => {
-    if (bmi < 18.5) return { category: "Underweight", color: "text-blue-600" };
-    if (bmi < 25) return { category: "Normal", color: "text-green-600" };
+    if (bmi < 18.5) return { category: "Underweight", color: "text-gray-900" };
+    if (bmi < 25) return { category: "Normal", color: "text-gray-900" };
     if (bmi < 30) return { category: "Overweight", color: "text-yellow-600" };
     return { category: "Obese", color: "text-red-600" };
   };
@@ -201,8 +201,8 @@ export default function HealthIntegration({
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+      <div>
+        <h2 className="text-xl font-semibold text-gray-800 mb-1">
           Health Integration
         </h2>
         <p className="text-gray-600">
@@ -213,7 +213,7 @@ export default function HealthIntegration({
       {/* Health Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* BMI Card */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <Calculator className="w-6 h-6 text-blue-500" />
             <h3 className="text-lg font-semibold text-gray-900">BMI</h3>
@@ -232,7 +232,7 @@ export default function HealthIntegration({
         </div>
 
         {/* Daily Calorie Needs */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <Target className="w-6 h-6 text-green-500" />
             <h3 className="text-lg font-semibold text-gray-900">Daily Needs</h3>
@@ -249,7 +249,7 @@ export default function HealthIntegration({
         </div>
 
         {/* Weight Trend */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <TrendingUp className="w-6 h-6 text-purple-500" />
             <h3 className="text-lg font-semibold text-gray-900">
@@ -262,7 +262,7 @@ export default function HealthIntegration({
                 weightTrend.trend === "up"
                   ? "text-red-600"
                   : weightTrend.trend === "down"
-                  ? "text-green-600"
+                  ? "text-gray-900"
                   : "text-gray-600"
               }`}
             >
@@ -288,21 +288,21 @@ export default function HealthIntegration({
       </div>
 
       {/* Calorie Balance Analysis */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Today&apos;s Calorie Balance
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-2xl font-bold text-gray-900">
               {formatCalories(currentCalories)}
             </div>
             <div className="text-sm text-gray-600">Consumed Today</div>
           </div>
 
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-gray-900">
               {formatCalories(dailyNeeds)}
             </div>
             <div className="text-sm text-gray-600">Daily Target</div>
@@ -311,7 +311,7 @@ export default function HealthIntegration({
           <div className="text-center">
             <div
               className={`text-2xl font-bold ${
-                calorieBalance > 0 ? "text-red-600" : "text-green-600"
+                calorieBalance > 0 ? "text-red-600" : "text-gray-900"
               }`}
             >
               {calorieBalance > 0 ? "+" : ""}
@@ -346,7 +346,7 @@ export default function HealthIntegration({
       </div>
 
       {/* Weight Tracking */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">
             Weight Tracking
@@ -393,7 +393,7 @@ export default function HealthIntegration({
       </div>
 
       {/* Health Metrics Configuration */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">
             Health Profile
@@ -445,7 +445,7 @@ export default function HealthIntegration({
                   onChange={(e) =>
                     updateHealthMetrics("gender", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400"
                 >
                   <option value="male">Male</option>
                   <option value="female">Female</option>
@@ -462,7 +462,7 @@ export default function HealthIntegration({
                   onChange={(e) =>
                     updateHealthMetrics("activityLevel", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400"
                 >
                   <option value="sedentary">
                     Sedentary (little/no exercise)
@@ -489,7 +489,7 @@ export default function HealthIntegration({
                 <select
                   value={healthMetrics.goal}
                   onChange={(e) => updateHealthMetrics("goal", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400"
                 >
                   <option value="lose">Lose Weight</option>
                   <option value="maintain">Maintain Weight</option>
@@ -501,7 +501,7 @@ export default function HealthIntegration({
             <div className="flex gap-3 pt-4">
               <Button
                 onClick={saveHealthMetrics}
-                className="bg-green-500 hover:bg-green-600 text-white"
+                className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white"
               >
                 <Heart className="w-4 h-4 mr-2" />
                 Save & Update Calorie Goal
@@ -539,15 +539,15 @@ export default function HealthIntegration({
       </div>
 
       {/* Health Recommendations */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-blue-900 mb-4">
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 sm:p-6">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">
           Personalized Recommendations
         </h3>
 
         <div className="space-y-3 text-sm">
           {bmi < 18.5 && (
             <div className="flex items-start gap-2">
-              <Activity className="w-4 h-4 text-blue-600 mt-0.5" />
+              <Activity className="w-4 h-4 text-gray-900 mt-0.5" />
               <p className="text-blue-800">
                 Your BMI indicates you&apos;re underweight. Consider increasing
                 your calorie intake with nutrient-dense foods and consult a
@@ -558,7 +558,7 @@ export default function HealthIntegration({
 
           {bmi >= 25 && (
             <div className="flex items-start gap-2">
-              <Activity className="w-4 h-4 text-blue-600 mt-0.5" />
+              <Activity className="w-4 h-4 text-gray-900 mt-0.5" />
               <p className="text-blue-800">
                 Your BMI indicates you&apos;re above normal weight. A moderate
                 calorie deficit combined with regular exercise can help achieve
@@ -569,7 +569,7 @@ export default function HealthIntegration({
 
           {calorieBalance > 500 && (
             <div className="flex items-start gap-2">
-              <Target className="w-4 h-4 text-blue-600 mt-0.5" />
+              <Target className="w-4 h-4 text-gray-900 mt-0.5" />
               <p className="text-blue-800">
                 You&apos;re significantly over your calorie target today.
                 Consider lighter meals or increased physical activity.
@@ -579,7 +579,7 @@ export default function HealthIntegration({
 
           {calorieBalance < -500 && (
             <div className="flex items-start gap-2">
-              <Target className="w-4 h-4 text-blue-600 mt-0.5" />
+              <Target className="w-4 h-4 text-gray-900 mt-0.5" />
               <p className="text-blue-800">
                 You&apos;re well under your calorie target. Make sure
                 you&apos;re eating enough to support your health and energy

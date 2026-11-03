@@ -273,8 +273,8 @@ export default function DataManagement({ onDataChange }: DataManagementProps) {
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6">
       {/* Header */}
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+      <div>
+        <h2 className="text-xl font-semibold text-gray-800 mb-1">
           Data Management
         </h2>
         <p className="text-gray-600">
@@ -303,7 +303,7 @@ export default function DataManagement({ onDataChange }: DataManagementProps) {
       )}
 
       {/* Storage Usage */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Storage Usage
         </h3>
@@ -348,7 +348,7 @@ export default function DataManagement({ onDataChange }: DataManagementProps) {
       </div>
 
       {/* Storage Optimization */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">
             Storage Optimization
@@ -394,7 +394,7 @@ export default function DataManagement({ onDataChange }: DataManagementProps) {
               <Button
                 onClick={handleOptimizeStorage}
                 disabled={isOptimizing}
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+                className="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white"
               >
                 <Zap className="w-4 h-4 mr-2" />
                 {isOptimizing ? "Optimizing..." : "Optimize Storage"}
@@ -434,7 +434,7 @@ export default function DataManagement({ onDataChange }: DataManagementProps) {
       </div>
 
       {/* Export Data */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Export Data
         </h3>
@@ -446,7 +446,7 @@ export default function DataManagement({ onDataChange }: DataManagementProps) {
         <Button
           onClick={handleExportData}
           disabled={isExporting}
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+          className="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white"
         >
           <Download className="w-4 h-4 mr-2" />
           {isExporting ? "Exporting..." : "Export All Data"}
@@ -458,7 +458,7 @@ export default function DataManagement({ onDataChange }: DataManagementProps) {
       </div>
 
       {/* Import Data */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Import Data
         </h3>
@@ -485,7 +485,7 @@ export default function DataManagement({ onDataChange }: DataManagementProps) {
       </div>
 
       {/* Clear Data Options */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Clear Data</h3>
         <p className="text-gray-600 mb-4">
           Remove data from your device. Use with caution - these actions cannot
@@ -592,7 +592,7 @@ export default function DataManagement({ onDataChange }: DataManagementProps) {
       </div>
 
       {/* Data Summary */}
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+      <div className="bg-amber-50/60 border border-amber-100 rounded-xl p-4 sm:p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Data Summary
         </h3>

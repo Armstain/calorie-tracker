@@ -49,7 +49,7 @@ export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) 
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+        <div className="bg-white/95 p-3 border border-amber-200 rounded-xl shadow-lg">
           <p className="font-medium text-gray-900">{data.displayDate}</p>
           <p className="text-sm text-gray-600">
             <span className="font-medium">{formatCalories(data.calories)}</span> of {formatCalories(data.goal)} calories
@@ -101,8 +101,8 @@ export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+      <div>
+        <h2 className="text-xl font-semibold text-gray-800 mb-1">
           Weekly History & Trends
         </h2>
         <p className="text-gray-600">
@@ -112,29 +112,29 @@ export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) 
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-blue-900">
+        <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 shadow-sm text-center">
+          <div className="text-2xl font-bold text-gray-900">
             {formatCalories(weeklyAverage)}
           </div>
           <div className="text-sm text-gray-600">Daily Average</div>
         </div>
         
-        <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-green-900">
+        <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 shadow-sm text-center">
+          <div className="text-2xl font-bold text-gray-900">
             {formatCalories(totalCalories)}
           </div>
           <div className="text-sm text-gray-600">Weekly Total</div>
         </div>
         
-        <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-purple-900">
+        <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 shadow-sm text-center">
+          <div className="text-2xl font-bold text-gray-900">
             {Math.round(goalAchievementRate)}%
           </div>
           <div className="text-sm text-gray-600">Goal Achievement</div>
         </div>
         
-        <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
-          <div className="text-2xl font-bold text-orange-900">
+        <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 shadow-sm text-center">
+          <div className="text-2xl font-bold text-gray-900">
             {daysWithGoalMet}/7
           </div>
           <div className="text-sm text-gray-600">Goals Met</div>
@@ -143,7 +143,7 @@ export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) 
 
       {/* Trend Indicator */}
       {trend && (
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 shadow-sm">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-gray-900">Weekly Trend</h3>
             <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${
@@ -245,7 +245,7 @@ export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) 
       </div>
 
       {viewMode === 'chart' && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Daily Calorie Intake</h3>
             {weeklyData.length > 0 && (
@@ -425,7 +425,7 @@ export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) 
 
       {/* List View */}
       {viewMode === 'list' && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily Breakdown</h3>
           
           {weeklyData.length === 0 ? (
@@ -439,7 +439,7 @@ export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) 
                 <div
                   key={day.date}
                   className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-sm ${
-                    selectedDate === day.date ? 'border-blue-300 bg-blue-50' : 'border-gray-200'
+                    selectedDate === day.date ? 'border-amber-300 bg-amber-50' : 'border-gray-200'
                   }`}
                   onClick={() => handleDateClick(day.date)}
                 >

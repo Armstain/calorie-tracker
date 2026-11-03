@@ -323,8 +323,8 @@ export default function GoalSettings({
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6">
       {/* Header */}
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+      <div>
+        <h2 className="text-xl font-semibold text-gray-800 mb-1">
           Goal Settings
         </h2>
         <p className="text-gray-600">
@@ -334,28 +334,28 @@ export default function GoalSettings({
 
       {/* Goal Performance Summary */}
       {weeklyAverage > 0 && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Goal Performance
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-blue-900">
+            <div className="text-center p-4 bg-amber-50 border border-amber-100 rounded-xl">
+              <div className="text-2xl font-bold text-gray-900">
                 {formatCalories(settings.dailyCalorieGoal)}
               </div>
               <div className="text-sm text-blue-700">Current Goal</div>
             </div>
             
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <div className="text-2xl font-bold text-green-900">
+            <div className="text-center p-4 bg-amber-50 border border-amber-100 rounded-xl">
+              <div className="text-2xl font-bold text-gray-900">
                 {formatCalories(weeklyAverage)}
               </div>
               <div className="text-sm text-green-700">Weekly Average</div>
             </div>
             
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <div className="text-2xl font-bold text-purple-900">
+            <div className="text-center p-4 bg-amber-50 border border-amber-100 rounded-xl">
+              <div className="text-2xl font-bold text-gray-900">
                 {Math.round(goalAchievementRate)}%
               </div>
               <div className="text-sm text-purple-700">Achievement Rate</div>
@@ -430,7 +430,7 @@ export default function GoalSettings({
       )}
 
       {/* Settings Form */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-gray-900">
             Preferences
@@ -438,7 +438,7 @@ export default function GoalSettings({
           {!isEditing && (
             <Button
               onClick={() => setIsEditing(true)}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium"
+              className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-medium"
             >
               Edit Settings
             </Button>
@@ -513,7 +513,7 @@ export default function GoalSettings({
                 checked={formData.notifications}
                 onChange={(e) => setFormData(prev => ({ ...prev, notifications: e.target.checked }))}
                 disabled={!isEditing}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-amber-600 border-gray-300 rounded focus:ring-amber-400"
               />
               <div>
                 <div className="text-sm font-medium text-gray-700">
@@ -559,7 +559,7 @@ export default function GoalSettings({
           <div className="flex gap-3 mt-6 pt-6 border-t border-gray-200">
             <Button
               onClick={handleSave}
-              className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium"
+              className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white px-6 py-2 rounded-lg font-medium"
             >
               Save Changes
             </Button>
@@ -576,7 +576,7 @@ export default function GoalSettings({
 
       {/* Quick Goal Presets */}
       {isEditing && (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+        <div className="bg-amber-50/60 border border-amber-100 rounded-xl p-4 sm:p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Quick Goal Presets
           </h3>
@@ -591,7 +591,7 @@ export default function GoalSettings({
                 key={preset.label}
                 onClick={() => setFormData(prev => ({ ...prev, dailyCalorieGoal: preset.calories.toString() }))}
                 variant="outline"
-                className="p-3 text-center border border-gray-300 rounded-lg hover:bg-white hover:border-blue-300 transition-colors h-auto flex-col"
+                className="p-3 text-center border border-gray-300 rounded-lg hover:bg-white hover:border-amber-300 transition-colors h-auto flex-col"
               >
                 <div className="font-medium text-gray-900">{preset.label}</div>
                 <div className="text-sm text-gray-600">{formatCalories(preset.calories)}</div>
@@ -602,7 +602,7 @@ export default function GoalSettings({
       )}
 
       {/* Profile Management Section */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <User className="w-5 h-5 text-gray-600" />
@@ -885,7 +885,7 @@ export default function GoalSettings({
                 <div className="flex gap-3 pt-4 border-t border-gray-200">
                   <Button
                     onClick={handleProfileSave}
-                    className="bg-green-500 hover:bg-green-600 text-white"
+                    className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white"
                   >
                     Save Profile
                   </Button>
@@ -944,7 +944,7 @@ export default function GoalSettings({
       </div>
 
       {/* Data Management Section */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-4 sm:p-6 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Data Management
         </h3>
