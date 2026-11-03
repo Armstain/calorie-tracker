@@ -353,15 +353,30 @@ class FoodDatabaseService {
   public searchFoods(query: string): CommonFood[] {
     const q = query.trim().toLowerCase();
     if (!q) return this.foods;
-    return this.foods.filter(food =>
-      food.name.toLowerCase().includes(q) ||
-      food.nameBn?.includes(query.trim()) ||
-      food.description?.toLowerCase().includes(q) ||
-      food.aliases?.some(alias => alias.toLowerCase().includes(q)) ||
-      // Transliterated names live in BD ids (bd-bhaat for ভাত, whose
-      // English name is "Cooked white rice" and which has no aliases).
-      food.id.replace(/^bd-/, '').replace(/_/g, ' ').includes(q)
-    );
+    // Ranked, so the most likely food comes first instead of whatever
+    // order the database happens to store: exact name, name starting
+    // with the query, name containing it, then Bangla / alias / id
+    // (transliterated names live in BD ids: bd-bhaat for ভাত, whose
+    // English name is "Cooked white rice" and which has no aliases),
+    // then description. Ties keep database order.
+    const scored: { food: CommonFood; score: number; index: number }[] = [];
+    this.foods.forEach((food, index) => {
+      const name = food.name.toLowerCase();
+      const idText = food.id.replace(/^bd-/, '').replace(/_/g, ' ');
+      let score: number | null = null;
+      if (name === q) score = 0;
+      else if (name.startsWith(q)) score = 1;
+      else if (name.includes(q)) score = 2;
+      else if (
+        food.nameBn?.includes(query.trim()) ||
+        food.aliases?.some(alias => alias.toLowerCase().includes(q)) ||
+        idText.includes(q)
+      ) score = 3;
+      else if (food.description?.toLowerCase().includes(q)) score = 4;
+      if (score !== null) scored.push({ food, score, index });
+    });
+    scored.sort((a, b) => a.score - b.score || a.index - b.index);
+    return scored.map(s => s.food);
   }
 
   public getFoodById(id: string): CommonFood | undefined {

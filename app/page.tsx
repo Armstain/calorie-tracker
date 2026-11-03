@@ -603,17 +603,9 @@ export default function Home() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {currentView === "capture" && (
             <div className="space-y-6">
-              {/* Daily Progress Summary */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-amber-200 shadow-sm">
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-lg font-semibold text-gray-800">Today&apos;s Progress</h2>
-                  <button
-                    onClick={() => setCurrentView("tracker")}
-                    className="text-amber-600 hover:text-amber-700 text-sm font-medium"
-                  >
-                    View Details →
-                  </button>
-                </div>
+              {/* Slim progress strip: one line of numbers + bar. The full
+                  breakdown lives in the tracker view, not on Capture. */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-3 border border-amber-200 shadow-sm">
                 {isLoadingSettings || isLoadingEntries ? (
                   <div className="animate-pulse">
                     <div className="flex items-center gap-4">
@@ -656,107 +648,17 @@ export default function Home() {
                 ) : null}
               </div>
 
-              {/* Welcome Message for New Users */}
+              {/* Slim welcome banner, new users only: no badge row. */}
               {todaysEntries.length === 0 && (
-                <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-200">
-                  <div className="text-center space-y-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto">
-                      <Camera className="w-6 h-6 text-white" />
+                <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center shrink-0">
+                      <Camera className="w-5 h-5 text-white" />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-800">Welcome to CalorieMeter!</h3>
-                    <p className="text-gray-600 max-w-md mx-auto">
-                      Take a photo of your food and get instant AI-powered calorie estimates. 
-                      Start tracking your nutrition journey today!
+                    <p className="text-gray-600 text-sm">
+                      <span className="font-semibold text-gray-800">Welcome to CalorieMeter! </span>
+                      Scan a meal for instant AI estimates, or add from the food database.
                     </p>
-                    <div className="flex items-center justify-center gap-4 text-sm text-gray-500 mt-4">
-                      <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                        <span>AI Analysis</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                        <span>Local Storage</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-                        <span>Privacy First</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Recent Meals Preview */}
-              {todaysEntries.length > 0 && (
-                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-amber-200 shadow-sm">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-semibold text-gray-800">Recent Meals</h3>
-                    <span className="text-sm text-gray-500">{todaysEntries.length} entries today</span>
-                  </div>
-                  <div className="flex gap-3 overflow-x-auto pb-2">
-                    {todaysEntries.slice(-3).map((entry, index) => (
-                      <div key={index} className="flex-shrink-0 bg-gray-50 rounded-lg p-3 min-w-[120px]">
-                        <div className="text-sm font-medium text-gray-800 truncate">
-                          {entry.foods[0]?.name || 'Food Item'}
-                        </div>
-                        <div className="text-xs text-gray-500 mt-1">
-                          {entry.totalCalories} cal
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          {new Date(entry.timestamp).toLocaleTimeString([], { 
-                            hour: '2-digit', 
-                            minute: '2-digit' 
-                          })}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Favorites & Repeats — no AI, no tokens */}
-              {(favorites.length > 0 || recentMeals.length > 0) && (
-                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-green-200 shadow-sm">
-                  <h3 className="font-semibold text-gray-800 mb-1">Favorites &amp; repeats</h3>
-                  <p className="text-xs text-gray-500 mb-3">Logged from saved data — no photo, no AI call, no tokens.</p>
-                  <div className="space-y-2">
-                    {favorites.map((fav) => (
-                      <div key={fav.id} className="flex items-center justify-between gap-2 bg-gray-50 rounded-lg p-3">
-                        <div className="min-w-0">
-                          <div className="text-sm font-medium text-gray-800 truncate">☆ {fav.name}</div>
-                          <div className="text-xs text-gray-500">{fav.totalCalories} cal · used {fav.useCount}x</div>
-                        </div>
-                        <div className="flex gap-2 shrink-0">
-                          <button
-                            onClick={() => handleRepeatMeal(fav.foods, fav.totalCalories, fav.id)}
-                            className="px-3 py-1.5 text-sm font-medium text-green-700 bg-green-100 hover:bg-green-200 rounded-lg"
-                          >
-                            Add
-                          </button>
-                          <button
-                            onClick={() => handleRemoveFavorite(fav.id)}
-                            aria-label={`Remove ${fav.name} from favorites`}
-                            className="px-2 py-1.5 text-sm text-gray-500 hover:text-red-600"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                    {recentMeals.filter((m) => !favorites.some((f) => f.foods.length === m.foods.length && f.totalCalories === m.totalCalories && f.name === m.name)).slice(0, 4).map((meal) => (
-                      <div key={meal.key} className="flex items-center justify-between gap-2 bg-gray-50 rounded-lg p-3">
-                        <div className="min-w-0">
-                          <div className="text-sm font-medium text-gray-800 truncate">↻ {meal.name}</div>
-                          <div className="text-xs text-gray-500">{meal.totalCalories} cal · last logged {new Date(meal.lastTimestamp).toLocaleDateString()}</div>
-                        </div>
-                        <button
-                          onClick={() => handleRepeatMeal(meal.foods, meal.totalCalories)}
-                          className="px-3 py-1.5 text-sm font-medium text-green-700 bg-green-100 hover:bg-green-200 rounded-lg shrink-0"
-                        >
-                          Repeat
-                        </button>
-                      </div>
-                    ))}
                   </div>
                 </div>
               )}
@@ -808,16 +710,53 @@ export default function Home() {
                 />
               </div>
 
-              {/* Quick Tips */}
-              <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                <h4 className="font-medium text-blue-800 mb-2">💡 Pro Tips</h4>
-                <ul className="text-sm text-blue-700 space-y-1">
-                  <li>• Add a short note (e.g. portion size) for more accurate estimates</li>
-                  <li>• Ensure good lighting for better AI recognition</li>
-                  <li>• Include the whole plate for accurate portion estimates</li>
-                  <li>• Try different angles if the first analysis isn&apos;t accurate</li>
-                </ul>
-              </div>
+              {/* Favorites & Repeats — no AI, no tokens */}
+              {(favorites.length > 0 || recentMeals.length > 0) && (
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-green-200 shadow-sm">
+                  <h3 className="font-semibold text-gray-800 mb-1">Favorites &amp; repeats</h3>
+                  <p className="text-xs text-gray-500 mb-3">Logged from saved data — no photo, no AI call, no tokens.</p>
+                  <div className="space-y-2">
+                    {favorites.map((fav) => (
+                      <div key={fav.id} className="flex items-center justify-between gap-2 bg-gray-50 rounded-lg p-3">
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium text-gray-800 truncate">☆ {fav.name}</div>
+                          <div className="text-xs text-gray-500">{fav.totalCalories} cal · used {fav.useCount}x</div>
+                        </div>
+                        <div className="flex gap-2 shrink-0">
+                          <button
+                            onClick={() => handleRepeatMeal(fav.foods, fav.totalCalories, fav.id)}
+                            className="px-3 py-1.5 text-sm font-medium text-green-700 bg-green-100 hover:bg-green-200 rounded-lg"
+                          >
+                            Add
+                          </button>
+                          <button
+                            onClick={() => handleRemoveFavorite(fav.id)}
+                            aria-label={`Remove ${fav.name} from favorites`}
+                            className="px-2 py-1.5 text-sm text-gray-500 hover:text-red-600"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    {recentMeals.filter((m) => !favorites.some((f) => f.foods.length === m.foods.length && f.totalCalories === m.totalCalories && f.name === m.name)).slice(0, 4).map((meal) => (
+                      <div key={meal.key} className="flex items-center justify-between gap-2 bg-gray-50 rounded-lg p-3">
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium text-gray-800 truncate">↻ {meal.name}</div>
+                          <div className="text-xs text-gray-500">{meal.totalCalories} cal · last logged {new Date(meal.lastTimestamp).toLocaleDateString()}</div>
+                        </div>
+                        <button
+                          onClick={() => handleRepeatMeal(meal.foods, meal.totalCalories)}
+                          className="px-3 py-1.5 text-sm font-medium text-green-700 bg-green-100 hover:bg-green-200 rounded-lg shrink-0"
+                        >
+                          Repeat
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
             </div>
           )}
 
