@@ -93,12 +93,10 @@ export class StorageOptimizer {
   async optimizeFoodEntry(entry: Omit<FoodEntry, 'id'>): Promise<Omit<FoodEntry, 'id'>> {
     const optimizedEntry = { ...entry };
 
-    if (!this.config.enableImageStorage) {
-      optimizedEntry.imageData = undefined;
-    } else if (entry.imageData) {
-      const compressedImage = await this.compressImage(entry.imageData);
-      optimizedEntry.imageData = compressedImage || undefined;
-    }
+    // Photos are never saved: a photo is used once for AI analysis and
+    // then discarded. Stripping here is unconditional, not config-gated,
+    // so no settings toggle can re-enable photo storage.
+    optimizedEntry.imageData = undefined;
 
     optimizedEntry.foods = entry.foods.map(food => ({
       ...food,
@@ -211,7 +209,10 @@ export class StorageOptimizer {
   }
 
   updateConfig(newConfig: Partial<StorageOptimizationConfig>): void {
-    this.config = { ...this.config, ...newConfig };
+    // Photos are never saved; ignore any request to re-enable image storage.
+    const { enableImageStorage: _ignored, ...rest } = newConfig;
+    void _ignored;
+    this.config = { ...this.config, ...rest, enableImageStorage: false };
   }
 
   getConfig(): StorageOptimizationConfig {

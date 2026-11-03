@@ -26,14 +26,22 @@ import { useNetworkStatus } from "@/lib/hooks/useNetworkStatus";
 import { useToast } from "@/lib/hooks/useToast";
 import { ToastContainer } from "@/components/ui/toast";
 import { storageService } from "@/lib/storage";
-import { FoodAnalysisResult, UserSettings, UserProfile, AppError } from "@/types";
+import { FoodAnalysisResult, FoodItem, UserSettings, UserProfile, AppError } from "@/types";
 import { dateUtils } from "@/lib/utils";
 import WorkingCamera from "@/components/WorkingCamera";
 import AnalysisProgress from "@/components/AnalysisProgress";
 import { learningService } from "@/lib/learningService";
 import HealthIntegration from "@/components/HealthIntegration";
 import FoodDatabaseEntry from "@/components/FoodDatabaseEntry";
-import { CommonFood } from "@/lib/foodDatabase";
+import { CommonFood, MacroPerUnit } from "@/lib/foodDatabase";
+import {
+  FavoriteMeal,
+  getFavorites,
+  saveFavorite,
+  removeFavorite,
+  markFavoriteUsed,
+  getRecentMeals,
+} from "@/lib/favorites";
 
 import {
   useTodaysEntries,
@@ -60,6 +68,7 @@ export default function Home() {
   const [analysisResult, setAnalysisResult] =
     useState<FoodAnalysisResult | null>(null);
   const [showFoodDatabase, setShowFoodDatabase] = useState(false);
+  const [favorites, setFavorites] = useState<FavoriteMeal[]>([]);
   const analysisAbortRef = useRef<AbortController | null>(null);
   const [mealNote, setMealNote] = useState("");
   const [analysisModelLabel, setAnalysisModelLabel] = useState<string | undefined>();
@@ -127,7 +136,12 @@ export default function Home() {
     refetchEntries();
     refetchWeekly();
     refetchSettings();
+    setFavorites(getFavorites());
   }, [refetchEntries, refetchWeekly, refetchSettings]);
+
+  useEffect(() => {
+    setFavorites(getFavorites());
+  }, []);
 
   const handlePhotoCapture = useCallback(
     async (imageData: string) => {
@@ -374,17 +388,20 @@ export default function Home() {
     handleOnboardingComplete(minimalProfile);
   }, [handleOnboardingComplete]);
 
-  const handleFoodDatabaseAdd = useCallback(async (food: CommonFood, calories: number, portion: string) => {
+  const handleFoodDatabaseAdd = useCallback(async (food: CommonFood, calories: number, portion: string, macros?: MacroPerUnit) => {
     try {
-      // Create a food entry from the database selection
+      // Create a food entry from the database selection. Macros were
+      // previously dropped here, so DB foods counted 0g protein/carbs/fat.
+      const foodItem: FoodItem = {
+        name: food.nameBn ? `${food.name} (${food.nameBn})` : food.name,
+        calories: calories,
+        quantity: portion,
+        confidence: 1.0, // Database entries have 100% confidence
+        ...(macros ? { macros: { protein: macros.protein, carbs: macros.carbs, fat: macros.fat, fiber: macros.fiber } } : {}),
+      };
       const foodEntry = {
         timestamp: new Date().toISOString(),
-        foods: [{
-          name: food.name,
-          calories: calories,
-          quantity: portion,
-          confidence: 1.0 // Database entries have 100% confidence
-        }],
+        foods: [foodItem],
         totalCalories: calories,
         date: dateUtils.getCurrentDate(),
       };
@@ -397,6 +414,54 @@ export default function Home() {
       showError(error as Error);
     }
   }, [refreshData, showError]);
+
+  // Favorites & repeats: log a stored meal with zero Gemini calls.
+  const handleFavoriteFromDb = useCallback((food: CommonFood, calories: number, portion: string, macros?: MacroPerUnit) => {
+    const foodItem: FoodItem = {
+      name: food.nameBn ? `${food.name} (${food.nameBn})` : food.name,
+      calories,
+      quantity: portion,
+      confidence: 1.0,
+      ...(macros ? { macros: { protein: macros.protein, carbs: macros.carbs, fat: macros.fat, fiber: macros.fiber } } : {}),
+    };
+    const favorite = saveFavorite([foodItem]);
+    setFavorites(getFavorites());
+    if (favorite) showSuccessToast("Saved as favorite", `${foodItem.name} can now be logged without AI`, 3000);
+  }, [showSuccessToast]);
+
+  const handleSaveAnalysisAsFavorite = useCallback(() => {
+    if (!analysisResult) return;
+    const favorite = saveFavorite(analysisResult.foods);
+    setFavorites(getFavorites());
+    if (favorite) showSuccessToast("Saved as favorite", "This meal can be repeated later with no new image parse", 3000);
+  }, [analysisResult, showSuccessToast]);
+
+  const handleRepeatMeal = useCallback(async (foods: FoodItem[], totalCalories: number, favoriteId?: string) => {
+    try {
+      await storageService.saveFoodEntry({
+        timestamp: new Date().toISOString(),
+        foods,
+        totalCalories,
+        date: dateUtils.getCurrentDate(),
+      });
+      if (favoriteId) markFavoriteUsed(favoriteId);
+      setFavorites(getFavorites());
+      refreshData();
+      setCurrentView("tracker");
+    } catch (error) {
+      showError(error as Error);
+    }
+  }, [refreshData, showError]);
+
+  const handleRemoveFavorite = useCallback((id: string) => {
+    removeFavorite(id);
+    setFavorites(getFavorites());
+  }, []);
+
+  const recentMeals = useMemo(() => {
+    const allEntries = weeklyData.flatMap((day) => day.entries);
+    return getRecentMeals(allEntries, 8);
+  }, [weeklyData]);
 
   // Show loading state while checking onboarding status
   if (isCheckingOnboarding) {
@@ -649,6 +714,53 @@ export default function Home() {
                 </div>
               )}
 
+              {/* Favorites & Repeats — no AI, no tokens */}
+              {(favorites.length > 0 || recentMeals.length > 0) && (
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-green-200 shadow-sm">
+                  <h3 className="font-semibold text-gray-800 mb-1">Favorites &amp; repeats</h3>
+                  <p className="text-xs text-gray-500 mb-3">Logged from saved data — no photo, no AI call, no tokens.</p>
+                  <div className="space-y-2">
+                    {favorites.map((fav) => (
+                      <div key={fav.id} className="flex items-center justify-between gap-2 bg-gray-50 rounded-lg p-3">
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium text-gray-800 truncate">☆ {fav.name}</div>
+                          <div className="text-xs text-gray-500">{fav.totalCalories} cal · used {fav.useCount}x</div>
+                        </div>
+                        <div className="flex gap-2 shrink-0">
+                          <button
+                            onClick={() => handleRepeatMeal(fav.foods, fav.totalCalories, fav.id)}
+                            className="px-3 py-1.5 text-sm font-medium text-green-700 bg-green-100 hover:bg-green-200 rounded-lg"
+                          >
+                            Add
+                          </button>
+                          <button
+                            onClick={() => handleRemoveFavorite(fav.id)}
+                            aria-label={`Remove ${fav.name} from favorites`}
+                            className="px-2 py-1.5 text-sm text-gray-500 hover:text-red-600"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    {recentMeals.filter((m) => !favorites.some((f) => f.foods.length === m.foods.length && f.totalCalories === m.totalCalories && f.name === m.name)).slice(0, 4).map((meal) => (
+                      <div key={meal.key} className="flex items-center justify-between gap-2 bg-gray-50 rounded-lg p-3">
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium text-gray-800 truncate">↻ {meal.name}</div>
+                          <div className="text-xs text-gray-500">{meal.totalCalories} cal · last logged {new Date(meal.lastTimestamp).toLocaleDateString()}</div>
+                        </div>
+                        <button
+                          onClick={() => handleRepeatMeal(meal.foods, meal.totalCalories)}
+                          className="px-3 py-1.5 text-sm font-medium text-green-700 bg-green-100 hover:bg-green-200 rounded-lg shrink-0"
+                        >
+                          Repeat
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Camera Component */}
               <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-amber-200 shadow-sm">
                 <div className="mb-4">
@@ -717,6 +829,7 @@ export default function Home() {
               onAddToDaily={handleAddToDaily}
               onRetakePhoto={handleRetakePhoto}
               onAnalysisUpdate={setAnalysisResult}
+              onSaveFavorite={handleSaveAnalysisAsFavorite}
             />
           )}
 
@@ -849,6 +962,7 @@ export default function Home() {
         {showFoodDatabase && (
           <FoodDatabaseEntry
             onFoodAdd={handleFoodDatabaseAdd}
+            onFavoriteAdd={handleFavoriteFromDb}
             onClose={() => setShowFoodDatabase(false)}
           />
         )}

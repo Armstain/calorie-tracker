@@ -414,22 +414,6 @@ export default function DataManagement({ onDataChange }: DataManagementProps) {
             <h4 className="text-sm font-medium text-gray-900 mb-3">Optimization Settings</h4>
             <div className="space-y-3 text-sm">
               <div className="flex items-center justify-between">
-                <div className="flex flex-col">
-                  <span className="text-gray-600">Store Images:</span>
-                  <span className="text-xs text-gray-500">Recommended: OFF (saves 90% storage)</span>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={optimizationConfig.enableImageStorage}
-                    onChange={(e) => updateOptimizationSettings({ enableImageStorage: e.target.checked })}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-              
-              <div className="flex items-center justify-between">
                 <span className="text-gray-600">Auto-cleanup (days):</span>
                 <select
                   value={optimizationConfig.autoCleanupDays}
@@ -444,19 +428,6 @@ export default function DataManagement({ onDataChange }: DataManagementProps) {
                 </select>
               </div>
 
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Max Image Size:</span>
-                <select
-                  value={optimizationConfig.maxImageSize}
-                  onChange={(e) => updateOptimizationSettings({ maxImageSize: parseInt(e.target.value) })}
-                  className="px-2 py-1 border border-gray-300 rounded text-sm"
-                >
-                  <option value={50}>50 KB</option>
-                  <option value={100}>100 KB</option>
-                  <option value={200}>200 KB</option>
-                  <option value={500}>500 KB</option>
-                </select>
-              </div>
             </div>
           </div>
         )}

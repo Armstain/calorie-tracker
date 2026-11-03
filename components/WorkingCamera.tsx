@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import { RotateCcw, Check, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CameraProps } from '@/types';
+import { downscaleImage } from '@/lib/image';
+import { APP_CONFIG } from '@/lib/config';
 
 export default function WorkingCamera({ onPhotoCapture, onError }: CameraProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -106,11 +108,17 @@ export default function WorkingCamera({ onPhotoCapture, onError }: CameraProps) 
     try {
       setIsLoading(true);
 
-      // Convert to base64
+      // Convert to base64, then shrink before any Gemini call: a full-size
+      // phone photo costs far more image tokens than food recognition needs.
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         const imageData = e.target?.result as string;
-        setCapturedImage(imageData);
+        const shrunk = await downscaleImage(
+          imageData,
+          APP_CONFIG.IMAGE_MAX_SIDE,
+          APP_CONFIG.IMAGE_DOWNSCALE_QUALITY
+        );
+        setCapturedImage(shrunk);
       };
       reader.readAsDataURL(file);
     } catch (error) {

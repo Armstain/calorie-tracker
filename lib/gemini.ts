@@ -367,7 +367,7 @@ export class GeminiService {
       }],
       generationConfig: {
         // Thinking tokens count against this budget, so leave headroom for the JSON.
-        maxOutputTokens: 16384,
+        maxOutputTokens: 4096,
         responseMimeType: 'application/json',
         responseSchema: FOOD_ANALYSIS_SCHEMA,
       }
@@ -706,97 +706,18 @@ export class GeminiService {
   }
 
   private getFoodAnalysisPrompt(note = '', userContext = ''): string {
-    const base = `Analyze this image and provide comprehensive food information. This could be either actual food or a nutrition label/food packaging. Return the response as JSON with this exact format:
+    const base = `Identify every food and drink in this photo and estimate its nutrition.
 
-{
-  "foods": [
-    {
-      "name": "food item name",
-      "calories": number,
-      "quantity": "portion size or serving size",
-      "estimatedGrams": number,
-      "confidence": 0.8,
-      "ingredients": ["ingredient1", "ingredient2", "ingredient3"],
-      "cookingMethod": "grilled|fried|baked|steamed|raw|boiled|roasted",
-      "macros": {
-        "protein": number,
-        "carbs": number,
-        "fat": number,
-        "fiber": number
-      },
-      "category": "protein|vegetable|grain|fruit|dairy|snack|beverage",
-      "healthScore": number
-    }
-  ],
-  "mealType": "breakfast|lunch|dinner|snack",
-  "restaurantName": "restaurant name if identifiable",
-  "totalMacros": {
-    "protein": number,
-    "carbs": number,
-    "fat": number,
-    "fiber": number
-  }
-}
-
-ENHANCED ANALYSIS INSTRUCTIONS:
-
-**PORTION WEIGHT FIRST (most important for accuracy):**
-- For each item, first estimate its edible weight in grams ("estimatedGrams") using visual cues: plate size (~26 cm dinner plate), utensils, hands, cups, packaging.
-- Then compute calories and macros from that weight using typical values per 100 g for the identified food and cooking method.
-- Keep "quantity" human-readable (e.g. "1 cup", "2 slices") but make it consistent with estimatedGrams.
-- For drinks use grams ≈ millilitres.
-
-**INGREDIENT BREAKDOWN:**
-- List main ingredients you can identify
-- Include seasonings, sauces, oils if visible
-- For complex dishes, break down components (e.g., burger: "beef patty", "bun", "lettuce", "tomato", "cheese")
-
-**COOKING METHOD DETECTION:**
-- Look for visual cues: grill marks, golden browning, oil sheen, etc.
-- "grilled" - visible grill marks, charred edges
-- "fried" - golden/crispy exterior, oil visible
-- "baked" - even browning, dry surface
-- "steamed" - moist appearance, no browning
-- "raw" - fresh, uncooked appearance
-- "boiled" - soft texture, no browning
-- "roasted" - caramelized edges, dry heat cooking
-
-**MACRO ESTIMATION (grams):**
-- Protein: meat, fish, eggs, beans, dairy
-- Carbs: bread, rice, pasta, fruits, vegetables
-- Fat: oils, butter, nuts, fatty meats
-- Fiber: vegetables, fruits, whole grains
-
-**HEALTH SCORE (1-10):**
-- 8-10: Very healthy (vegetables, lean proteins, whole grains)
-- 6-7: Moderately healthy (balanced meals with some processing)
-- 4-5: Average (mixed healthy and less healthy components)
-- 1-3: Less healthy (highly processed, fried, high sugar/fat)
-
-**RESTAURANT DETECTION:**
-- Look for distinctive plating, branded items, restaurant-style presentation
-- Common chains: McDonald's, Subway, Starbucks, etc.
-- Include restaurant name if clearly identifiable
-
-**MEAL TYPE DETECTION:**
-- breakfast: eggs, cereal, toast, coffee, pancakes
-- lunch: sandwiches, salads, soups, light meals
-- dinner: larger portions, multiple courses, hearty meals
-- snack: small portions, finger foods, single items
-
-**NUTRITION LABEL PRIORITY:**
-- If nutrition label visible, use exact values and set confidence to 0.95
-- Extract all macro information from label
-- Use product name and serving size exactly as stated
-
-**ACCURACY GUIDELINES:**
-- Be specific about food names and cooking methods
-- Consider portion sizes carefully
-- Set confidence based on image clarity and food recognition
-- Include all visible components of complex dishes
-- Estimate macros based on typical food composition
-
-Focus on comprehensive analysis while maintaining accuracy.`;
+Rules, in order of importance:
+- PORTION WEIGHT FIRST: for each item, first estimate its edible weight in grams (estimatedGrams) from visual cues (plate ~26 cm, utensils, hands, cups, packaging), then compute calories and macros from that weight using typical per-100g values for the food and cooking method. Keep quantity human-readable (e.g. "1 cup") and consistent with estimatedGrams. Drinks: grams ≈ millilitres.
+- List main ingredients you can see, including oils, sauces and seasonings.
+- cookingMethod: grilled | fried | baked | steamed | raw | boiled | roasted, from visual cues (grill marks, golden browning, oil sheen, no browning).
+- macros in grams (protein, carbs, fat, fiber) from typical food composition.
+- healthScore 1-10 (8-10 very healthy, 6-7 moderate, 4-5 average, 1-3 highly processed/fried/sugary).
+- mealType: breakfast | lunch | dinner | snack, from the foods shown.
+- restaurantName only if clearly identifiable from plating or branding.
+- If a nutrition label is visible, use its exact values and set confidence to 0.95, with the product name and serving size exactly as stated.
+- Be specific about food names, include every visible component of complex dishes, and set confidence from image clarity and recognition certainty.`;
 
     const sections = [base];
 

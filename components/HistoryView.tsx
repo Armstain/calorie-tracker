@@ -82,6 +82,10 @@ export default function HistoryView({ weeklyData, onDateSelect }: HistoryProps) 
     const firstAvg = firstHalf.reduce((sum, day) => sum + day.totalCalories, 0) / firstHalf.length;
     const secondAvg = secondHalf.reduce((sum, day) => sum + day.totalCalories, 0) / secondHalf.length;
     
+    // No baseline calories yet (e.g. a fresh account): there is no trend
+    // to compute, and dividing by 0 would render as NaN%.
+    if (firstAvg === 0) return null;
+
     const difference = secondAvg - firstAvg;
     const percentChange = Math.abs(difference / firstAvg * 100);
     

@@ -6,10 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import FoodDatabaseService, { CommonFood } from '@/lib/foodDatabase';
+import FoodDatabaseService, { CommonFood, MacroPerUnit } from '@/lib/foodDatabase';
+
 
 interface FoodDatabaseEntryProps {
-  onFoodAdd: (food: CommonFood, calories: number, portion: string) => void;
+  onFoodAdd: (food: CommonFood, calories: number, portion: string, macros?: MacroPerUnit) => void;
+  // Optional: when provided, a "Save as favorite" button appears. Favorites
+  // are re-logged later with zero Gemini calls (see lib/favorites.ts).
+  onFavoriteAdd?: (food: CommonFood, calories: number, portion: string, macros?: MacroPerUnit) => void;
   onClose: () => void;
 }
 
@@ -19,7 +23,7 @@ interface SelectedFood {
   portionName: string;
 }
 
-export default function FoodDatabaseEntry({ onFoodAdd, onClose }: FoodDatabaseEntryProps) {
+export default function FoodDatabaseEntry({ onFoodAdd, onFavoriteAdd, onClose }: FoodDatabaseEntryProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedFood, setSelectedFood] = useState<SelectedFood | null>(null);
@@ -86,6 +90,16 @@ export default function FoodDatabaseEntry({ onFoodAdd, onClose }: FoodDatabaseEn
   const calculatedCalories = selectedFood 
     ? foodDatabase.calculateCalories(selectedFood.food.id, selectedFood.portionMultiplier)
     : 0;
+
+  const calculatedMacros = selectedFood
+    ? foodDatabase.calculateMacros(selectedFood.food.id, selectedFood.portionMultiplier)
+    : undefined;
+
+  const handleFavoriteAdd = () => {
+    if (selectedFood && onFavoriteAdd) {
+      onFavoriteAdd(selectedFood.food, calculatedCalories, selectedFood.portionName, calculatedMacros);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -159,9 +173,9 @@ export default function FoodDatabaseEntry({ onFoodAdd, onClose }: FoodDatabaseEn
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <h4 className="font-medium">{food.name}</h4>
+                        <h4 className="font-medium">{food.name}{food.nameBn ? ` (${food.nameBn})` : ''}</h4>
                         <p className="text-sm text-gray-600">{food.description}</p>
-                        <p className="text-xs text-gray-500">{food.caloriesPerUnit} cal per {food.unit}</p>
+                        <p className="text-xs text-gray-500">{food.caloriesPerUnit} cal per {food.unit}{food.proteinPerUnit !== undefined ? ` · P ${food.proteinPerUnit}g · C ${food.carbsPerUnit}g · F ${food.fatPerUnit}g` : ''}</p>
                       </div>
                       <Badge variant="secondary">
                         {categories.find(c => c.id === food.category)?.icon}
@@ -248,6 +262,9 @@ export default function FoodDatabaseEntry({ onFoodAdd, onClose }: FoodDatabaseEn
                   <div className="text-right">
                     <p className="text-2xl font-bold text-blue-600">{calculatedCalories}</p>
                     <p className="text-sm text-gray-600">calories</p>
+                    {calculatedMacros && (
+                      <p className="text-xs text-gray-500">P {calculatedMacros.protein}g · C {calculatedMacros.carbs}g · F {calculatedMacros.fat}g</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -261,6 +278,15 @@ export default function FoodDatabaseEntry({ onFoodAdd, onClose }: FoodDatabaseEn
                 <Plus className="h-4 w-4 mr-2" />
                 Add to Daily Total
               </Button>
+              {onFavoriteAdd && (
+                <Button
+                  onClick={handleFavoriteAdd}
+                  variant="outline"
+                  className="w-full"
+                >
+                  ☆ Save as favorite (no AI needed next time)
+                </Button>
+              )}
             </div>
           )}
         </CardContent>
