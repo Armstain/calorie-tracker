@@ -1,0 +1,4667 @@
+[
+ {
+  "id": "bd-fctb_04_0001",
+  "name": "Agathi, raw",
+  "nameBn": "Bok ful shak",
+  "category": "vegetables",
+  "caloriesPerUnit": 132,
+  "proteinPerUnit": 12.6,
+  "carbsPerUnit": 8.6,
+  "fatPerUnit": 2.7,
+  "fiberPerUnit": 11.8,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 88 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Bok ful shak"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0002",
+  "name": "Alligator weed, raw",
+  "nameBn": "Malancha shak",
+  "category": "vegetables",
+  "caloriesPerUnit": 86,
+  "proteinPerUnit": 7.4,
+  "carbsPerUnit": 9.9,
+  "fatPerUnit": 1.8,
+  "fiberPerUnit": 3.9,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 57 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Malancha shak"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-alu_bhorta",
+  "name": "Alu bhorta",
+  "nameBn": "আলু ভর্তা",
+  "category": "cooked",
+  "caloriesPerUnit": 95,
+  "proteinPerUnit": 2.0,
+  "carbsPerUnit": 20.0,
+  "fatPerUnit": 1.0,
+  "fiberPerUnit": 2.0,
+  "unit": "1 bati (100g)",
+  "description": "Recipe · 95 kcal / 100g",
+  "source": "recipe",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "1 spoon (15g)",
+    "multiplier": 0.15
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0033",
+  "name": "Amaranth, leaves, green, boiled* (without salt)",
+  "nameBn": "Sobuj data shak siddha, lobon chara",
+  "category": "vegetables",
+  "caloriesPerUnit": 45,
+  "proteinPerUnit": 3.4,
+  "carbsPerUnit": 2.6,
+  "fatPerUnit": 0.4,
+  "fiberPerUnit": 7.6,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 30 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Sobuj data shak siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0005",
+  "name": "Amaranth, leaves, green, raw",
+  "nameBn": "Sobuj data shak",
+  "category": "vegetables",
+  "caloriesPerUnit": 38,
+  "proteinPerUnit": 3.0,
+  "carbsPerUnit": 2.2,
+  "fatPerUnit": 0.4,
+  "fiberPerUnit": 6.6,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 25 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Sobuj data shak"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0032",
+  "name": "Amaranth, leaves, red, boiled* (without salt)",
+  "nameBn": "Lal shak siddha, lobon chara",
+  "category": "vegetables",
+  "caloriesPerUnit": 56,
+  "proteinPerUnit": 8.0,
+  "carbsPerUnit": 0.9,
+  "fatPerUnit": 0.6,
+  "fiberPerUnit": 7.5,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 37 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Lal shak siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0004",
+  "name": "Amaranth, leaves, red, raw",
+  "nameBn": "Lal shak",
+  "category": "vegetables",
+  "caloriesPerUnit": 48,
+  "proteinPerUnit": 6.8,
+  "carbsPerUnit": 0.8,
+  "fatPerUnit": 0.4,
+  "fiberPerUnit": 6.3,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 32 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Lal shak"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0003",
+  "name": "Amaranth, leaves, spiney, raw",
+  "nameBn": "Kanta notay shak",
+  "category": "vegetables",
+  "caloriesPerUnit": 76,
+  "proteinPerUnit": 7.2,
+  "carbsPerUnit": 7.8,
+  "fatPerUnit": 0.4,
+  "fiberPerUnit": 6.6,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 51 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Kanta notay shak"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0001",
+  "name": "Amaranth, stem, raw",
+  "nameBn": "Data",
+  "category": "vegetables",
+  "caloriesPerUnit": 32,
+  "proteinPerUnit": 1.4,
+  "carbsPerUnit": 5.6,
+  "fatPerUnit": 0.2,
+  "fiberPerUnit": 1.8,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 21 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Data"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0001",
+  "name": "Anchovy, Gangetic hairfin, dried",
+  "nameBn": "Fesha, shutki",
+  "category": "fish",
+  "caloriesPerUnit": 328,
+  "proteinPerUnit": 70.9,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 4.9,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 328 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Fesha, shutki"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0002",
+  "name": "Anchovy, Gangetic hairfin, raw",
+  "nameBn": "Fesha",
+  "category": "fish",
+  "caloriesPerUnit": 105,
+  "proteinPerUnit": 17.7,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 3.8,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 105 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Fesha"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0003",
+  "name": "Anchovy, Gold spotted grebadier, raw",
+  "nameBn": "Olua",
+  "category": "fish",
+  "caloriesPerUnit": 71,
+  "proteinPerUnit": 13.2,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 2.1,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 71 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Olua"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0004",
+  "name": "Anchovy, Scaly hairfin, raw",
+  "nameBn": "Fesha, Teli",
+  "category": "fish",
+  "caloriesPerUnit": 101,
+  "proteinPerUnit": 19.3,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 2.7,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 101 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Fesha, Teli"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_15_0001",
+  "name": "Baking powder",
+  "nameBn": "Baking powder",
+  "category": "other",
+  "caloriesPerUnit": 26,
+  "proteinPerUnit": 0.8,
+  "carbsPerUnit": 5.7,
+  "fatPerUnit": 0.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 172 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Baking powder"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 piece (50g)",
+    "multiplier": 3.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-banana",
+  "name": "Banana",
+  "nameBn": "কলা",
+  "category": "fruits",
+  "caloriesPerUnit": 89,
+  "proteinPerUnit": 1.1,
+  "carbsPerUnit": 23.0,
+  "fatPerUnit": 0.3,
+  "fiberPerUnit": 2.6,
+  "unit": "1 piece (100g)",
+  "description": "Estimate · 89 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": []
+ },
+ {
+  "id": "bd-fctb_09_0005",
+  "name": "Barb, Olive, raw",
+  "nameBn": "Sorpunti",
+  "category": "fish",
+  "caloriesPerUnit": 175,
+  "proteinPerUnit": 17.4,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 11.7,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 175 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Sorpunti"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0006",
+  "name": "Barb, Olive, without bones, raw",
+  "nameBn": "Sorpunti, kata chara",
+  "category": "fish",
+  "caloriesPerUnit": 175,
+  "proteinPerUnit": 17.4,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 11.7,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 175 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Sorpunti, kata chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0007",
+  "name": "Barb, Pool barb, eyes included, raw",
+  "nameBn": "Punti, Vadi punti, chokh soho",
+  "category": "fish",
+  "caloriesPerUnit": 139,
+  "proteinPerUnit": 17.6,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 7.6,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 139 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Punti, Vadi punti, chokh soho"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0008",
+  "name": "Barb, Pool barb, without bones, eyes included, raw",
+  "nameBn": "Punti, Vadi punti, chokh soho, kata chara",
+  "category": "fish",
+  "caloriesPerUnit": 94,
+  "proteinPerUnit": 17.6,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 2.6,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 94 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Punti, Vadi punti, chokh soho, kata chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_01_0001",
+  "name": "Barley, whole-grain, raw",
+  "nameBn": "Jaab, gota",
+  "category": "grains",
+  "caloriesPerUnit": 810,
+  "proteinPerUnit": 27.2,
+  "carbsPerUnit": 141.0,
+  "fatPerUnit": 5.5,
+  "fiberPerUnit": 43.2,
+  "unit": "1 plate (250g)",
+  "description": "FCTB-2013 · 324 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Jaab, gota"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 bati (150g)",
+    "multiplier": 0.6
+   },
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 0.6
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.4
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0009",
+  "name": "Bata, raw",
+  "nameBn": "Bata",
+  "category": "fish",
+  "caloriesPerUnit": 106,
+  "proteinPerUnit": 15.9,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 4.7,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 106 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Bata"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_07_0001",
+  "name": "Bay leaf, dried",
+  "nameBn": "Tejpata",
+  "category": "spice",
+  "caloriesPerUnit": 18,
+  "proteinPerUnit": 0.4,
+  "carbsPerUnit": 2.4,
+  "fatPerUnit": 0.4,
+  "fiberPerUnit": 1.3,
+  "unit": "1 spoon (5g)",
+  "description": "FCTB-2013 · 353 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Tejpata"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 20.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0002",
+  "name": "Bean, scarlet runner, raw",
+  "nameBn": "Shim",
+  "category": "vegetables",
+  "caloriesPerUnit": 81,
+  "proteinPerUnit": 5.8,
+  "carbsPerUnit": 12.4,
+  "fatPerUnit": 0.2,
+  "fiberPerUnit": 3.0,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 54 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Shim"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0003",
+  "name": "Bean, seeds and pods, raw",
+  "nameBn": "Shim",
+  "category": "vegetables",
+  "caloriesPerUnit": 44,
+  "proteinPerUnit": 3.6,
+  "carbsPerUnit": 3.8,
+  "fatPerUnit": 0.2,
+  "fiberPerUnit": 6.4,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 29 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Shim"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-beef_curry",
+  "name": "Beef curry",
+  "nameBn": "গরুর মাংস (ঝোল)",
+  "category": "cooked",
+  "caloriesPerUnit": 200,
+  "proteinPerUnit": 16.0,
+  "carbsPerUnit": 4.0,
+  "fatPerUnit": 12.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "Estimate · 200 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "1 bati (150g)",
+    "multiplier": 1.5
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_10_0016",
+  "name": "Beef handi kabab*",
+  "nameBn": "Haaree kabab (goru)",
+  "category": "proteins",
+  "caloriesPerUnit": 233,
+  "proteinPerUnit": 12.7,
+  "carbsPerUnit": 6.6,
+  "fatPerUnit": 16.9,
+  "fiberPerUnit": 1.8,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 233 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Haaree kabab (goru)"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_10_0001",
+  "name": "Beef liver, raw",
+  "nameBn": "Gorur koliza",
+  "category": "proteins",
+  "caloriesPerUnit": 130,
+  "proteinPerUnit": 20.4,
+  "carbsPerUnit": 3.9,
+  "fatPerUnit": 3.6,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 130 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Gorur koliza"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_10_0003",
+  "name": "Beef, meat, 15-20% fat, boneless, raw",
+  "nameBn": "Gorur mangsaw, harh chara",
+  "category": "proteins",
+  "caloriesPerUnit": 207,
+  "proteinPerUnit": 19.7,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 14.2,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 207 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Gorur mangsaw, harh chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_10_0002",
+  "name": "Beef, meat, lean, boneless, raw",
+  "nameBn": "গরুর মাংস",
+  "category": "proteins",
+  "caloriesPerUnit": 103,
+  "proteinPerUnit": 20.7,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 2.3,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 103 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Gorur mangsaw, harh o chorbi chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_10_0004",
+  "name": "Beef, mince, lean, raw",
+  "nameBn": "Gorur mangsaw, kima",
+  "category": "proteins",
+  "caloriesPerUnit": 126,
+  "proteinPerUnit": 20.3,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 5.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 126 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Gorur mangsaw, kima"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0007",
+  "name": "Beet greens leaves",
+  "nameBn": "Beet shak",
+  "category": "vegetables",
+  "caloriesPerUnit": 46,
+  "proteinPerUnit": 4.2,
+  "carbsPerUnit": 3.2,
+  "fatPerUnit": 0.8,
+  "fiberPerUnit": 5.6,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 31 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Beet shak"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0004",
+  "name": "Beet root, red, raw",
+  "nameBn": "Beet",
+  "category": "vegetables",
+  "caloriesPerUnit": 69,
+  "proteinPerUnit": 3.0,
+  "carbsPerUnit": 11.8,
+  "fatPerUnit": 0.2,
+  "fiberPerUnit": 4.2,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 46 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Beet"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-beguni",
+  "name": "Beguni",
+  "nameBn": "বেগুনি",
+  "category": "street",
+  "caloriesPerUnit": 90,
+  "proteinPerUnit": 1.2,
+  "carbsPerUnit": 7.8,
+  "fatPerUnit": 6.0,
+  "fiberPerUnit": 0.9,
+  "unit": "1 piece (30g)",
+  "description": "Estimate · 300 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 3.333
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0008",
+  "name": "Bengal dayflower, leaves, raw",
+  "nameBn": "Bat baitta shak",
+  "category": "vegetables",
+  "caloriesPerUnit": 33,
+  "proteinPerUnit": 3.0,
+  "carbsPerUnit": 3.3,
+  "fatPerUnit": 0.4,
+  "fiberPerUnit": 2.1,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 22 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Bat baitta shak"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_02_0001",
+  "name": "Bengal gram, dehulled, split, dried, raw",
+  "nameBn": "ছোলা",
+  "category": "dal",
+  "caloriesPerUnit": 562,
+  "proteinPerUnit": 30.3,
+  "carbsPerUnit": 88.8,
+  "fatPerUnit": 9.0,
+  "fiberPerUnit": 1.8,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 375 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Cholar dal, vanga"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 spoon (15g)",
+    "multiplier": 0.1
+   },
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 1.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_02_0012",
+  "name": "Bengal gram, whole, boiled* (without salt)",
+  "nameBn": "Chola siddha, lobon chara",
+  "category": "dal",
+  "caloriesPerUnit": 273,
+  "proteinPerUnit": 15.9,
+  "carbsPerUnit": 35.0,
+  "fatPerUnit": 4.6,
+  "fiberPerUnit": 13.6,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 182 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Chola siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 spoon (15g)",
+    "multiplier": 0.1
+   },
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 1.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_02_0002",
+  "name": "Bengal gram, whole, dried, raw",
+  "nameBn": "Chola, shukna",
+  "category": "dal",
+  "caloriesPerUnit": 525,
+  "proteinPerUnit": 30.6,
+  "carbsPerUnit": 67.2,
+  "fatPerUnit": 9.0,
+  "fiberPerUnit": 26.1,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 350 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Chola, shukna"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 spoon (15g)",
+    "multiplier": 0.1
+   },
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 1.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_15_0002",
+  "name": "Betel leaves, raw",
+  "nameBn": "Pan pata",
+  "category": "other",
+  "caloriesPerUnit": 6,
+  "proteinPerUnit": 0.5,
+  "carbsPerUnit": 0.6,
+  "fatPerUnit": 0.1,
+  "fiberPerUnit": 0.7,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 42 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Pan pata"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 piece (50g)",
+    "multiplier": 3.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-pitha_bhapa",
+  "name": "Bhapa pitha",
+  "nameBn": "ভাপা পিঠা",
+  "category": "cooked",
+  "caloriesPerUnit": 150,
+  "proteinPerUnit": 3.0,
+  "carbsPerUnit": 30.0,
+  "fatPerUnit": 1.8,
+  "fiberPerUnit": 0.6,
+  "unit": "1 piece (60g)",
+  "description": "Estimate · 250 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 1.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_01_0034",
+  "name": "Biscuit, sweet*",
+  "nameBn": "Misti biscuit",
+  "category": "grains",
+  "caloriesPerUnit": 860,
+  "proteinPerUnit": 14.5,
+  "carbsPerUnit": 141.8,
+  "fatPerUnit": 25.0,
+  "fiberPerUnit": 6.0,
+  "unit": "1 plate (250g)",
+  "description": "FCTB-2013 · 344 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Misti biscuit"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 bati (150g)",
+    "multiplier": 0.6
+   },
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 0.6
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.4
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0009",
+  "name": "Bitter gourd leaves, green, raw",
+  "nameBn": "Korola shak",
+  "category": "vegetables",
+  "caloriesPerUnit": 82,
+  "proteinPerUnit": 7.4,
+  "carbsPerUnit": 9.2,
+  "fatPerUnit": 0.8,
+  "fiberPerUnit": 4.6,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 55 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Korola shak"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_02_0003",
+  "name": "Black gram, dehulled, dried, raw",
+  "nameBn": "Mashkalai dal, asto",
+  "category": "dal",
+  "caloriesPerUnit": 476,
+  "proteinPerUnit": 33.4,
+  "carbsPerUnit": 67.6,
+  "fatPerUnit": 2.6,
+  "fiberPerUnit": 24.4,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 317 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Mashkalai dal, asto"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 spoon (15g)",
+    "multiplier": 0.1
+   },
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 1.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_02_0004",
+  "name": "Black gram, split, dried, raw",
+  "nameBn": "Maskalai dal, vanga",
+  "category": "dal",
+  "caloriesPerUnit": 525,
+  "proteinPerUnit": 33.9,
+  "carbsPerUnit": 92.7,
+  "fatPerUnit": 1.8,
+  "fiberPerUnit": 1.4,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 350 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Maskalai dal, vanga"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 spoon (15g)",
+    "multiplier": 0.1
+   },
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 1.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0010",
+  "name": "Boal, without bones, raw",
+  "nameBn": "Boal, kata chara",
+  "category": "fish",
+  "caloriesPerUnit": 80,
+  "proteinPerUnit": 15.4,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 2.1,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 80 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Boal, kata chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-egg_boiled",
+  "name": "Boiled egg",
+  "nameBn": "সেদ্ধ ডিম",
+  "category": "cooked",
+  "caloriesPerUnit": 70,
+  "proteinPerUnit": 6.5,
+  "carbsPerUnit": 0.5,
+  "fatPerUnit": 4.5,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (50g)",
+  "description": "Estimate · 140 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-borhani",
+  "name": "Borhani",
+  "nameBn": "বোরহানি",
+  "category": "beverages",
+  "caloriesPerUnit": 100,
+  "proteinPerUnit": 4.0,
+  "carbsPerUnit": 10.0,
+  "fatPerUnit": 4.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 glass (200g)",
+  "description": "Estimate · 50 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 0.5
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0010",
+  "name": "Bottle gourd leaves, raw",
+  "nameBn": "Lau shak",
+  "category": "vegetables",
+  "caloriesPerUnit": 39,
+  "proteinPerUnit": 3.8,
+  "carbsPerUnit": 0.9,
+  "fatPerUnit": 0.9,
+  "fiberPerUnit": 6.6,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 26 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Lau shak"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_01_0002",
+  "name": "Bread, bun/roll",
+  "nameBn": "Bonruti, bun/roll",
+  "category": "grains",
+  "caloriesPerUnit": 675,
+  "proteinPerUnit": 22.0,
+  "carbsPerUnit": 127.2,
+  "fatPerUnit": 7.0,
+  "fiberPerUnit": 7.0,
+  "unit": "1 plate (250g)",
+  "description": "FCTB-2013 · 270 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Bonruti, bun/roll"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 bati (150g)",
+    "multiplier": 0.6
+   },
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 0.6
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.4
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_01_0003",
+  "name": "Bread, white, for toasting",
+  "nameBn": "Pawruti",
+  "category": "grains",
+  "caloriesPerUnit": 680,
+  "proteinPerUnit": 20.0,
+  "carbsPerUnit": 139.0,
+  "fatPerUnit": 3.5,
+  "fiberPerUnit": 6.2,
+  "unit": "1 plate (250g)",
+  "description": "FCTB-2013 · 272 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Pawruti"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 bati (150g)",
+    "multiplier": 0.6
+   },
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 0.6
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.4
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0033",
+  "name": "Brinjal, purple, long, boiled* (without salt)",
+  "nameBn": "Begun siddha, lobon chara",
+  "category": "vegetables",
+  "caloriesPerUnit": 39,
+  "proteinPerUnit": 3.2,
+  "carbsPerUnit": 3.2,
+  "fatPerUnit": 0.2,
+  "fiberPerUnit": 6.6,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 26 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Begun siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0005",
+  "name": "Brinjal, purple, long, raw",
+  "nameBn": "বেগুন",
+  "category": "vegetables",
+  "caloriesPerUnit": 36,
+  "proteinPerUnit": 2.8,
+  "carbsPerUnit": 3.0,
+  "fatPerUnit": 0.2,
+  "fiberPerUnit": 6.2,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 24 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Begun, kalo, lomba"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0006",
+  "name": "Broad beans, raw",
+  "nameBn": "Makhon shim",
+  "category": "vegetables",
+  "caloriesPerUnit": 75,
+  "proteinPerUnit": 6.8,
+  "carbsPerUnit": 6.8,
+  "fatPerUnit": 0.9,
+  "fiberPerUnit": 6.3,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 50 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Makhon shim"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0011",
+  "name": "Bronze feather back, raw",
+  "nameBn": "Foli",
+  "category": "fish",
+  "caloriesPerUnit": 80,
+  "proteinPerUnit": 17.8,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 1.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 80 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Foli"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_10_0005",
+  "name": "Buffalo meat, raw",
+  "nameBn": "Mohisher mangsaw",
+  "category": "proteins",
+  "caloriesPerUnit": 95,
+  "proteinPerUnit": 19.4,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 1.9,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 95 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Mohisher mangsaw"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0011",
+  "name": "Bugleweed, raw",
+  "nameBn": "Sabarang",
+  "category": "vegetables",
+  "caloriesPerUnit": 64,
+  "proteinPerUnit": 3.9,
+  "carbsPerUnit": 6.9,
+  "fatPerUnit": 2.0,
+  "fiberPerUnit": 2.0,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 43 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Sabarang"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_13_0001",
+  "name": "Butter, salted",
+  "nameBn": "Makhon, nonta",
+  "category": "oil",
+  "caloriesPerUnit": 110,
+  "proteinPerUnit": 0.1,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 12.2,
+  "fiberPerUnit": 0.0,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 733 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Makhon, nonta"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_12_0001",
+  "name": "Buttermilk, fluid, low fat",
+  "nameBn": "Ghol",
+  "category": "dairy",
+  "caloriesPerUnit": 82,
+  "proteinPerUnit": 8.5,
+  "carbsPerUnit": 7.8,
+  "fatPerUnit": 1.8,
+  "fiberPerUnit": 0.0,
+  "unit": "1 glass (250g)",
+  "description": "FCTB-2013 · 33 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Ghol"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 0.6
+   },
+   {
+    "name": "1 spoon (15g)",
+    "multiplier": 0.06
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.4
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0034",
+  "name": "Cabbage, boiled* (without salt)",
+  "nameBn": "Badhakopi siddha, lobon chara",
+  "category": "vegetables",
+  "caloriesPerUnit": 40,
+  "proteinPerUnit": 2.6,
+  "carbsPerUnit": 4.4,
+  "fatPerUnit": 0.6,
+  "fiberPerUnit": 4.2,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 27 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Badhakopi siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0007",
+  "name": "Cabbage, raw",
+  "nameBn": "Badhakopi",
+  "category": "vegetables",
+  "caloriesPerUnit": 36,
+  "proteinPerUnit": 2.2,
+  "carbsPerUnit": 3.9,
+  "fatPerUnit": 0.4,
+  "fiberPerUnit": 3.8,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 24 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Badhakopi"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0012",
+  "name": "Calbasu, without bones, raw",
+  "nameBn": "Kalbaush",
+  "category": "fish",
+  "caloriesPerUnit": 95,
+  "proteinPerUnit": 17.0,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 3.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 95 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Kalbaush"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_07_0002",
+  "name": "Cardamom",
+  "nameBn": "Elach",
+  "category": "spice",
+  "caloriesPerUnit": 13,
+  "proteinPerUnit": 0.5,
+  "carbsPerUnit": 1.9,
+  "fatPerUnit": 0.1,
+  "fiberPerUnit": 1.2,
+  "unit": "1 spoon (5g)",
+  "description": "FCTB-2013 · 261 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Elach"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 20.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0035",
+  "name": "Carrot, boiled* (without salt)",
+  "nameBn": "Gajor siddha, lobon chara",
+  "category": "vegetables",
+  "caloriesPerUnit": 64,
+  "proteinPerUnit": 1.6,
+  "carbsPerUnit": 11.0,
+  "fatPerUnit": 0.4,
+  "fiberPerUnit": 4.6,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 43 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Gajor siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0008",
+  "name": "Carrot, raw",
+  "nameBn": "গাজর",
+  "category": "vegetables",
+  "caloriesPerUnit": 51,
+  "proteinPerUnit": 1.4,
+  "carbsPerUnit": 9.0,
+  "fatPerUnit": 0.4,
+  "fiberPerUnit": 3.9,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 34 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Gajor"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_06_0002",
+  "name": "Cashew nuts, raw",
+  "nameBn": "Hizlee badam",
+  "category": "nut",
+  "caloriesPerUnit": 89,
+  "proteinPerUnit": 2.7,
+  "carbsPerUnit": 3.5,
+  "fatPerUnit": 7.0,
+  "fiberPerUnit": 0.5,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 595 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Hizlee badam"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 piece (30g)",
+    "multiplier": 2.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0012",
+  "name": "Cassava, leaves, raw",
+  "nameBn": "Simei alu shak",
+  "category": "vegetables",
+  "caloriesPerUnit": 93,
+  "proteinPerUnit": 7.0,
+  "carbsPerUnit": 8.6,
+  "fatPerUnit": 1.8,
+  "fiberPerUnit": 7.2,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 62 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Simei alu shak"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0013",
+  "name": "Catfish, Bacha, raw",
+  "nameBn": "Bacha",
+  "category": "fish",
+  "caloriesPerUnit": 122,
+  "proteinPerUnit": 16.1,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 6.4,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 122 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Bacha"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0014",
+  "name": "Catfish, Pabda, raw",
+  "nameBn": "Pabda",
+  "category": "fish",
+  "caloriesPerUnit": 95,
+  "proteinPerUnit": 17.3,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 2.8,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 95 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Pabda"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0015",
+  "name": "Catla, raw",
+  "nameBn": "কাতলা মাছ",
+  "category": "fish",
+  "caloriesPerUnit": 103,
+  "proteinPerUnit": 19.9,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 2.6,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 103 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Katla"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0036",
+  "name": "Cauliflower, boiled* (without salt)",
+  "nameBn": "Fulkopi siddha, lobon chara",
+  "category": "vegetables",
+  "caloriesPerUnit": 42,
+  "proteinPerUnit": 4.0,
+  "carbsPerUnit": 4.0,
+  "fatPerUnit": 0.4,
+  "fiberPerUnit": 3.2,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 28 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Fulkopi siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0009",
+  "name": "Cauliflower, raw",
+  "nameBn": "Fulkopi",
+  "category": "vegetables",
+  "caloriesPerUnit": 40,
+  "proteinPerUnit": 3.9,
+  "carbsPerUnit": 3.8,
+  "fatPerUnit": 0.4,
+  "fiberPerUnit": 3.0,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 27 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Fulkopi"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0016",
+  "name": "Chanda, Indian glaasy fish, eyes included, raw",
+  "nameBn": "Chanda, ranga, chokh soho",
+  "category": "fish",
+  "caloriesPerUnit": 115,
+  "proteinPerUnit": 15.5,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 5.9,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 115 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Chanda, ranga, chokh soho"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_12_0002",
+  "name": "Cheese, cottage, 25% fat",
+  "nameBn": "Poneer",
+  "category": "dairy",
+  "caloriesPerUnit": 865,
+  "proteinPerUnit": 61.5,
+  "carbsPerUnit": 13.5,
+  "fatPerUnit": 62.8,
+  "fiberPerUnit": 0.0,
+  "unit": "1 glass (250g)",
+  "description": "FCTB-2013 · 346 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Poneer"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 0.6
+   },
+   {
+    "name": "1 spoon (15g)",
+    "multiplier": 0.06
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.4
+   }
+  ]
+ },
+ {
+  "id": "bd-biriyani_chicken",
+  "name": "Chicken biriyani",
+  "nameBn": "চিকেন বিরিয়ানি",
+  "category": "cooked",
+  "caloriesPerUnit": 495,
+  "proteinPerUnit": 24.0,
+  "carbsPerUnit": 54.0,
+  "fatPerUnit": 18.0,
+  "fiberPerUnit": 3.0,
+  "unit": "1 plate (300g)",
+  "description": "Estimate · 165 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "1 packet (300g)",
+    "multiplier": 1.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.333
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_10_0006",
+  "name": "Chicken breast, without skin, raw",
+  "nameBn": "মুরগির বুকের মাংস",
+  "category": "proteins",
+  "caloriesPerUnit": 106,
+  "proteinPerUnit": 22.3,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 1.8,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 106 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Murgi, buker mangsaw, chamra charano"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-chicken_curry",
+  "name": "Chicken curry (home style)",
+  "nameBn": "মুরগির মাংস (ঝোল)",
+  "category": "cooked",
+  "caloriesPerUnit": 150,
+  "proteinPerUnit": 14.0,
+  "carbsPerUnit": 4.0,
+  "fatPerUnit": 8.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "Estimate · 150 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "1 bati (150g)",
+    "multiplier": 1.5
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_10_0007",
+  "name": "Chicken leg, without skin, raw",
+  "nameBn": "মুরগির রান",
+  "category": "proteins",
+  "caloriesPerUnit": 128,
+  "proteinPerUnit": 19.2,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 5.7,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 128 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Murgi, ranner mangsaw, chamra charano"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_10_0008",
+  "name": "Chicken liver, raw",
+  "nameBn": "Murgir koliza",
+  "category": "proteins",
+  "caloriesPerUnit": 114,
+  "proteinPerUnit": 16.9,
+  "carbsPerUnit": 0.7,
+  "fatPerUnit": 4.8,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 114 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Murgir koliza"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_06_0003",
+  "name": "Chilgoza pine, dried",
+  "nameBn": "Chilgoza",
+  "category": "nut",
+  "caloriesPerUnit": 107,
+  "proteinPerUnit": 2.1,
+  "carbsPerUnit": 1.3,
+  "fatPerUnit": 10.3,
+  "fiberPerUnit": 0.6,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 712 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Chilgoza"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 piece (30g)",
+    "multiplier": 2.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0010",
+  "name": "Chilli, green, with seeds, raw",
+  "nameBn": "কাঁচা মরিচ",
+  "category": "vegetables",
+  "caloriesPerUnit": 68,
+  "proteinPerUnit": 4.2,
+  "carbsPerUnit": 8.8,
+  "fatPerUnit": 0.2,
+  "fiberPerUnit": 7.0,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 45 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Kancha morich"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_07_0003",
+  "name": "Chilli, red, dry",
+  "nameBn": "Shukna morich",
+  "category": "spice",
+  "caloriesPerUnit": 16,
+  "proteinPerUnit": 0.8,
+  "carbsPerUnit": 1.8,
+  "fatPerUnit": 0.3,
+  "fiberPerUnit": 1.3,
+  "unit": "1 spoon (5g)",
+  "description": "FCTB-2013 · 313 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Shukna morich"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 20.0
+   }
+  ]
+ },
+ {
+  "id": "bd-chingri_bhuna",
+  "name": "Chingri bhuna",
+  "nameBn": "চিংড়ি ভুনা",
+  "category": "cooked",
+  "caloriesPerUnit": 180,
+  "proteinPerUnit": 27.0,
+  "carbsPerUnit": 4.5,
+  "fatPerUnit": 6.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 bati (150g)",
+  "description": "Estimate · 120 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-chomchom",
+  "name": "Chomchom",
+  "nameBn": "চমচম",
+  "category": "sweet",
+  "caloriesPerUnit": 150,
+  "proteinPerUnit": 3.0,
+  "carbsPerUnit": 28.0,
+  "fatPerUnit": 2.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (50g)",
+  "description": "Estimate · 300 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-chotpoti",
+  "name": "Chotpoti",
+  "nameBn": "চটপটি",
+  "category": "street",
+  "caloriesPerUnit": 180,
+  "proteinPerUnit": 6.0,
+  "carbsPerUnit": 28.5,
+  "fatPerUnit": 4.5,
+  "fiberPerUnit": 3.0,
+  "unit": "1 bati (150g)",
+  "description": "Estimate · 120 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_07_0004",
+  "name": "Cinnamon, ground",
+  "nameBn": "Darchini gura",
+  "category": "spice",
+  "caloriesPerUnit": 12,
+  "proteinPerUnit": 0.2,
+  "carbsPerUnit": 1.4,
+  "fatPerUnit": 0.1,
+  "fiberPerUnit": 2.7,
+  "unit": "1 spoon (5g)",
+  "description": "FCTB-2013 · 243 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Darchini gura"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 20.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0017",
+  "name": "Climbing perch, indigenous, eyes included, raw",
+  "nameBn": "Koi, deshi, chokh soho",
+  "category": "fish",
+  "caloriesPerUnit": 130,
+  "proteinPerUnit": 17.5,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 6.6,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 130 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Koi, deshi, chokh soho"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0018",
+  "name": "Climbing perch, Thai, eyes included, raw",
+  "nameBn": "Koi, Thai, chokh soho",
+  "category": "fish",
+  "caloriesPerUnit": 139,
+  "proteinPerUnit": 17.5,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 7.7,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 139 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Koi, Thai, chokh soho"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_07_0005",
+  "name": "Cloves, dried",
+  "nameBn": "Labongo",
+  "category": "spice",
+  "caloriesPerUnit": 13,
+  "proteinPerUnit": 0.3,
+  "carbsPerUnit": 1.4,
+  "fatPerUnit": 0.4,
+  "fiberPerUnit": 1.4,
+  "unit": "1 spoon (5g)",
+  "description": "FCTB-2013 · 267 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Labongo"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 20.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0019",
+  "name": "Clown knife fish, without bones, raw",
+  "nameBn": "Chital, kata chara",
+  "category": "fish",
+  "caloriesPerUnit": 96,
+  "proteinPerUnit": 17.8,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 2.8,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 96 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Chital, kata chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_06_0004",
+  "name": "Coconut milk",
+  "nameBn": "Narikel dudh",
+  "category": "nut",
+  "caloriesPerUnit": 32,
+  "proteinPerUnit": 0.3,
+  "carbsPerUnit": 0.2,
+  "fatPerUnit": 3.3,
+  "fiberPerUnit": 0.3,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 213 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Narikel dudh"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 piece (30g)",
+    "multiplier": 2.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_06_0005",
+  "name": "Coconut, desiccated",
+  "nameBn": "Narikel, shukna",
+  "category": "nut",
+  "caloriesPerUnit": 98,
+  "proteinPerUnit": 0.8,
+  "carbsPerUnit": 1.3,
+  "fatPerUnit": 9.3,
+  "fiberPerUnit": 2.7,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 652 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Narikel, shukna"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 piece (30g)",
+    "multiplier": 2.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_06_0006",
+  "name": "Coconut, mature kernel",
+  "nameBn": "Narikel",
+  "category": "nut",
+  "caloriesPerUnit": 58,
+  "proteinPerUnit": 0.5,
+  "carbsPerUnit": 1.0,
+  "fatPerUnit": 5.5,
+  "fiberPerUnit": 1.4,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 389 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Narikel"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 piece (30g)",
+    "multiplier": 2.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0013",
+  "name": "Colocasia leaves, black, raw",
+  "nameBn": "Kalo kochu shak",
+  "category": "vegetables",
+  "caloriesPerUnit": 93,
+  "proteinPerUnit": 8.4,
+  "carbsPerUnit": 8.0,
+  "fatPerUnit": 1.8,
+  "fiberPerUnit": 5.6,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 62 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Kalo kochu shak"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0014",
+  "name": "Colocasia leaves, green, raw",
+  "nameBn": "Shobuj kochu shak",
+  "category": "vegetables",
+  "caloriesPerUnit": 76,
+  "proteinPerUnit": 6.0,
+  "carbsPerUnit": 6.6,
+  "fatPerUnit": 1.6,
+  "fiberPerUnit": 5.6,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 51 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Shobuj kochu shak"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_05_0011",
+  "name": "Colocasia/Taro, boiled* (without salt)",
+  "nameBn": "Kochur mukhi siddha, lobon chara",
+  "category": "root",
+  "caloriesPerUnit": 115,
+  "proteinPerUnit": 2.5,
+  "carbsPerUnit": 23.6,
+  "fatPerUnit": 0.2,
+  "fiberPerUnit": 4.6,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 115 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Kochur mukhi siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 bati (150g)",
+    "multiplier": 1.5
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_05_0001",
+  "name": "Colocasia/Taro, corm, raw",
+  "nameBn": "Kochur mukhi",
+  "category": "root",
+  "caloriesPerUnit": 103,
+  "proteinPerUnit": 2.2,
+  "carbsPerUnit": 21.0,
+  "fatPerUnit": 0.2,
+  "fiberPerUnit": 4.1,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 103 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Kochur mukhi"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 bati (150g)",
+    "multiplier": 1.5
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_05_0017",
+  "name": "Colocasia/Taro/Tannia, cormel, boiled* (without salt)",
+  "nameBn": "Dudh kochu siddha, lobon chara",
+  "category": "root",
+  "caloriesPerUnit": 113,
+  "proteinPerUnit": 2.4,
+  "carbsPerUnit": 23.1,
+  "fatPerUnit": 0.2,
+  "fiberPerUnit": 4.6,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 113 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Dudh kochu siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 bati (150g)",
+    "multiplier": 1.5
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_05_0002",
+  "name": "Colocasia/Taro/Tannia, cormel, raw",
+  "nameBn": "Dudh kochu",
+  "category": "root",
+  "caloriesPerUnit": 101,
+  "proteinPerUnit": 2.2,
+  "carbsPerUnit": 20.6,
+  "fatPerUnit": 0.2,
+  "fiberPerUnit": 4.1,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 101 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Dudh kochu"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 bati (150g)",
+    "multiplier": 1.5
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0020",
+  "name": "Common carp, without bones, raw",
+  "nameBn": "Common carp, kata chara",
+  "category": "fish",
+  "caloriesPerUnit": 88,
+  "proteinPerUnit": 18.7,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 1.5,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 88 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Common carp, kata chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-dal_cooked",
+  "name": "Cooked musur dal (thin)",
+  "nameBn": "ডাল (রান্না)",
+  "category": "cooked",
+  "caloriesPerUnit": 158,
+  "proteinPerUnit": 10.5,
+  "carbsPerUnit": 27.0,
+  "fatPerUnit": 1.5,
+  "fiberPerUnit": 3.0,
+  "unit": "1 bati (150g)",
+  "description": "Estimate · 105 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "1 spoon (15g)",
+    "multiplier": 0.1
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-bhaat",
+  "name": "Cooked white rice",
+  "nameBn": "ভাত",
+  "category": "cooked",
+  "caloriesPerUnit": 325,
+  "proteinPerUnit": 6.2,
+  "carbsPerUnit": 70.0,
+  "fatPerUnit": 0.5,
+  "fiberPerUnit": 1.0,
+  "unit": "1 plate (250g)",
+  "description": "Estimate · 130 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "1 bati (150g)",
+    "multiplier": 0.6
+   },
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 0.6
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.4
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_07_0006",
+  "name": "Coriander leaves, raw",
+  "nameBn": "Dhone pata",
+  "category": "spice",
+  "caloriesPerUnit": 2,
+  "proteinPerUnit": 0.2,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 0.0,
+  "fiberPerUnit": 0.3,
+  "unit": "1 spoon (5g)",
+  "description": "FCTB-2013 · 30 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Dhone pata"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 20.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_07_0007",
+  "name": "Coriander seed, dry",
+  "nameBn": "Dhonia",
+  "category": "spice",
+  "caloriesPerUnit": 17,
+  "proteinPerUnit": 0.7,
+  "carbsPerUnit": 0.7,
+  "fatPerUnit": 0.8,
+  "fiberPerUnit": 2.0,
+  "unit": "1 spoon (5g)",
+  "description": "FCTB-2013 · 336 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Dhonia"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 20.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_13_0002",
+  "name": "Cottonseed oil",
+  "nameBn": "Tular bij er tel",
+  "category": "oil",
+  "caloriesPerUnit": 135,
+  "proteinPerUnit": 0.0,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 15.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 900 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Tular bij er tel"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0037",
+  "name": "Cowpea, boiled* (without salt)",
+  "nameBn": "Borboti siddha, lobon chara",
+  "category": "vegetables",
+  "caloriesPerUnit": 60,
+  "proteinPerUnit": 4.6,
+  "carbsPerUnit": 4.5,
+  "fatPerUnit": 0.6,
+  "fiberPerUnit": 9.4,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 40 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Borboti siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0015",
+  "name": "Cowpea, leaves, raw",
+  "nameBn": "Borboti pata",
+  "category": "vegetables",
+  "caloriesPerUnit": 51,
+  "proteinPerUnit": 5.1,
+  "carbsPerUnit": 2.6,
+  "fatPerUnit": 1.0,
+  "fiberPerUnit": 5.4,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 34 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Borboti pata"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0011",
+  "name": "Cowpea, pods and seeds, raw",
+  "nameBn": "Borboti",
+  "category": "vegetables",
+  "caloriesPerUnit": 58,
+  "proteinPerUnit": 4.5,
+  "carbsPerUnit": 4.2,
+  "fatPerUnit": 0.6,
+  "fiberPerUnit": 9.0,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 39 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Borboti"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0021",
+  "name": "Croaker, Black spotted, without bones, raw",
+  "nameBn": "Poa, kata chara",
+  "category": "fish",
+  "caloriesPerUnit": 100,
+  "proteinPerUnit": 18.6,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 2.9,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 100 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Poa, kata chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0012",
+  "name": "Cucumber, peeled, raw",
+  "nameBn": "Shosa",
+  "category": "vegetables",
+  "caloriesPerUnit": 26,
+  "proteinPerUnit": 1.2,
+  "carbsPerUnit": 4.4,
+  "fatPerUnit": 0.2,
+  "fiberPerUnit": 1.0,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 17 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Shosa"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_07_0008",
+  "name": "Cumin seeds",
+  "nameBn": "Jira",
+  "category": "spice",
+  "caloriesPerUnit": 20,
+  "proteinPerUnit": 0.9,
+  "carbsPerUnit": 1.9,
+  "fatPerUnit": 0.9,
+  "fiberPerUnit": 0.5,
+  "unit": "1 spoon (5g)",
+  "description": "FCTB-2013 · 402 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Jira"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 20.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_12_0003",
+  "name": "Curd, sweetened, whole milk",
+  "nameBn": "Doi, misti",
+  "category": "dairy",
+  "caloriesPerUnit": 235,
+  "proteinPerUnit": 8.0,
+  "carbsPerUnit": 28.5,
+  "fatPerUnit": 10.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 glass (250g)",
+  "description": "FCTB-2013 · 94 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Doi, misti"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 0.6
+   },
+   {
+    "name": "1 spoon (15g)",
+    "multiplier": 0.06
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.4
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0022",
+  "name": "Day's mystus, combined species, eyes included, raw",
+  "nameBn": "Tengra, bivinno projati, chokh soho",
+  "category": "fish",
+  "caloriesPerUnit": 114,
+  "proteinPerUnit": 18.2,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 4.6,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 114 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Tengra, bivinno projati, chokh soho"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-dim_bhuna",
+  "name": "Dim bhuna (egg curry)",
+  "nameBn": "ডিম ভুনা",
+  "category": "cooked",
+  "caloriesPerUnit": 140,
+  "proteinPerUnit": 8.0,
+  "carbsPerUnit": 2.0,
+  "fatPerUnit": 10.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (50g)",
+  "description": "Estimate · 280 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0016",
+  "name": "Dima leaves, raw",
+  "nameBn": "Dima shak",
+  "category": "vegetables",
+  "caloriesPerUnit": 50,
+  "proteinPerUnit": 2.6,
+  "carbsPerUnit": 5.4,
+  "fatPerUnit": 1.5,
+  "fiberPerUnit": 1.5,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 33 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Dima shak"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0006",
+  "name": "Dock leaves, raw",
+  "nameBn": "Chukai shak, bivinno projati",
+  "category": "vegetables",
+  "caloriesPerUnit": 69,
+  "proteinPerUnit": 4.6,
+  "carbsPerUnit": 8.8,
+  "fatPerUnit": 1.0,
+  "fiberPerUnit": 2.7,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 46 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Chukai shak, bivinno projati"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0017",
+  "name": "Drumstick, leaves, raw",
+  "nameBn": "Sajna pata",
+  "category": "vegetables",
+  "caloriesPerUnit": 108,
+  "proteinPerUnit": 10.0,
+  "carbsPerUnit": 6.9,
+  "fatPerUnit": 2.7,
+  "fiberPerUnit": 7.8,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 72 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Sajna pata"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0013",
+  "name": "Drumstick, pods, raw",
+  "nameBn": "Sajna data",
+  "category": "vegetables",
+  "caloriesPerUnit": 64,
+  "proteinPerUnit": 4.4,
+  "carbsPerUnit": 7.6,
+  "fatPerUnit": 0.3,
+  "fiberPerUnit": 7.2,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 43 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Sajna data"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_10_0009",
+  "name": "Duck, meat, raw",
+  "nameBn": "Hasher mangshaw",
+  "category": "proteins",
+  "caloriesPerUnit": 130,
+  "proteinPerUnit": 21.6,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 4.8,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 130 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Hasher mangshaw"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-dudh_cha",
+  "name": "Dudh cha (milk tea)",
+  "nameBn": "দুধ চা",
+  "category": "beverages",
+  "caloriesPerUnit": 78,
+  "proteinPerUnit": 3.0,
+  "carbsPerUnit": 9.6,
+  "fatPerUnit": 3.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 cup (120g)",
+  "description": "Estimate · 65 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 0.833
+   }
+  ]
+ },
+ {
+  "id": "bd-egg_omelette",
+  "name": "Egg omelette",
+  "nameBn": "ডিম ভাজি",
+  "category": "cooked",
+  "caloriesPerUnit": 110,
+  "proteinPerUnit": 7.0,
+  "carbsPerUnit": 1.0,
+  "fatPerUnit": 8.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (50g)",
+  "description": "Estimate · 220 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_11_0005",
+  "name": "Egg, chicken, farmed, boiled* (without salt)",
+  "nameBn": "Murgir dim siddha, lobon chara",
+  "category": "egg",
+  "caloriesPerUnit": 79,
+  "proteinPerUnit": 8.2,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 5.1,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (50g)",
+  "description": "FCTB-2013 · 158 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Murgir dim siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_11_0001",
+  "name": "Egg, chicken, farmed, raw",
+  "nameBn": "মুরগির ডিম (ফার্ম)",
+  "category": "egg",
+  "caloriesPerUnit": 70,
+  "proteinPerUnit": 7.2,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 4.5,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (50g)",
+  "description": "FCTB-2013 · 139 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Murgir dim, farm er"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_11_0006",
+  "name": "Egg, chicken, native, boiled* (without salt)",
+  "nameBn": "Deshi murgir dim siddha, lobon chara",
+  "category": "egg",
+  "caloriesPerUnit": 90,
+  "proteinPerUnit": 7.6,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 6.6,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (50g)",
+  "description": "FCTB-2013 · 179 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Deshi murgir dim siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_11_0002",
+  "name": "Egg, chicken, native, raw",
+  "nameBn": "Murgir dim, deshi",
+  "category": "egg",
+  "caloriesPerUnit": 79,
+  "proteinPerUnit": 6.6,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 5.8,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (50g)",
+  "description": "FCTB-2013 · 158 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Murgir dim, deshi"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_11_0003",
+  "name": "Egg, chicken, native, yolk, raw",
+  "nameBn": "Murgir dim er kusum, deshi",
+  "category": "egg",
+  "caloriesPerUnit": 162,
+  "proteinPerUnit": 8.0,
+  "carbsPerUnit": 1.3,
+  "fatPerUnit": 13.9,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (50g)",
+  "description": "FCTB-2013 · 325 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Murgir dim er kusum, deshi"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_11_0007",
+  "name": "Egg, duck, whole, boiled* (without salt)",
+  "nameBn": "Hasher dim siddha, lobon chara",
+  "category": "egg",
+  "caloriesPerUnit": 107,
+  "proteinPerUnit": 7.6,
+  "carbsPerUnit": 0.8,
+  "fatPerUnit": 8.1,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (50g)",
+  "description": "FCTB-2013 · 214 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Hasher dim siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_11_0004",
+  "name": "Egg, duck, whole, raw",
+  "nameBn": "হাঁসের ডিম",
+  "category": "egg",
+  "caloriesPerUnit": 94,
+  "proteinPerUnit": 6.8,
+  "carbsPerUnit": 0.7,
+  "fatPerUnit": 7.2,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (50g)",
+  "description": "FCTB-2013 · 188 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Hasher dim"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_05_0018",
+  "name": "Elephant foot, corm, boiled* (without salt)",
+  "nameBn": "Ole kochu siddha, lobon chara",
+  "category": "root",
+  "caloriesPerUnit": 83,
+  "proteinPerUnit": 1.3,
+  "carbsPerUnit": 16.9,
+  "fatPerUnit": 0.1,
+  "fiberPerUnit": 4.6,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 83 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Ole kochu siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 bati (150g)",
+    "multiplier": 1.5
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_05_0003",
+  "name": "Elephant foot, corm, raw",
+  "nameBn": "Ole kochu",
+  "category": "root",
+  "caloriesPerUnit": 74,
+  "proteinPerUnit": 1.2,
+  "carbsPerUnit": 15.1,
+  "fatPerUnit": 0.1,
+  "fiberPerUnit": 4.1,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 74 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Ole kochu"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 bati (150g)",
+    "multiplier": 1.5
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_07_0009",
+  "name": "Fennel seeds",
+  "nameBn": "Mauri",
+  "category": "spice",
+  "caloriesPerUnit": 16,
+  "proteinPerUnit": 0.8,
+  "carbsPerUnit": 0.6,
+  "fatPerUnit": 0.7,
+  "fiberPerUnit": 2.0,
+  "unit": "1 spoon (5g)",
+  "description": "FCTB-2013 · 329 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Mauri"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 20.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_07_0010",
+  "name": "Fenugreek seeds",
+  "nameBn": "Methi",
+  "category": "spice",
+  "caloriesPerUnit": 16,
+  "proteinPerUnit": 1.1,
+  "carbsPerUnit": 1.6,
+  "fatPerUnit": 0.3,
+  "fiberPerUnit": 1.2,
+  "unit": "1 spoon (5g)",
+  "description": "FCTB-2013 · 330 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Methi"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 20.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0019",
+  "name": "Fenugreek, leaves, raw",
+  "nameBn": "Methi shak",
+  "category": "vegetables",
+  "caloriesPerUnit": 75,
+  "proteinPerUnit": 6.6,
+  "carbsPerUnit": 7.5,
+  "fatPerUnit": 1.4,
+  "fiberPerUnit": 3.2,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 50 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Methi shak"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0018",
+  "name": "Fern, leaves, raw",
+  "nameBn": "Dheki shak",
+  "category": "vegetables",
+  "caloriesPerUnit": 102,
+  "proteinPerUnit": 2.0,
+  "carbsPerUnit": 20.6,
+  "fatPerUnit": 0.9,
+  "fiberPerUnit": 1.5,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 68 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Dheki shak"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0023",
+  "name": "Fish (Catla, Mrigal, Rohu), dorsal with skin, raw",
+  "nameBn": "Macher gada (Katla, Mrigal, Rui)",
+  "category": "fish",
+  "caloriesPerUnit": 104,
+  "proteinPerUnit": 19.7,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 2.8,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 104 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Macher gada (Katla, Mrigal, Rui)"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0024",
+  "name": "Fish (Catla, Mrigal, Rohu), ventral with skin, raw",
+  "nameBn": "Macher peti (Katla, Mrigal, Rui)",
+  "category": "fish",
+  "caloriesPerUnit": 130,
+  "proteinPerUnit": 21.4,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 4.9,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 130 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Macher peti (Katla, Mrigal, Rui)"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0072",
+  "name": "Fish ball*",
+  "nameBn": "Macher kopta",
+  "category": "fish",
+  "caloriesPerUnit": 220,
+  "proteinPerUnit": 15.7,
+  "carbsPerUnit": 21.7,
+  "fatPerUnit": 6.7,
+  "fiberPerUnit": 5.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 220 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Macher kopta"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_13_0003",
+  "name": "Fish oil, cod liver",
+  "nameBn": "Kod liver tel",
+  "category": "oil",
+  "caloriesPerUnit": 135,
+  "proteinPerUnit": 0.0,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 15.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 900 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Kod liver tel"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_10_0010",
+  "name": "Frog, legs, raw",
+  "nameBn": "Bang",
+  "category": "proteins",
+  "caloriesPerUnit": 68,
+  "proteinPerUnit": 16.4,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 0.3,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 68 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Bang"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fuchka",
+  "name": "Fuchka",
+  "nameBn": "ফুচকা",
+  "category": "street",
+  "caloriesPerUnit": 40,
+  "proteinPerUnit": 1.0,
+  "carbsPerUnit": 7.0,
+  "fatPerUnit": 1.0,
+  "fiberPerUnit": 0.2,
+  "unit": "1 piece (25g)",
+  "description": "Estimate · 160 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 4.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0025",
+  "name": "Ganges river sprat, combined species, raw",
+  "nameBn": "Kachki, bivinno projati",
+  "category": "fish",
+  "caloriesPerUnit": 93,
+  "proteinPerUnit": 16.1,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 3.2,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 93 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Kachki, bivinno projati"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0026",
+  "name": "Gangetic ailia, raw",
+  "nameBn": "Kajuli",
+  "category": "fish",
+  "caloriesPerUnit": 117,
+  "proteinPerUnit": 15.3,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 6.2,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 117 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Kajuli"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0027",
+  "name": "Gangetic mystus, raw",
+  "nameBn": "Gulsha",
+  "category": "fish",
+  "caloriesPerUnit": 86,
+  "proteinPerUnit": 15.4,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 2.7,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 86 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Gulsha"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0014",
+  "name": "Garlic, raw",
+  "nameBn": "Rosun",
+  "category": "vegetables",
+  "caloriesPerUnit": 220,
+  "proteinPerUnit": 10.4,
+  "carbsPerUnit": 41.4,
+  "fatPerUnit": 0.9,
+  "fiberPerUnit": 3.2,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 147 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Rosun"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_13_0004",
+  "name": "Ghee, cow",
+  "nameBn": "Ghee, cow",
+  "category": "oil",
+  "caloriesPerUnit": 135,
+  "proteinPerUnit": 0.0,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 15.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 898 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Ghee, cow"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_13_0005",
+  "name": "Ghee, vegetable",
+  "nameBn": "Dalda/Bonoshpati",
+  "category": "oil",
+  "caloriesPerUnit": 135,
+  "proteinPerUnit": 0.0,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 15.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 900 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Dalda/Bonoshpati"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0028",
+  "name": "Giant river-catfish, raw",
+  "nameBn": "Guizza",
+  "category": "fish",
+  "caloriesPerUnit": 75,
+  "proteinPerUnit": 15.9,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 1.3,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 75 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Guizza"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0029",
+  "name": "Giant sea perch, whole, dried",
+  "nameBn": "Vetkee, shutki",
+  "category": "fish",
+  "caloriesPerUnit": 318,
+  "proteinPerUnit": 60.2,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 8.6,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 318 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Vetkee, shutki"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0030",
+  "name": "Giant sea perch, without bones, raw",
+  "nameBn": "Vetkee, kata chara",
+  "category": "fish",
+  "caloriesPerUnit": 96,
+  "proteinPerUnit": 18.6,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 2.5,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 96 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Vetkee, kata chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_05_0019",
+  "name": "Giant taro, corm, boiled* (without salt)",
+  "nameBn": "Mann kochu siddha, lobon chara",
+  "category": "root",
+  "caloriesPerUnit": 92,
+  "proteinPerUnit": 1.6,
+  "carbsPerUnit": 18.6,
+  "fatPerUnit": 0.2,
+  "fiberPerUnit": 4.6,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 92 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Mann kochu siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 bati (150g)",
+    "multiplier": 1.5
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_05_0004",
+  "name": "Giant taro, corm, raw",
+  "nameBn": "Mann kochu",
+  "category": "root",
+  "caloriesPerUnit": 82,
+  "proteinPerUnit": 1.5,
+  "carbsPerUnit": 16.6,
+  "fatPerUnit": 0.2,
+  "fiberPerUnit": 4.1,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 82 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Mann kochu"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 bati (150g)",
+    "multiplier": 1.5
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_07_0011",
+  "name": "Ginger root, raw",
+  "nameBn": "Ada",
+  "category": "spice",
+  "caloriesPerUnit": 4,
+  "proteinPerUnit": 0.1,
+  "carbsPerUnit": 0.7,
+  "fatPerUnit": 0.0,
+  "fiberPerUnit": 0.1,
+  "unit": "1 spoon (5g)",
+  "description": "FCTB-2013 · 72 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Ada"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 20.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_10_0011",
+  "name": "Goat meat, lean, raw",
+  "nameBn": "Khaseer mangsaw",
+  "category": "proteins",
+  "caloriesPerUnit": 118,
+  "proteinPerUnit": 21.4,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 3.6,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 118 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Khaseer mangsaw"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0031",
+  "name": "Goby, Tank goby, raw",
+  "nameBn": "Bele",
+  "category": "fish",
+  "caloriesPerUnit": 81,
+  "proteinPerUnit": 14.7,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 2.5,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 81 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Bele"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0032",
+  "name": "Gourami, Banded gourami, eyes included, raw",
+  "nameBn": "Khailsa, kata chara, chokh soho",
+  "category": "fish",
+  "caloriesPerUnit": 105,
+  "proteinPerUnit": 15.8,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 4.6,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 105 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Khailsa, kata chara, chokh soho"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0015",
+  "name": "Gourd, ash, raw",
+  "nameBn": "Chalkumra",
+  "category": "vegetables",
+  "caloriesPerUnit": 15,
+  "proteinPerUnit": 0.6,
+  "carbsPerUnit": 1.5,
+  "fatPerUnit": 0.2,
+  "fiberPerUnit": 2.6,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 10 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Chalkumra"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0047",
+  "name": "Gourd, bitter, boiled* (without salt)",
+  "nameBn": "Korola siddha, lobon chara",
+  "category": "vegetables",
+  "caloriesPerUnit": 52,
+  "proteinPerUnit": 3.4,
+  "carbsPerUnit": 6.2,
+  "fatPerUnit": 0.6,
+  "fiberPerUnit": 4.5,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 35 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Korola siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0048",
+  "name": "Gourd, bitter, fry*",
+  "nameBn": "",
+  "category": "vegetables",
+  "caloriesPerUnit": 195,
+  "proteinPerUnit": 4.6,
+  "carbsPerUnit": 10.6,
+  "fatPerUnit": 13.6,
+  "fiberPerUnit": 6.2,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 130 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0016",
+  "name": "Gourd, bitter, raw",
+  "nameBn": "Korola",
+  "category": "vegetables",
+  "caloriesPerUnit": 46,
+  "proteinPerUnit": 3.2,
+  "carbsPerUnit": 5.4,
+  "fatPerUnit": 0.4,
+  "fiberPerUnit": 3.9,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 31 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Korola"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0017",
+  "name": "Gourd, bottle, raw",
+  "nameBn": "Lau",
+  "category": "vegetables",
+  "caloriesPerUnit": 51,
+  "proteinPerUnit": 1.6,
+  "carbsPerUnit": 10.2,
+  "fatPerUnit": 0.2,
+  "fiberPerUnit": 0.9,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 34 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Lau"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0038",
+  "name": "Gourd, pointed, boiled* (without salt)",
+  "nameBn": "Potol siddha, lobon chara",
+  "category": "vegetables",
+  "caloriesPerUnit": 42,
+  "proteinPerUnit": 3.4,
+  "carbsPerUnit": 3.8,
+  "fatPerUnit": 0.6,
+  "fiberPerUnit": 3.8,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 28 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Potol siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0018",
+  "name": "Gourd, pointed, raw",
+  "nameBn": "Potol",
+  "category": "vegetables",
+  "caloriesPerUnit": 36,
+  "proteinPerUnit": 3.0,
+  "carbsPerUnit": 3.3,
+  "fatPerUnit": 0.4,
+  "fiberPerUnit": 3.3,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 24 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Potol"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0019",
+  "name": "Gourd, ridge, raw",
+  "nameBn": "Jhinga",
+  "category": "vegetables",
+  "caloriesPerUnit": 44,
+  "proteinPerUnit": 2.0,
+  "carbsPerUnit": 6.9,
+  "fatPerUnit": 0.6,
+  "fiberPerUnit": 1.6,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 29 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Jhinga"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0020",
+  "name": "Gourd, snake, raw",
+  "nameBn": "Chichinga",
+  "category": "vegetables",
+  "caloriesPerUnit": 36,
+  "proteinPerUnit": 0.8,
+  "carbsPerUnit": 6.8,
+  "fatPerUnit": 0.4,
+  "fiberPerUnit": 1.2,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 24 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Chichinga"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0021",
+  "name": "Gourd, sponge, raw",
+  "nameBn": "Dhundul",
+  "category": "vegetables",
+  "caloriesPerUnit": 36,
+  "proteinPerUnit": 1.4,
+  "carbsPerUnit": 6.4,
+  "fatPerUnit": 0.3,
+  "fiberPerUnit": 1.6,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 24 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Dhundul"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0039",
+  "name": "Gourd, teasle, boiled* (without salt)",
+  "nameBn": "Kakrol siddha, lobon chara",
+  "category": "vegetables",
+  "caloriesPerUnit": 104,
+  "proteinPerUnit": 3.3,
+  "carbsPerUnit": 20.1,
+  "fatPerUnit": 0.8,
+  "fiberPerUnit": 2.0,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 69 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Kakrol siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_03_0022",
+  "name": "Gourd, teasle, raw",
+  "nameBn": "Kakrol",
+  "category": "vegetables",
+  "caloriesPerUnit": 92,
+  "proteinPerUnit": 2.8,
+  "carbsPerUnit": 17.7,
+  "fatPerUnit": 0.8,
+  "fiberPerUnit": 1.6,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 61 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Kakrol"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_02_0014",
+  "name": "Grass pea, split, boiled* (without salt)",
+  "nameBn": "Khesari dal siddha, lobon chara",
+  "category": "dal",
+  "caloriesPerUnit": 213,
+  "proteinPerUnit": 17.1,
+  "carbsPerUnit": 34.2,
+  "fatPerUnit": 0.6,
+  "fiberPerUnit": 1.4,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 142 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Khesari dal siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 spoon (15g)",
+    "multiplier": 0.1
+   },
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 1.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_02_0007",
+  "name": "Grass pea, split, dried, raw",
+  "nameBn": "Khesari dal, vanga",
+  "category": "dal",
+  "caloriesPerUnit": 528,
+  "proteinPerUnit": 42.6,
+  "carbsPerUnit": 84.8,
+  "fatPerUnit": 1.4,
+  "fiberPerUnit": 3.3,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 352 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Khesari dal, vanga"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 spoon (15g)",
+    "multiplier": 0.1
+   },
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 1.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_02_0013",
+  "name": "Green gram, split, boiled* (without salt)",
+  "nameBn": "Mung dal siddha, lobon chara",
+  "category": "dal",
+  "caloriesPerUnit": 242,
+  "proteinPerUnit": 16.4,
+  "carbsPerUnit": 42.2,
+  "fatPerUnit": 0.8,
+  "fiberPerUnit": 0.4,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 161 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Mung dal siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 spoon (15g)",
+    "multiplier": 0.1
+   },
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 1.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_02_0005",
+  "name": "Green gram, split, dried, raw",
+  "nameBn": "মুগ ডাল",
+  "category": "dal",
+  "caloriesPerUnit": 526,
+  "proteinPerUnit": 35.6,
+  "carbsPerUnit": 91.4,
+  "fatPerUnit": 1.8,
+  "fiberPerUnit": 1.0,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 351 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Mung dal, vanga"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 spoon (15g)",
+    "multiplier": 0.1
+   },
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 1.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_02_0006",
+  "name": "Green gram, whole, dried, raw",
+  "nameBn": "Mungkalai",
+  "category": "dal",
+  "caloriesPerUnit": 477,
+  "proteinPerUnit": 35.6,
+  "carbsPerUnit": 67.2,
+  "fatPerUnit": 2.0,
+  "fiberPerUnit": 24.4,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 318 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Mungkalai"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 spoon (15g)",
+    "multiplier": 0.1
+   },
+   {
+    "name": "1 cup (150g)",
+    "multiplier": 1.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-chicken_grilled",
+  "name": "Grilled chicken breast",
+  "nameBn": "গ্রিলড চিকেন",
+  "category": "cooked",
+  "caloriesPerUnit": 248,
+  "proteinPerUnit": 46.5,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 6.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (150g)",
+  "description": "Estimate · 165 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_06_0007",
+  "name": "Groundnuts/Peanut, raw",
+  "nameBn": "চিনাবাদাম",
+  "category": "nut",
+  "caloriesPerUnit": 88,
+  "proteinPerUnit": 3.4,
+  "carbsPerUnit": 2.2,
+  "fatPerUnit": 7.0,
+  "fiberPerUnit": 1.3,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 585 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "China badam"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 piece (30g)",
+    "multiplier": 2.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-haleem",
+  "name": "Haleem",
+  "nameBn": "হালিম",
+  "category": "cooked",
+  "caloriesPerUnit": 240,
+  "proteinPerUnit": 16.0,
+  "carbsPerUnit": 24.0,
+  "fatPerUnit": 8.0,
+  "fiberPerUnit": 2.0,
+  "unit": "1 bati (200g)",
+  "description": "Estimate · 120 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 0.5
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0033",
+  "name": "Hilsha, without bones, raw",
+  "nameBn": "ইলিশ মাছ",
+  "category": "fish",
+  "caloriesPerUnit": 223,
+  "proteinPerUnit": 18.0,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 16.8,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 223 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Ilish, kata chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_15_0003",
+  "name": "Honey",
+  "nameBn": "Modhu",
+  "category": "other",
+  "caloriesPerUnit": 49,
+  "proteinPerUnit": 0.0,
+  "carbsPerUnit": 12.2,
+  "fatPerUnit": 0.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 326 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Modhu"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 piece (50g)",
+    "multiplier": 3.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-ilish_bhapa",
+  "name": "Ilish bhapa",
+  "nameBn": "ইলিশ ভাপা",
+  "category": "cooked",
+  "caloriesPerUnit": 220,
+  "proteinPerUnit": 18.0,
+  "carbsPerUnit": 2.0,
+  "fatPerUnit": 15.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "Estimate · 220 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": []
+ },
+ {
+  "id": "bd-fctb_07_0012",
+  "name": "Indian pennywort, raw",
+  "nameBn": "Thankuni pata",
+  "category": "spice",
+  "caloriesPerUnit": 2,
+  "proteinPerUnit": 0.1,
+  "carbsPerUnit": 0.1,
+  "fatPerUnit": 0.0,
+  "fiberPerUnit": 0.4,
+  "unit": "1 spoon (5g)",
+  "description": "FCTB-2013 · 37 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Thankuni pata"
+  ],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 20.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0034",
+  "name": "Indian river shad, raw",
+  "nameBn": "Chapila",
+  "category": "fish",
+  "caloriesPerUnit": 106,
+  "proteinPerUnit": 15.4,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 4.9,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 106 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Chapila"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0036",
+  "name": "Indian spinach, boiled* (without salt)",
+  "nameBn": "Pui shak siddha, lobon chara",
+  "category": "vegetables",
+  "caloriesPerUnit": 50,
+  "proteinPerUnit": 4.6,
+  "carbsPerUnit": 4.2,
+  "fatPerUnit": 0.6,
+  "fiberPerUnit": 4.4,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 33 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Pui shak siddha, lobon chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_04_0020",
+  "name": "Indian spinach, raw",
+  "nameBn": "Pui shak",
+  "category": "vegetables",
+  "caloriesPerUnit": 38,
+  "proteinPerUnit": 3.6,
+  "carbsPerUnit": 3.2,
+  "fatPerUnit": 0.4,
+  "fiberPerUnit": 3.3,
+  "unit": "1 bati (150g)",
+  "description": "FCTB-2013 · 25 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Pui shak"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 1.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 0.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0035",
+  "name": "Indian threadfin, without bones, raw",
+  "nameBn": "Lakkha, gada, kata chara",
+  "category": "fish",
+  "caloriesPerUnit": 102,
+  "proteinPerUnit": 20.3,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 2.1,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 102 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Lakkha, gada, kata chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_09_0036",
+  "name": "Indo-pacific king mackerel, without bones, raw",
+  "nameBn": "Surma/ Bijoram, kata chara",
+  "category": "fish",
+  "caloriesPerUnit": 102,
+  "proteinPerUnit": 20.9,
+  "carbsPerUnit": 0.0,
+  "fatPerUnit": 2.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 piece (100g)",
+  "description": "FCTB-2013 · 102 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Surma/ Bijoram, kata chara"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 plate (200g)",
+    "multiplier": 2.0
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_06_0008",
+  "name": "Jackfruit seeds, raw",
+  "nameBn": "Kathal er bichi",
+  "category": "nut",
+  "caloriesPerUnit": 23,
+  "proteinPerUnit": 0.8,
+  "carbsPerUnit": 4.6,
+  "fatPerUnit": 0.1,
+  "fiberPerUnit": 0.2,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 151 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Kathal er bichi"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 piece (30g)",
+    "multiplier": 2.0
+   },
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_15_0004",
+  "name": "Jaggery, sugarcane, solid",
+  "nameBn": "Gur, Akh",
+  "category": "other",
+  "caloriesPerUnit": 58,
+  "proteinPerUnit": 0.1,
+  "carbsPerUnit": 14.3,
+  "fatPerUnit": 0.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 385 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Gur, Akh"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 piece (50g)",
+    "multiplier": 3.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_15_0005",
+  "name": "Jaggery/Panela, date palm",
+  "nameBn": "Gur, Khejur",
+  "category": "other",
+  "caloriesPerUnit": 53,
+  "proteinPerUnit": 0.2,
+  "carbsPerUnit": 12.9,
+  "fatPerUnit": 0.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 352 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Gur, Khejur"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 piece (50g)",
+    "multiplier": 3.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-fctb_15_0006",
+  "name": "Jagggery liquid, date palm",
+  "nameBn": "Nolen gur",
+  "category": "other",
+  "caloriesPerUnit": 13,
+  "proteinPerUnit": 0.0,
+  "carbsPerUnit": 3.1,
+  "fatPerUnit": 0.0,
+  "fiberPerUnit": 0.0,
+  "unit": "1 spoon (15g)",
+  "description": "FCTB-2013 · 86 kcal / 100g",
+  "source": "fctb2013",
+  "aliases": [
+   "Nolen gur"
+  ],
+  "commonPortions": [
+   {
+    "name": "1 piece (50g)",
+    "multiplier": 3.333
+   },
+   {
+    "name": "100g",
+    "multiplier": 6.667
+   }
+  ]
+ },
+ {
+  "id": "bd-jhalmuri",
+  "name": "Jhalmuri",
+  "nameBn": "ঝালমুড়ি",
+  "category": "street",
+  "caloriesPerUnit": 200,
+  "proteinPerUnit": 4.0,
+  "carbsPerUnit": 30.4,
+  "fatPerUnit": 7.2,
+  "fiberPerUnit": 1.6,
+  "unit": "1 packet (80g)",
+  "description": "Estimate · 250 kcal / 100g",
+  "source": "estimate",
+  "aliases": [],
+  "commonPortions": [
+   {
+    "name": "100g",
+    "multiplier": 1.25
+   }
+  ]
+ }
+]

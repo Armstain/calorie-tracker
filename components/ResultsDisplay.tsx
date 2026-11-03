@@ -15,7 +15,8 @@ export default function ResultsDisplay({
   analysisResult, 
   onAddToDaily, 
   onRetakePhoto,
-  onAnalysisUpdate
+  onAnalysisUpdate,
+  onSaveFavorite
 }: ResultsProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -516,6 +517,15 @@ export default function ResultsDisplay({
           Analyze Another
         </Button>
       </div>
+      {onSaveFavorite && (
+        <Button
+          onClick={onSaveFavorite}
+          variant="outline"
+          className="w-full mt-3"
+        >
+          ☆ Save meal as favorite — repeat it later with no new image parse
+        </Button>
+      )}
 
       {/* Manual Correction Modal */}
       {editingIndex !== null && (

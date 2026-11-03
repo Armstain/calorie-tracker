@@ -74,6 +74,11 @@ export const APP_CONFIG = {
   MAX_DAILY_ENTRIES: 50,
   IMAGE_QUALITY: 0.8,
   MAX_IMAGE_SIZE: 1024 * 1024, // 1MB in bytes
+  // Token saving: photos are downscaled to this longest side before any
+  // Gemini call. A phone photo is several megapixels; food recognition
+  // does not need that, and Gemini image tokens scale with resolution.
+  IMAGE_MAX_SIDE: 1024,
+  IMAGE_DOWNSCALE_QUALITY: 0.75,
   SUPPORTED_IMAGE_FORMATS: ['image/jpeg', 'image/png', 'image/webp'],
 } as const;
 
@@ -82,6 +87,7 @@ export const STORAGE_KEYS = {
   DAILY_ENTRIES: 'calorie_tracker_daily_entries',
   USER_SETTINGS: 'calorie_tracker_settings',
   DAILY_GOAL: 'calorie_tracker_daily_goal',
+  FAVORITES: 'calorie_tracker_favorites',
   LAST_CLEANUP: 'calorie_tracker_last_cleanup',
   USER_PROFILE: 'calorie_tracker_user_profile',
 } as const;

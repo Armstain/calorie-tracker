@@ -3,18 +3,43 @@
  * Provides a local database of common foods for quick calorie entry
  */
 
+import bdFoodsA from '@/lib/data/bd-foods-a.json';
+import bdFoodsB from '@/lib/data/bd-foods-b.json';
+
+export interface MacroPerUnit {
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+}
+
 export interface CommonFood {
   id: string;
   name: string;
+  nameBn?: string;
   category: string;
   caloriesPerUnit: number;
+  // Macros per unit, when known (all BD foods; the original 19 lack them).
+  proteinPerUnit?: number;
+  carbsPerUnit?: number;
+  fatPerUnit?: number;
+  fiberPerUnit?: number;
   unit: string; // e.g., "100g", "1 cup", "1 piece"
   description?: string;
+  source?: string;
+  aliases?: string[];
   commonPortions?: {
     name: string;
     multiplier: number; // multiplier for base calories
   }[];
 }
+
+// Bangladeshi foods ported from the Flutter app's FCTB-2013 database
+// (assets/food_db.json, 375 items). Split into two files so each stays
+// under the ~128KB shell-arg limit of the GitHub push tool. Salt (0 kcal)
+// is the only item dropped. BD ids are prefixed "bd-" so they cannot
+// collide with the original 19 foods (e.g. web "banana" vs BD "bd-banana").
+const bdFoods: CommonFood[] = [...(bdFoodsA as CommonFood[]), ...(bdFoodsB as CommonFood[])];
 
 export interface FoodCategory {
   id: string;
@@ -48,6 +73,18 @@ class FoodDatabaseService {
       { id: 'snacks', name: 'Snacks', icon: '🍿' },
       { id: 'beverages', name: 'Beverages', icon: '☕' },
       { id: 'desserts', name: 'Desserts', icon: '🍰' },
+      // Bangladeshi database categories (no web equivalent yet).
+      { id: 'cooked', name: 'Cooked Dishes', icon: '🍲' },
+      { id: 'fish', name: 'Fish', icon: '🐟' },
+      { id: 'dal', name: 'Dal & Lentils', icon: '🫘' },
+      { id: 'street', name: 'Street Food', icon: '🍢' },
+      { id: 'sweet', name: 'Sweets', icon: '🍬' },
+      { id: 'root', name: 'Roots & Tubers', icon: '🥔' },
+      { id: 'spice', name: 'Spices', icon: '🌶️' },
+      { id: 'oil', name: 'Oils & Fats', icon: '🫙' },
+      { id: 'egg', name: 'Eggs', icon: '🥚' },
+      { id: 'nut', name: 'Nuts & Seeds', icon: '🥜' },
+      { id: 'other', name: 'Other', icon: '🍽️' },
     ];
 
     this.foods = [
@@ -301,6 +338,8 @@ class FoodDatabaseService {
         ],
       },
     ];
+    // Bangladeshi foods (374) ported from the Flutter FCTB-2013 database.
+    this.foods.push(...bdFoods);
   }
 
   public getCategories(): FoodCategory[] {
@@ -312,10 +351,16 @@ class FoodDatabaseService {
   }
 
   public searchFoods(query: string): CommonFood[] {
-    const lowercaseQuery = query.toLowerCase();
-    return this.foods.filter(food => 
-      food.name.toLowerCase().includes(lowercaseQuery) ||
-      food.description?.toLowerCase().includes(lowercaseQuery)
+    const q = query.trim().toLowerCase();
+    if (!q) return this.foods;
+    return this.foods.filter(food =>
+      food.name.toLowerCase().includes(q) ||
+      food.nameBn?.includes(query.trim()) ||
+      food.description?.toLowerCase().includes(q) ||
+      food.aliases?.some(alias => alias.toLowerCase().includes(q)) ||
+      // Transliterated names live in BD ids (bd-bhaat for ভাত, whose
+      // English name is "Cooked white rice" and which has no aliases).
+      food.id.replace(/^bd-/, '').replace(/_/g, ' ').includes(q)
     );
   }
 
@@ -331,6 +376,20 @@ class FoodDatabaseService {
     const food = this.getFoodById(foodId);
     if (!food) return 0;
     return Math.round(food.caloriesPerUnit * portionMultiplier);
+  }
+
+  /** Macros for one portion, scaled by the portion multiplier. Returns
+   * undefined when the food has no macro data (the original 19 foods). */
+  public calculateMacros(foodId: string, portionMultiplier: number = 1): MacroPerUnit | undefined {
+    const food = this.getFoodById(foodId);
+    if (!food || food.proteinPerUnit === undefined) return undefined;
+    const round1 = (v: number) => Math.round(v * 10) / 10;
+    return {
+      protein: round1((food.proteinPerUnit || 0) * portionMultiplier),
+      carbs: round1((food.carbsPerUnit || 0) * portionMultiplier),
+      fat: round1((food.fatPerUnit || 0) * portionMultiplier),
+      fiber: round1((food.fiberPerUnit || 0) * portionMultiplier),
+    };
   }
 }
 

@@ -78,6 +78,8 @@ export interface ResultsProps {
   onAddToDaily: () => void;
   onRetakePhoto: () => void;
   onAnalysisUpdate?: (updatedResult: FoodAnalysisResult) => void;
+  // Save this parsed meal so it can be repeated later with zero new parses.
+  onSaveFavorite?: () => void;
 }
 
 export interface TrackerProps {
