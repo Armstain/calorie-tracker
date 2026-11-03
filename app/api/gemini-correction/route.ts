@@ -1,27 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getApiKey, GEMINI_MODELS, GEMINI_CONFIG, geminiHeaders } from '@/lib/config';
+import { createRateLimiter, getClientId } from '@/lib/rateLimit';
+import { getAvailableModels, markModelUnavailable } from '@/lib/modelHealth';
 
-// Simple in-memory rate limiting
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 5; // 5 requests per minute
-
-function checkRateLimit(clientId: string): boolean {
-  const now = Date.now();
-  const clientData = rateLimitMap.get(clientId);
-  
-  if (!clientData || now > clientData.resetTime) {
-    rateLimitMap.set(clientId, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
-    return true;
-  }
-  
-  if (clientData.count >= RATE_LIMIT_MAX_REQUESTS) {
-    return false;
-  }
-  
-  clientData.count++;
-  return true;
-}
+// 5 correction requests per minute per client
+const correctionLimiter = createRateLimiter({ windowMs: 60 * 1000, max: 5 });
 
 async function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -39,11 +22,18 @@ export async function POST(request: NextRequest) {
     }
 
     // Simple rate limiting based on IP
-    const clientId = request.headers.get('x-forwarded-for') || 'localhost';
-    if (!checkRateLimit(clientId)) {
+    const limit = correctionLimiter.check(getClientId(request.headers));
+    if (!limit.allowed) {
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please wait a moment before trying again.' },
-        { status: 429 }
+        { status: 429, headers: { 'Retry-After': String(limit.retryAfterSeconds) } }
+      );
+    }
+
+    if (typeof prompt !== 'string' || prompt.length > 8000) {
+      return NextResponse.json(
+        { error: 'Prompt is too long' },
+        { status: 413 }
       );
     }
 
@@ -61,7 +51,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Try models in fallback order with retry logic
-    const modelsToTry = GEMINI_CONFIG.FALLBACK_ORDER;
+    const modelsToTry = getAvailableModels(apiKey, GEMINI_CONFIG.FALLBACK_ORDER);
     const retryDelays = [1000, 2000, 4000]; // Exponential backoff
     
     for (const modelName of modelsToTry) {
@@ -108,6 +98,7 @@ export async function POST(request: NextRequest) {
 
           // Model retired or not available to this key - go straight to the next model
           if (response.status === 404) {
+            markModelUnavailable(apiKey, modelName);
             break;
           }
 

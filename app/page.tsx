@@ -30,6 +30,7 @@ import { FoodAnalysisResult, UserSettings, UserProfile, AppError } from "@/types
 import { dateUtils } from "@/lib/utils";
 import WorkingCamera from "@/components/WorkingCamera";
 import AnalysisProgress from "@/components/AnalysisProgress";
+import { learningService } from "@/lib/learningService";
 import HealthIntegration from "@/components/HealthIntegration";
 import FoodDatabaseEntry from "@/components/FoodDatabaseEntry";
 import { CommonFood } from "@/lib/foodDatabase";
@@ -60,6 +61,9 @@ export default function Home() {
     useState<FoodAnalysisResult | null>(null);
   const [showFoodDatabase, setShowFoodDatabase] = useState(false);
   const analysisAbortRef = useRef<AbortController | null>(null);
+  const [mealNote, setMealNote] = useState("");
+  const [analysisModelLabel, setAnalysisModelLabel] = useState<string | undefined>();
+  const [foundFoods, setFoundFoods] = useState<string[]>([]);
 
   // TanStack Query hooks for data fetching
   const { data: todaysEntries = [], isLoading: isLoadingEntries, refetch: refetchEntries } = useTodaysEntries();
@@ -141,11 +145,36 @@ export default function Home() {
       const controller = new AbortController();
       analysisAbortRef.current = controller;
 
+      setAnalysisModelLabel(undefined);
+      setFoundFoods([]);
+
+      let userContext = '';
+      try {
+        userContext = learningService.getPromptContext();
+      } catch {
+        // Learning data is optional
+      }
+
       foodAnalysisMutation.mutate(
-        { imageData, apiKey: settings?.apiKey || '', signal: controller.signal },
+        {
+          imageData,
+          apiKey: settings?.apiKey || '',
+          signal: controller.signal,
+          note: mealNote,
+          userContext,
+          onProgress: (event) => {
+            if (event.type === 'model') {
+              setAnalysisModelLabel(event.label);
+              setFoundFoods([]);
+            } else if (event.type === 'food') {
+              setFoundFoods(prev => (prev.includes(event.name) ? prev : [...prev, event.name]));
+            }
+          },
+        },
         {
           onSuccess: (result) => {
             analysisAbortRef.current = null;
+            setMealNote("");
             setAnalysisResult(result);
             setCurrentView("results");
 
@@ -188,7 +217,7 @@ export default function Home() {
         }
       );
     },
-    [isOnline, settings?.apiKey, showError, showSuccessToast, foodAnalysisMutation]
+    [isOnline, settings?.apiKey, mealNote, showError, showSuccessToast, foodAnalysisMutation]
   );
 
   const handleStopScan = useCallback(() => {
@@ -637,6 +666,24 @@ export default function Home() {
                     Point your camera at your meal and tap the capture button for instant analysis, or use Quick Add for common foods
                   </p>
                 </div>
+                <div className="mb-3">
+                  <label htmlFor="meal-note" className="block text-sm font-medium text-gray-700 mb-1">
+                    Add a note <span className="font-normal text-gray-400">(optional)</span>
+                  </label>
+                  <input
+                    id="meal-note"
+                    type="text"
+                    value={mealNote}
+                    onChange={(e) => setMealNote(e.target.value.slice(0, 300))}
+                    maxLength={300}
+                    placeholder='e.g. "2 rotis, large bowl of dal, cooked in ghee"'
+                    disabled={foodAnalysisMutation.isPending}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:bg-gray-50"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Portions, hidden ingredients or cooking oil help the AI estimate more accurately.
+                  </p>
+                </div>
                 <WorkingCamera
                   onPhotoCapture={handlePhotoCapture}
                   onError={showError}
@@ -644,6 +691,8 @@ export default function Home() {
                 <AnalysisProgress
                   isAnalyzing={foodAnalysisMutation.isPending}
                   onStop={handleStopScan}
+                  modelLabel={analysisModelLabel}
+                  foundFoods={foundFoods}
                 />
               </div>
 
@@ -651,7 +700,7 @@ export default function Home() {
               <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
                 <h4 className="font-medium text-blue-800 mb-2">💡 Pro Tips</h4>
                 <ul className="text-sm text-blue-700 space-y-1">
-                  <li>• <span className="text-green-600 font-medium">Ready to use!</span> Default API key is already configured</li>
+                  <li>• Add a short note (e.g. portion size) for more accurate estimates</li>
                   <li>• Ensure good lighting for better AI recognition</li>
                   <li>• Include the whole plate for accurate portion estimates</li>
                   <li>• Try different angles if the first analysis isn&apos;t accurate</li>

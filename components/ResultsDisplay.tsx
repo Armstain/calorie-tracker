@@ -22,9 +22,24 @@ export default function ResultsDisplay({
   const [naturalCorrectionIndex, setNaturalCorrectionIndex] = useState<number | null>(null);
   const [correctionData, setCorrectionData] = useState<{
     calories: string;
+    grams: string;
     cookingMethod: string;
     ingredients: string;
-  }>({ calories: '', cookingMethod: '', ingredients: '' });
+  }>({ calories: '', grams: '', cookingMethod: '', ingredients: '' });
+
+  // When the weight changes, scale calories proportionally (if we know the original weight).
+  const handleGramsChange = (value: string) => {
+    if (editingIndex === null) return;
+    const original = analysisResult.foods[editingIndex];
+    const grams = parseFloat(value);
+    setCorrectionData(prev => {
+      const next = { ...prev, grams: value };
+      if (original.estimatedGrams && original.estimatedGrams > 0 && grams > 0) {
+        next.calories = String(Math.round(original.calories * (grams / original.estimatedGrams)));
+      }
+      return next;
+    });
+  };
 
   const handleAddToDaily = async () => {
     try {
@@ -39,6 +54,7 @@ export default function ResultsDisplay({
     const food = analysisResult.foods[index];
     setCorrectionData({
       calories: food.calories.toString(),
+      grams: food.estimatedGrams ? food.estimatedGrams.toString() : '',
       cookingMethod: food.cookingMethod || '',
       ingredients: food.ingredients?.join(', ') || ''
     });
@@ -89,9 +105,28 @@ export default function ResultsDisplay({
       ? correctionData.cookingMethod as 'grilled' | 'fried' | 'baked' | 'steamed' | 'raw' | 'boiled' | 'roasted'
       : undefined;
 
+    const parsedGrams = parseFloat(correctionData.grams);
+    const correctedGrams = parsedGrams > 0 ? Math.round(parsedGrams) : originalFood.estimatedGrams;
+
+    // Scale macros with the weight change so they stay consistent with the portion.
+    const weightRatio =
+      originalFood.estimatedGrams && correctedGrams && originalFood.estimatedGrams > 0
+        ? correctedGrams / originalFood.estimatedGrams
+        : 1;
+    const correctedMacros = originalFood.macros && weightRatio !== 1
+      ? {
+          protein: Math.round(originalFood.macros.protein * weightRatio),
+          carbs: Math.round(originalFood.macros.carbs * weightRatio),
+          fat: Math.round(originalFood.macros.fat * weightRatio),
+          fiber: Math.round(originalFood.macros.fiber * weightRatio),
+        }
+      : originalFood.macros;
+
     const correctedFood = {
       ...originalFood,
       calories: correctedCalories,
+      estimatedGrams: correctedGrams,
+      macros: correctedMacros,
       cookingMethod,
       ingredients: correctionData.ingredients.split(',').map(i => i.trim()).filter(Boolean)
     };
@@ -101,11 +136,24 @@ export default function ResultsDisplay({
     updatedFoods[editingIndex] = correctedFood;
     
     const newTotalCalories = updatedFoods.reduce((sum, food) => sum + food.calories, 0);
+    const hasMacros = updatedFoods.some(food => food.macros);
+    const newTotalMacros = hasMacros
+      ? updatedFoods.reduce(
+          (total, food) => ({
+            protein: total.protein + (food.macros?.protein ?? 0),
+            carbs: total.carbs + (food.macros?.carbs ?? 0),
+            fat: total.fat + (food.macros?.fat ?? 0),
+            fiber: total.fiber + (food.macros?.fiber ?? 0),
+          }),
+          { protein: 0, carbs: 0, fat: 0, fiber: 0 }
+        )
+      : analysisResult.totalMacros;
     
     const updatedResult = {
       ...analysisResult,
       foods: updatedFoods,
-      totalCalories: newTotalCalories
+      totalCalories: newTotalCalories,
+      totalMacros: newTotalMacros
     };
 
     // Update parent component's state
@@ -121,12 +169,12 @@ export default function ResultsDisplay({
     );
 
     setEditingIndex(null);
-    setCorrectionData({ calories: '', cookingMethod: '', ingredients: '' });
+    setCorrectionData({ calories: '', grams: '', cookingMethod: '', ingredients: '' });
   };
 
   const cancelCorrection = () => {
     setEditingIndex(null);
-    setCorrectionData({ calories: '', cookingMethod: '', ingredients: '' });
+    setCorrectionData({ calories: '', grams: '', cookingMethod: '', ingredients: '' });
   };
 
   const getConfidenceColor = (confidence: number) => {
@@ -293,6 +341,9 @@ export default function ResultsDisplay({
                   </div>
                   <p className="text-sm text-gray-600 mt-1">
                     {food.quantity}
+                    {food.estimatedGrams ? (
+                      <span className="text-gray-400"> · ≈{food.estimatedGrams} g</span>
+                    ) : null}
                   </p>
                 </div>
                 
@@ -478,6 +529,28 @@ export default function ResultsDisplay({
             </p>
             
             <div className="space-y-4">
+              {/* Weight Correction */}
+              <div>
+                <label htmlFor="correction-grams" className="block text-sm font-medium text-gray-700 mb-1">
+                  Weight in grams
+                  {analysisResult.foods[editingIndex].estimatedGrams
+                    ? ` (AI estimate: ${analysisResult.foods[editingIndex].estimatedGrams} g)`
+                    : ''}
+                </label>
+                <Input
+                  id="correction-grams"
+                  type="number"
+                  min={0}
+                  value={correctionData.grams}
+                  onChange={(e) => handleGramsChange(e.target.value)}
+                  placeholder="e.g. 250"
+                  className="w-full"
+                />
+                {analysisResult.foods[editingIndex].estimatedGrams ? (
+                  <p className="text-xs text-gray-500 mt-1">Calories and macros update with the weight.</p>
+                ) : null}
+              </div>
+
               {/* Calories Correction */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

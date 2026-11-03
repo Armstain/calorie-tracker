@@ -6,6 +6,10 @@ import { Sparkles, Eye, Calculator, CheckCircle } from 'lucide-react';
 interface AnalysisProgressProps {
   isAnalyzing: boolean;
   onStop: () => void;
+  /** Model currently being tried, e.g. "Gemini 3.8 Flash". */
+  modelLabel?: string;
+  /** Food names detected so far while the answer streams in. */
+  foundFoods?: string[];
 }
 
 const THINKING_STEPS = [
@@ -15,7 +19,7 @@ const THINKING_STEPS = [
   { icon: CheckCircle, text: 'Finalizing analysis...', duration: 2000 },
 ];
 
-export default function AnalysisProgress({ isAnalyzing, onStop }: AnalysisProgressProps) {
+export default function AnalysisProgress({ isAnalyzing, onStop, modelLabel, foundFoods = [] }: AnalysisProgressProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
 
@@ -52,8 +56,13 @@ export default function AnalysisProgress({ isAnalyzing, onStop }: AnalysisProgre
 
   if (!isAnalyzing) return null;
 
-  const CurrentIcon = THINKING_STEPS[currentStep].icon;
-  const currentText = THINKING_STEPS[currentStep].text;
+  // Once foods start arriving, real progress replaces the timed steps.
+  const hasFoods = foundFoods.length > 0;
+  const stepIndex = hasFoods ? Math.max(currentStep, 2) : currentStep;
+  const CurrentIcon = THINKING_STEPS[stepIndex].icon;
+  const currentText = hasFoods
+    ? `Found ${foundFoods.length} item${foundFoods.length !== 1 ? 's' : ''}, calculating nutrition...`
+    : THINKING_STEPS[stepIndex].text;
 
   return (
     <div className="mt-4 p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
@@ -79,9 +88,9 @@ export default function AnalysisProgress({ isAnalyzing, onStop }: AnalysisProgre
               <div
                 key={index}
                 className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                  index < currentStep
+                  index < stepIndex
                     ? 'bg-amber-500'
-                    : index === currentStep
+                    : index === stepIndex
                     ? 'bg-amber-400 animate-pulse'
                     : 'bg-amber-200'
                 }`}
@@ -89,9 +98,23 @@ export default function AnalysisProgress({ isAnalyzing, onStop }: AnalysisProgre
             ))}
           </div>
 
-          {/* Time elapsed */}
+          {/* Foods detected so far */}
+          {hasFoods && (
+            <ul className="flex flex-wrap gap-1.5 mb-2" aria-live="polite" aria-label="Foods found so far">
+              {foundFoods.map(name => (
+                <li
+                  key={name}
+                  className="px-2 py-0.5 text-xs font-medium capitalize text-amber-800 bg-white border border-amber-200 rounded-full"
+                >
+                  {name}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {/* Time elapsed and model */}
           <div className="text-xs text-amber-500">
-            {Math.floor(elapsedTime / 1000)}s elapsed
+            {Math.floor(elapsedTime / 1000)}s elapsed{modelLabel ? ` · ${modelLabel}` : ''}
           </div>
         </div>
 

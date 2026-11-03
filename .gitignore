@@ -41,3 +41,8 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# vision accuracy eval output and private photos
+/eval/results/
+/eval/labels.json
+/eval/images/

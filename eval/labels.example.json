@@ -1,0 +1,13 @@
+[
+  {
+    "image": "images/dal-roti.jpg",
+    "calories": 520,
+    "foods": ["roti", "dal"],
+    "note": "2 rotis, 1 bowl dal"
+  },
+  {
+    "image": "images/banana.jpg",
+    "calories": 105,
+    "foods": ["banana"]
+  }
+]

@@ -2,35 +2,99 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { queryKeys, type FoodAnalysisParams, type MutationOptions } from './types';
 import { FoodAnalysisResult, AppError, ApiError } from '@/types';
 
+async function throwResponseError(response: Response): Promise<never> {
+  const errorBody = await response.json().catch(() => null);
+  if (errorBody && typeof errorBody === 'object' && 'type' in errorBody && 'message' in errorBody) {
+    throw errorBody as AppError;
+  }
+  throw {
+    type: 'api',
+    message: 'Food analysis failed. Please try again.',
+    statusCode: response.status,
+  } as ApiError;
+}
+
+// Read the newline-delimited JSON event stream from /api/gemini-analyze.
+async function readAnalysisStream(
+  body: ReadableStream<Uint8Array>,
+  onProgress?: FoodAnalysisParams['onProgress']
+): Promise<FoodAnalysisResult> {
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  const handleLine = (line: string): FoodAnalysisResult | undefined => {
+    if (!line.trim()) return undefined;
+    const event = JSON.parse(line);
+    if (event.type === 'result') return event.result as FoodAnalysisResult;
+    if (event.type === 'error') throw event.error as AppError;
+    if (event.type === 'model' || event.type === 'food') onProgress?.(event);
+    return undefined;
+  };
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let newlineIndex: number;
+    while ((newlineIndex = buffer.indexOf('\n')) >= 0) {
+      const line = buffer.slice(0, newlineIndex);
+      buffer = buffer.slice(newlineIndex + 1);
+      const result = handleLine(line);
+      if (result) return result;
+    }
+  }
+  const result = handleLine(buffer);
+  if (result) return result;
+
+  throw {
+    type: 'api',
+    message: 'The analysis ended unexpectedly. Please try again.',
+    statusCode: 502,
+  } as ApiError;
+}
+
+export async function requestFoodAnalysis({
+  imageData,
+  apiKey,
+  signal,
+  note,
+  userContext,
+  onProgress,
+}: FoodAnalysisParams): Promise<FoodAnalysisResult> {
+  const response = await fetch('/api/gemini-analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    signal,
+    body: JSON.stringify({
+      imageData,
+      apiKey: apiKey && apiKey.trim() ? apiKey.trim() : undefined,
+      note: note && note.trim() ? note.trim() : undefined,
+      userContext: userContext || undefined,
+      stream: true,
+    }),
+  });
+
+  if (!response.ok) {
+    return throwResponseError(response);
+  }
+
+  const contentType = response.headers.get('content-type') || '';
+  if (contentType.includes('application/x-ndjson') && response.body) {
+    return readAnalysisStream(response.body, onProgress);
+  }
+
+  return (await response.json()) as FoodAnalysisResult;
+}
+
 export function useFoodAnalysis(options?: MutationOptions<FoodAnalysisResult, AppError, FoodAnalysisParams>) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ imageData, apiKey, signal }: FoodAnalysisParams): Promise<FoodAnalysisResult> => {
+    mutationFn: async (params: FoodAnalysisParams): Promise<FoodAnalysisResult> => {
+      const { imageData } = params;
       try {
-        const response = await fetch('/api/gemini-analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          signal,
-          body: JSON.stringify({
-            imageData,
-            apiKey: apiKey && apiKey.trim() ? apiKey.trim() : undefined,
-          }),
-        });
-
-        if (!response.ok) {
-          const errorBody = await response.json().catch(() => null);
-          if (errorBody && typeof errorBody === 'object' && 'type' in errorBody && 'message' in errorBody) {
-            throw errorBody as AppError;
-          }
-          throw {
-            type: 'api',
-            message: 'Food analysis failed. Please try again.',
-            statusCode: response.status,
-          } as ApiError;
-        }
-
-        const result = (await response.json()) as FoodAnalysisResult;
+        const result = await requestFoodAnalysis(params);
 
         // Cache the result for potential reuse
         queryClient.setQueryData(

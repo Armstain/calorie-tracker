@@ -51,6 +51,12 @@ npm run dev
 - Identifies multiple foods in one photo
 - Provides detailed nutritional breakdowns
 - Estimates portion sizes and cooking methods
+- Estimates each item's weight in grams; edit the weight and calories/macros rescale
+- Optional note with each photo (e.g. "2 rotis, cooked in ghee") for better accuracy
+- Learns from your corrections and sends them as calibration hints
+- Streams progress so detected foods appear while the analysis runs
+- Per-client rate limiting and a 1.5 MB image cap on the analysis API
+- Accuracy evaluation script: `npm run eval:vision` (see `eval/README.md`)
 
 ### Natural Language Corrections
 ```text

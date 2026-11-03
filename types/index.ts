@@ -11,6 +11,7 @@ export interface FoodItem {
   name: string;
   calories: number;
   quantity: string;
+  estimatedGrams?: number;
   confidence: number;
   ingredients?: string[];
   cookingMethod?: 'grilled' | 'fried' | 'baked' | 'steamed' | 'raw' | 'boiled' | 'roasted';
@@ -30,6 +31,11 @@ export interface FoodAnalysisResult {
   restaurantName?: string;
   totalMacros?: MacroNutrients;
 }
+
+// Progress events streamed while a photo is being analyzed
+export type AnalysisProgressEvent =
+  | { type: 'model'; model: string; label: string }
+  | { type: 'food'; name: string };
 
 export interface FoodEntry {
   id: string;

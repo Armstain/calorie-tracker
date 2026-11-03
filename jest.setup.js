@@ -29,49 +29,53 @@ jest.mock('next/image', () => ({
   },
 }))
 
-// Mock MediaDevices API for camera tests
-Object.defineProperty(global.navigator, 'mediaDevices', {
-  writable: true,
-  value: {
-    getUserMedia: jest.fn(),
-  },
-})
+// Browser-only mocks (skipped in tests that use the node environment)
+if (typeof window !== 'undefined') {
+  // Mock MediaDevices API for camera tests
+  Object.defineProperty(global.navigator, 'mediaDevices', {
+    writable: true,
+    value: {
+      getUserMedia: jest.fn(),
+    },
+  })
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+  // Mock localStorage
+  const localStorageMock = {
+    getItem: jest.fn(),
+    setItem: jest.fn(),
+    removeItem: jest.fn(),
+    clear: jest.fn(),
+  }
+  Object.defineProperty(window, 'localStorage', {
+    value: localStorageMock,
+  })
+
+
+  // Mock canvas for image processing
+  HTMLCanvasElement.prototype.getContext = jest.fn(() => ({
+    drawImage: jest.fn(),
+    getImageData: jest.fn(),
+    putImageData: jest.fn(),
+  }))
+
+  HTMLCanvasElement.prototype.toDataURL = jest.fn(() => 'data:image/jpeg;base64,mock-image-data')
+
+  // Mock FileReader for image uploads
+  global.FileReader = class {
+    constructor() {
+      this.readAsDataURL = jest.fn(() => {
+        this.onload({ target: { result: 'data:image/jpeg;base64,mock-image-data' } })
+      })
+    }
+  }
+
+  // Mock URL.createObjectURL
+  global.URL.createObjectURL = jest.fn(() => 'mock-object-url')
+  global.URL.revokeObjectURL = jest.fn()
 }
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-})
 
 // Mock fetch for API calls
 global.fetch = jest.fn()
-
-// Mock canvas for image processing
-HTMLCanvasElement.prototype.getContext = jest.fn(() => ({
-  drawImage: jest.fn(),
-  getImageData: jest.fn(),
-  putImageData: jest.fn(),
-}))
-
-HTMLCanvasElement.prototype.toDataURL = jest.fn(() => 'data:image/jpeg;base64,mock-image-data')
-
-// Mock FileReader for image uploads
-global.FileReader = class {
-  constructor() {
-    this.readAsDataURL = jest.fn(() => {
-      this.onload({ target: { result: 'data:image/jpeg;base64,mock-image-data' } })
-    })
-  }
-}
-
-// Mock URL.createObjectURL
-global.URL.createObjectURL = jest.fn(() => 'mock-object-url')
-global.URL.revokeObjectURL = jest.fn()
 
 // Suppress console errors during tests unless explicitly testing error scenarios
 const originalError = console.error

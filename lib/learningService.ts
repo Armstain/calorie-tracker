@@ -136,6 +136,53 @@ export class LearningService {
     return suggestions;
   }
 
+  // Build a short, plain-text summary of this user's recent corrections to send
+  // with new analyses, so the model can calibrate portions and calories for them.
+  getPromptContext(maxItems: number = 8, maxLength: number = 1200): string {
+    const describe = (food: Partial<FoodItem>) => {
+      const grams = typeof food.estimatedGrams === 'number' ? ` (~${food.estimatedGrams} g)` : '';
+      const quantity = food.quantity ? ` ${food.quantity}` : '';
+      return `"${food.name ?? 'unknown'}"${quantity}${grams} = ${food.calories ?? '?'} kcal`;
+    };
+
+    const recent = Array.from(this.corrections.values())
+      .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+
+    const lines: string[] = [];
+    const seen = new Set<string>();
+
+    for (const correction of recent) {
+      const originalFoods = correction.originalAnalysis?.foods || [];
+      const correctedFoods = correction.correctedData?.foods || [];
+
+      correctedFoods.forEach((corrected, index) => {
+        const original = originalFoods[index];
+        if (!original || !corrected) return;
+
+        const changed =
+          (corrected.name !== undefined && corrected.name !== original.name) ||
+          (corrected.calories !== undefined && corrected.calories !== original.calories) ||
+          (corrected.estimatedGrams !== undefined && corrected.estimatedGrams !== original.estimatedGrams);
+        if (!changed) return;
+
+        const key = (corrected.name || original.name || '').toLowerCase();
+        if (seen.has(key)) return;
+        seen.add(key);
+
+        lines.push(`- AI estimated ${describe(original)}; user corrected to ${describe({ ...original, ...corrected })}`);
+      });
+
+      if (lines.length >= maxItems) break;
+    }
+
+    let context = lines.slice(0, maxItems).join('\n');
+    if (context.length > maxLength) {
+      context = context.slice(0, maxLength);
+      context = context.slice(0, Math.max(0, context.lastIndexOf('\n')));
+    }
+    return context;
+  }
+
   // Get learning statistics
   getLearningStats(): {
     totalCorrections: number;

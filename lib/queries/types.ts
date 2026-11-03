@@ -1,4 +1,4 @@
-import { FoodEntry, UserSettings } from '@/types';
+import { AnalysisProgressEvent, FoodEntry, UserSettings } from '@/types';
 
 export const queryKeys = {
   storage: {
@@ -27,6 +27,12 @@ export interface FoodAnalysisParams {
   imageData: string;
   apiKey: string;
   signal?: AbortSignal;
+  /** Optional free-text hint about the meal, e.g. "2 rotis, large bowl of dal". */
+  note?: string;
+  /** Summary of the user's past corrections, sent as calibration hints. */
+  userContext?: string;
+  /** Receives progress events while the analysis streams in. */
+  onProgress?: (event: AnalysisProgressEvent) => void;
 }
 
 export interface SaveFoodEntryParams {
