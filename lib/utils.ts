@@ -299,14 +299,40 @@ export const errorUtils = {
           ? 'Camera access denied. Please enable camera permissions in your browser settings.'
           : 'Camera not available. Please try again or use the file upload option.';
       
-      case 'api':
-        if (error.message.includes('rate limit')) {
-          return 'Too many requests. Please wait a moment and try again.';
+      case 'api': {
+        // The service already produces specific, actionable messages
+        // (no key, bad key, quota, safety block, no food, cut off).
+        // Previously this function threw all of them away and showed
+        // "check your internet connection" for every failure, even when
+        // the connection was fine. Keep the specific cause, and add the
+        // next step the user can actually take.
+        const m = error.message;
+        if (m.includes('API key not configured') || m.includes('No API key')) {
+          return 'No Gemini API key is set. Add your key in Settings to use AI scan, or use Quick Add instead.';
         }
-        if (error.message.includes('key')) {
-          return 'API configuration error. Please check your settings.';
+        if (m.includes('Invalid API key')) {
+          return 'That Gemini API key does not work. Check it in Settings.';
         }
-        return 'Analysis failed. Please check your internet connection and try again.';
+        if (m.toLowerCase().includes('rate limit') || m.includes('Too many')) {
+          return 'Too many requests — you have hit the Gemini limit for now. Wait a bit and try again, or use Quick Add meanwhile.';
+        }
+        if (m.includes('safety filter')) {
+          return 'This photo was blocked by the AI safety filter. Try a different photo.';
+        }
+        if (m.includes('Could not recognize any food')) {
+          return m + ' Or add it manually with Quick Add.';
+        }
+        if (m.includes('cut off')) {
+          return 'The AI reply was cut off before it finished. Please try again.';
+        }
+        if (m.includes('too large') || m.includes('Image is too large')) {
+          return 'That photo is too large. Please use a photo under 1.5 MB.';
+        }
+        // Any other specific service message beats a generic one, unless
+        // it leaks internal model names (the old all-models dump).
+        if (m && !m.includes('gemini-')) return m;
+        return 'The AI analysis failed. Try a clearer photo, or add the meal manually with Quick Add.';
+      }
       
       case 'storage':
         return 'Unable to save data. Please check your browser storage settings.';

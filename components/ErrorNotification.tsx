@@ -13,6 +13,9 @@ interface ErrorNotificationProps {
   canRetry?: boolean;
   autoHide?: boolean;
   autoHideDelay?: number;
+  // One real next step, e.g. "Open Settings" for a missing key or
+  // "Add manually" when the AI could not recognize the food.
+  secondaryAction?: { label: string; onClick: () => void };
 }
 
 export default function ErrorNotification({
@@ -22,7 +25,8 @@ export default function ErrorNotification({
   onRetry,
   canRetry = false,
   autoHide = false,
-  autoHideDelay = 5000
+  autoHideDelay = 5000,
+  secondaryAction
 }: ErrorNotificationProps) {
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -116,6 +120,15 @@ export default function ErrorNotification({
                     className="text-xs bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 px-3 py-1 rounded font-medium transition-colors"
                   >
                     Try Again
+                  </button>
+                )}
+
+                {secondaryAction && (
+                  <button
+                    onClick={secondaryAction.onClick}
+                    className="text-xs bg-amber-500 hover:bg-amber-600 border border-amber-500 text-white px-3 py-1 rounded font-medium transition-colors"
+                  >
+                    {secondaryAction.label}
                   </button>
                 )}
                 
